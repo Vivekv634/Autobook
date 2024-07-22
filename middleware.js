@@ -2,13 +2,17 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function middleware(request) {
-    const usernotesID = headers().get('usernotesID');
-    if (!usernotesID) {
-        return NextResponse.redirect(new URL('/', request.url))
+    try {
+        const notesDocID = headers().get('notesDocID');
+        if (!notesDocID) {
+            return NextResponse.json({ error: 'notesDocID header is required!' }, { status: 400 });
+        }
+        return NextResponse.next();
+    } catch (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.next();
 }
 
 export const config = {
-    matcher: '/api/notes/:path*'
-}
+    matcher: ['/api/notes/:path*', '/api/notes']
+};

@@ -10,13 +10,15 @@ export async function POST(request) {
         await sendEmailVerification(response.user).then(() => console.log('Email Verification Send!'));
         return NextResponse.json(response, { status: 201 });
     } catch (error) {
-        return NextResponse.status(500).json({ 'error': error.message }, { status: 500 });
+        return NextResponse.json({ 'error': error.message }, { status: 500 });
     }
 };
 
 const registerUser = async (name, email, password) => {
     const response = await createUserWithEmailAndPassword(auth, email, password);
-    const notesSchema = { authID: response.user.uid }
+    const notesSchema = {
+        authID: response.user.uid
+    }
     const notesResponse = await addDoc(notesDB, notesSchema);
     const userSchema = {
         name: name,

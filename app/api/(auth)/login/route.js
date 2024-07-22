@@ -15,7 +15,7 @@ export async function POST(request) {
 
 const loginUser = async (email, password) => {
     const response = await signInWithEmailAndPassword(auth, email, password);
-    const q = query(userDB, where('email', '==', response.user.email));
+    const q = query(userDB, where('authID', '==', response.user.uid));
     const docSnap = await getDocs(q);
     let userDoc, userDocID;
     docSnap.forEach(doc => {
