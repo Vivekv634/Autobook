@@ -24,7 +24,7 @@ export async function PUT(request, { params }) {
             });
             transaction.update(notesRef, { notes: updatedNotes });
         }).then(() => console.log('Transaction successfully committed!'));
-        return NextResponse.json({ 'result': 'Note Updated!' }, { status: 200 });
+        return NextResponse.json({ 'result': updatedNotes }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ 'error': error.message }, { status: 500 });
     }

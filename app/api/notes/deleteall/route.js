@@ -10,7 +10,7 @@ export async function DELETE(request) {
         await runTransaction(db, async (transaction) => {
             const notesSnap = await transaction.get(notesRef);
             if (!notesSnap.exists()) {
-                return NextResponse.json({ 'result': 'getting error while retriving notes data' }, { status: 500 });
+                return NextResponse.json({ 'error': 'getting error while retriving notes data' }, { status: 500 });
             }
             const notesData = notesSnap.data();
             transaction.update(notesRef, { ...notesData, notes: [] });

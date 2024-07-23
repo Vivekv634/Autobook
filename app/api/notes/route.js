@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET(request) {
-    console.log('here');
     const notesDocID = headers().get('notesDocID');
     try {
         const notesRef = doc(db, 'notes', notesDocID);
@@ -12,7 +11,7 @@ export async function GET(request) {
         if (!notesSnap.exists()) {
             return NextResponse.json({ error: 'getting error while retriving notes data' }, { status: 500 });
         }
-        const notes = notesSnap.data();
+        const notes = notesSnap.data().notes;
         return NextResponse.json({ result: notes }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

@@ -33,8 +33,8 @@ export async function POST(request) {
                 }
             }
         }).then(() => console.log('Transaction successfully committed!'));
-        return NextResponse.json({ 'result': 'Note Created!' }, { status: 200 });
+        return NextResponse.json({ 'result': notes }, { status: 200 });
     } catch (error) {
-        return NextResponse.json({ 'result': error.message }, { status: 500 });
+        return NextResponse.json({ 'error': error.message }, { status: 500 });
     }
 }

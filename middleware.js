@@ -14,5 +14,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-    matcher: ['/api/notes/:path*', '/api/notes']
+    matcher: ['/api/notes/:path*', '/api/notes', '/api/notebook/:path*']
 };
