@@ -14,7 +14,13 @@
     "quill": "^2.0.2",
     "react": "^18",
     "react-dom": "^18",
+<<<<<<< Updated upstream
     "react-quill": "^2.0.0"
+=======
+    "react-quill": "^2.0.0",
+    "string-crypto": "^3.0.2",
+    "uid": "^2.0.2"
+>>>>>>> Stashed changes
   },
   "devDependencies": {
     "eslint": "^8",
