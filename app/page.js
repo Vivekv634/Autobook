@@ -1,53 +1,57 @@
-"use client"; // Add this line to mark the component as a Client Component
+"use client" // Add this line to mark the component as a Client Component
 
 import React, { useState } from 'react';
-import ReactQuill from 'react-quill';
+import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import './globals.css'; // Optional: Custom CSS for your component
 
-import Image from "next/image";
+// Dynamic import of ReactQuill
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+});
 
-// Define the custom toolbar options
-const toolbarOptions = [
-  [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-  [{ 'font': [] }],
-  [{ 'size': [] }],
-  [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-  [{ 'indent': '-1' }, { 'indent': '+1' }],
-  ['bold', 'italic', 'underline', 'strike'],
-  [{ 'color': [] }, { 'background': [] }],
-  [{ 'align': [] }],
-  ['link', 'image', 'video'],
-  ['clean'] // Remove formatting button
+const modules = {
+  toolbar: [
+    [{ 'font': ['sans-serif', 'serif', 'monospace'] }],
+    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+    [{ 'size': ['small', false, 'large', 'huge'] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ 'script': 'sub' }, { 'script': 'super' }],
+    [{ 'header': 1 }, { 'header': 2 }],
+    ['blockquote', 'code-block'],
+    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    [{ 'indent': '-1' }, { 'indent': '+1' }],
+    [{ 'direction': 'rtl' }],
+    [{ 'align': [] }],
+    ['link', 'image', 'video'],
+    ['clean']
+  ],
+  clipboard: {
+    matchVisual: false,
+  }
+};
+
+const formats = [
+  'font', 'header', 'size', 'color', 'background',
+  'align', 'bold', 'italic', 'underline', 'strike', 'blockquote',
+  'list', 'bullet', 'indent', 'link', 'image', 'video', 'code-block', 'formula'
 ];
 
 export default function Home() {
-  const [editorContent, setEditorContent] = useState('');
-
-  const handleEditorChange = (content) => {
-    setEditorContent(content);
-  };
+  const [content, setContent] = useState('');
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-
-      <div className="container">
-        <div className="row">
-          <div className="editor">
-            <ReactQuill
-              value={editorContent}
-              onChange={handleEditorChange}
-              theme="snow"
-              placeholder="Start typing..."
-              className="editor-input"
-            />
-          </div>
-          <div className="preview">
-            <h3></h3>
-            <div dangerouslySetInnerHTML={{ __html: editorContent }} />
-          </div>
-        </div>
-      </div>
-    </main>
+    <div className='container m-auto mt-5'>
+      <ReactQuill
+        placeholder='Start editing...'
+        formats={formats}
+        modules={modules}
+        theme='snow'
+        value={content}
+        onChange={setContent}
+      />
+      {content}
+    </div>
   );
 }
