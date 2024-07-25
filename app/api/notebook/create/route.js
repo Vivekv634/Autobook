@@ -32,7 +32,7 @@ export async function POST(request) {
             }
             transaction.update(notesDocRef, updatedData);
         })
-        return NextResponse.json({ 'result': updatedData }, { status: 200 });
+        return NextResponse.json({ 'result': updatedData }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ 'error': error.message }, { status: 500 });
     }
