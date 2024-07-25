@@ -3,13 +3,21 @@
 import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
+import { Quill } from 'react-quill';
+import '../../app/globals.css';
+import KeyboardBindings from '@/app/utils/keyboardBindings';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
 });
+
+const Font = Quill.import('formats/font');
+Font.whitelist = ['sans-serif', 'serif', 'monospace', 'roboto'];
+Quill.register(Font, true);
+
 const modules = {
     toolbar: [
-        [{ 'font': ['sans-serif', 'serif', 'monospace'] }],
+        [{ 'font': Font.whitelist }],
         [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
         [{ 'size': ['small', false, 'large', 'huge'] }],
         ['bold', 'italic', 'underline', 'strike'],
@@ -22,10 +30,14 @@ const modules = {
         [{ 'direction': 'rtl' }],
         [{ 'align': [] }],
         ['link', 'image', 'video'],
-        ['clean']
+        ['clean'],
+        ['formula']
     ],
     clipboard: {
         matchVisual: false,
+    },
+    keyboard: {
+        bindings: KeyboardBindings
     }
 };
 
@@ -38,7 +50,7 @@ const formats = [
 export default function TextEditor() {
     const [content, setContent] = useState('');
     return (
-        <div className='container m-auto mt-5'>
+        <div>
             <ReactQuill
                 placeholder='Start editing...'
                 formats={formats}

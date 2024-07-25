@@ -41,3 +41,15 @@
   height: 100%;
   width: 100%;
 }
+/* App.css */
+.custom-quill-editor .ql-container {
+  height: 200px; /* Adjust this value to set the desired height */
+}
+
+.custom-quill-editor .ql-editor {
+  height: 100%; /* Make sure the editor takes the full height of the container */
+}
+
+.ql-font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
