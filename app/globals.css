@@ -8,48 +8,53 @@
   }
 }
 
-.container{
-  position: relative;
-  height: 100vh;
-  width: 100%;
-  color: black;
-}
-
-.row{
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.editor,
-.preview {
-  position: relative;
-  height: 100%;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.preview{
-  border: 1px solid wheat;
-}
-
-.editor-input{
-  height: 100%;
-  width: 100%;
-}
-/* App.css */
-.custom-quill-editor .ql-container {
-  height: 200px; /* Adjust this value to set the desired height */
-}
-
-.custom-quill-editor .ql-editor {
-  height: 100%; /* Make sure the editor takes the full height of the container */
-}
-
+/* fonts css */
 .ql-font-roboto {
   font-family: 'Roboto', sans-serif;
+}
+
+.ql-font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.ql-font-quicksand {
+  font-family: 'Quicksand', sans-serif;
+}
+
+.ql-font-ubuntu {
+  font-family: 'Ubuntu', sans-serif;
+}
+
+.ql-font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="roboto"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="roboto"]::before {
+    content: 'Roboto';
+    font-family: 'Roboto', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="poppins"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="poppins"]::before {
+    content: 'Poppins';
+    font-family: 'Poppins', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="quicksand"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="quicksand"]::before {
+    content: 'Quicksand';
+    font-family: 'Quicksand', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="ubuntu"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="ubuntu"]::before {
+    content: 'Ubuntu';
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="montserrat"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="montserrat"]::before {
+    content: 'Montserrat';
+    font-family: 'Montserrat', sans-serif;
 }

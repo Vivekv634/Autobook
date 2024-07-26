@@ -10,19 +10,15 @@ export default function Home() {
   const { isAuthenticated } = useSelector(state => state.userLogin);
   const dispatch = useDispatch();
   return (
-    <div className='container m-auto'>
-      <QuillEditor />
-      {isAuthenticated ?
-        <div>
-          <button type="button" onClick={() => dispatch(logout())}>Logout</button>
-          <Link href='/login'>Login</Link>
-          <Link href='/register'>Register</Link>
-        </div>
-        :
-        <div>
-          <Link href='/register'>Register</Link>
-          <Link href='/login'>Login</Link>
-        </div>}
-    </div>
+    <>
+      <main className='container m-auto *:p-0 *:m-0'>
+        <QuillEditor />
+        <section className=''>
+          {isAuthenticated && <button type="button" className='py-1 px-2 m-2 bg-slate-300 rounded' onClick={() => dispatch(logout())}>Logout</button>}
+          <Link className='py-1 px-2 m-2 bg-slate-300 rounded' href='/register'><button>Register</button></Link>
+          <Link className='py-1 px-2 m-2 bg-slate-300 rounded' href='/login'><button>Login</button></Link>
+        </section>
+      </main>
+    </>
   );
 }
