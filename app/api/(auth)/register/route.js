@@ -24,7 +24,15 @@ const registerUser = async (name, email, password) => {
         name: name,
         email: email,
         authID: response.user.uid,
-        notesDocID: notesResponse.id
+        notesDocID: notesResponse.id,
+        vault: false,
+        vaultPassword: null,
+        isAppLocked: false,
+        appLockPassword: null,
+        defaultFontFamily: 'sans-serif',
+        defaultFontSize: 18,
+        defaultHomePage: 'notes',
+        theme: 'dark'
     };
     await addDoc(userDB, userSchema);
     return response;

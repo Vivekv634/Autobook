@@ -15,7 +15,8 @@ export async function POST(request) {
         isReadOnly: false,
         isFavorite: false,
         isLocked: false,
-        isTrash: false
+        isTrash: true,
+        deletionTimeStamp: new Date().getTime() + (7 * 24 * 60 * 60 * 1000)
     };
     const { title, body } = await request.json();
     const docRef = doc(db, 'notes', notesDocID);
@@ -32,7 +33,8 @@ export async function POST(request) {
                     transaction.update(docRef, { notes: notes });
                 }
             }
-        }).then(() => console.log('Transaction successfully committed!'));
+        }).then(() => console.log('Transaction successfully committed!'))
+            .catch(error => console.log(error));
         return NextResponse.json({ 'result': notes }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ 'error': error.message }, { status: 500 });
