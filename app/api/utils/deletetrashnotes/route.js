@@ -24,6 +24,7 @@ export async function DELETE() {
         });
 
         await batch.commit();
+        console.log({ result: 'Old notes deleted' });
         return NextResponse.json({ result: 'Old notes deleted' }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
