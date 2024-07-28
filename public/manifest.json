@@ -1,0 +1,16 @@
+{
+  "name": "Notesnook",
+  "short_name": "Notesnook",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#222831",
+  "theme_color": "#222831",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./logo-64x64.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    }
+  ]
+}

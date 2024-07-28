@@ -9,7 +9,7 @@ import {
 function AlertDestructive({ message, variant }) {
     return (
         <div className="p-2">
-            <Alert variant={variant} className='absolute top-0 left-0 right-0 ml-auto mr-auto  md:max-w-fit'>
+            <Alert variant={variant} className='absolute top-0 left-0 right-0 ml-auto mr-auto  md:max-w-fit md:min-w-60'>
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
@@ -23,7 +23,7 @@ function AlertDestructive({ message, variant }) {
 function AlertRegisterSuccess({ message }) {
     return (
         <div className="p-2">
-            <Alert variant='' className='bg-green-300 absolute top-0 left-0 right-0 ml-auto mr-auto  md:max-w-fit'>
+            <Alert variant='' className='bg-green-300 absolute top-0 left-0 right-0 ml-auto mr-auto  md:max-w-fit md:min-w-60'>
                 <Mail className="h-4 w-4" />
                 <AlertTitle>Success</AlertTitle>
                 <AlertDescription>
