@@ -1,8 +1,13 @@
-import React from 'react'
+import NotesComponent from "@/app/components/pages/NotesComponent";
+
+export const metadata = {
+  title: 'Notes - Notesnook'
+}
 
 const Notes = () => {
+
   return (
-    <div>Notes</div>
+    <NotesComponent />
   )
 }
 

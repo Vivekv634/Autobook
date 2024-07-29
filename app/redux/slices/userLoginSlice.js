@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { deleteCookie, setCookie } from "cookies-next";
 
 const initialState = {
     user: null,
@@ -19,6 +20,7 @@ const userLoginSlice = createSlice({
             state.user = action.payload;
             state.isAuthenticated = true;
             state.isLoading = false;
+            setCookie('user-session-data', action.payload, { maxAge: action.payload.response.user.stsTokenManager.expirationTime })
         },
         loginFailure: (state, action) => {
             state.isLoading = false;
@@ -27,6 +29,8 @@ const userLoginSlice = createSlice({
         logout: (state) => {
             state.user = null;
             state.isAuthenticated = false;
+            deleteCookie('user-session-data');
+
         }
     }
 });

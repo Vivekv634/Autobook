@@ -1,4 +1,5 @@
 "use client"
+import { getCookie, hasCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux';
@@ -8,15 +9,18 @@ const Dashboard = () => {
     const router = useRouter();
 
     useEffect(() => {
-        if (user && user.userDoc.defaultHomePage) {
-            router.push(`/dashboard/${user.userDoc.defaultHomePage}`);
+        if (hasCookie('user-session-data')) {
+            const cookie = JSON.parse(getCookie('user-session-data'))
+            console.info(cookie.userDoc.defaultHomePage)
+            const homePage = cookie.userDoc.defaultHomePage;
+            router.push(`/dashboard/${homePage}`);
         } else {
             router.push('/login');
         }
     }, [user, router]);
 
     return (
-        <main className='flex justify-center items-center h-screen bg-[#222831] text-[#EEE] text-xl'>Redirecting...</main>
+        <main className='flex justify-center items-center h-screen bg-white text-black text-3xl'>Redirecting...</main>
     )
 }
 
