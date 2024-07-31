@@ -19,7 +19,9 @@ const NotesComponent = () => {
     }, [user, router]);
 
     return (
-        <div>NotesComponent</div>
+        <>
+            NotesComponent
+        </>
     )
 }
 

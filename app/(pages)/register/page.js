@@ -1,4 +1,4 @@
-import RegisterComponent from "@/app/components/pages/RegisterComponent";
+import RegisterComponent from "./Register.jsx";
 
 export const metadata = {
     title: 'Register - Notesnook',

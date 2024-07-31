@@ -8,8 +8,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { AlertRegisterSuccess, AlertDestructive } from "@/app/components/Alert";
-import InputField from "@/app/components/Input";
+import { AlertRegisterSuccess, AlertDestructive } from "@/app/components/Alert.jsx";
+import InputField from "@/app/components/Input.jsx";
 import { hasCookie } from "cookies-next";
 
 const RegisterComponent = () => {

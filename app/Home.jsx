@@ -4,7 +4,7 @@ import '@/app/globals.css';
 import { useDispatch } from 'react-redux';
 import { logout } from '@/app/redux/slices/userLoginSlice';
 import Link from 'next/link';
-import QuillEditor from '@/app/components/TextEditor';
+import QuillEditor from '@/app/components/TextEditor.jsx';
 import { getCookie, hasCookie } from 'cookies-next';
 
 const HomeComponent = () => {

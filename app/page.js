@@ -1,4 +1,4 @@
-import HomeComponent from "./components/pages/HomeComponent";
+import HomeComponent from "./Home.jsx";
 
 export const metadata = {
   title: 'Notesnook'

@@ -1,4 +1,4 @@
-import NotesComponent from "@/app/components/pages/NotesComponent";
+import NotesComponent from "./Notes";
 
 export const metadata = {
   title: 'Notes - Notesnook'

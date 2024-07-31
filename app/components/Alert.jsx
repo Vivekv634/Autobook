@@ -6,7 +6,7 @@ import {
     AlertTitle,
 } from "@/components/ui/alert"
 
-function AlertDestructive({ message, variant }) {
+function AlertDestructive({ message }) {
     return (
         <div className="p-2">
             <Alert variant='destructive' className='bg-red-300 absolute top-0 left-0 right-0 ml-auto mr-auto  md:max-w-fit md:min-w-60'>

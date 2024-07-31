@@ -1,4 +1,4 @@
-import LoginComponent from "@/app/components/pages/LoginComponent";
+import LoginComponent from "./Login.jsx";
 
 export const metadata = {
     title: 'Login - Notesnook',

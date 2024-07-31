@@ -1,4 +1,4 @@
-import NotebookComponent from "@/app/components/pages/NotebookComponent";
+import NotebookComponent from "./Notebook";
 
 export const metadata = {
   title: 'Notebooks - Notesnook'

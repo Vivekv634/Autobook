@@ -11,7 +11,6 @@ const Dashboard = () => {
     useEffect(() => {
         if (hasCookie('user-session-data')) {
             const cookie = JSON.parse(getCookie('user-session-data'))
-            console.info(cookie.userDoc.defaultHomePage)
             const homePage = cookie.userDoc.defaultHomePage;
             router.push(`/dashboard/${homePage}`);
         } else {
