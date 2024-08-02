@@ -12,7 +12,7 @@ export async function POST(request) {
         const newNotebook = {
             notebookID: uid(),
             notebookName: notebookName,
-            notebookCreationDate: new Date().toString(),
+            notebookCreationDate: new Date().getTime(),
             notes: []
         }
         let updatedData;

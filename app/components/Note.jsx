@@ -1,0 +1,73 @@
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
+import { formatDistanceToNowStrict } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
+import { Book, PenOff, PinIcon, Star } from 'lucide-react';
+import Link from 'next/link';
+import { useMediaQuery } from 'usehooks-ts';
+import NoteDropDownMenu from './NoteDropDownMenu';
+import { Label } from '@/components/ui/label';
+
+
+const Note = ({ note, notesDocID, notebook_name }) => {
+    // const creationDate = new Date(note.creation_date);
+    // console.log(note);
+    const isDesktop = useMediaQuery("(min-width: 640px)");
+    const timeAgo = formatDistanceToNowStrict(note.updation_date, { addSuffix: true });
+
+    if (isDesktop) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle className='truncate'>{note.title}</CardTitle>
+                    <CardDescription></CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {/* Add your content here */}
+                </CardContent>
+                <CardFooter className='flex flex-col items-start'>
+                    <div className='flex justify-between w-full'>
+                        <div className='flex items-center'>
+                            {notebook_name && <Link href={`/dashboard/notebooks/${note.notesbook_ref_id}`}>
+                                <Badge variant='outline' className='flex items-center gap-1'><Book className='h-4 w-4' />{notebook_name}</Badge>
+                            </Link>}
+                            {note.isPinned && <PinIcon className='h-4 w-5' />}
+                            {note.isReadOnly && <PenOff className='h-4 w-5' />}
+                            {note.isFavorite && <Star className='h-4 w-5' />}
+                        </div>
+                        {timeAgo}
+                    </div>
+                </CardFooter>
+            </Card>
+        )
+    }
+
+    return (
+        <NoteDropDownMenu note={note} notesDocID={notesDocID}>
+            <Card className='my-1'>
+                <CardHeader>
+                    <CardTitle className='truncate'>{note.title}</CardTitle>
+                    <CardDescription></CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {/* Add your content here */}
+                </CardContent>
+                <CardFooter className='flex flex-col items-start'>
+                    <div className='flex justify-between w-full'>
+                        <div className='flex items-center'>
+                            {notebook_name && <Link href={`/dashboard/notebooks/${note.notesbook_ref_id}`}>
+                                <Badge variant='outline' className='flex items-center gap-1'><Book className='h-4 w-4' />{notebook_name}</Badge>
+                            </Link>}
+                            {note.isPinned && <PinIcon className='h-4 w-5' />}
+                            {note.isReadOnly && <PenOff className='h-4 w-5' />}
+                            {note.isFavorite && <Star className='h-4 w-5' />}
+                        </div>
+                        <Label className='flex items-center'>{timeAgo}</Label>
+                    </div>
+                </CardFooter>
+            </Card>
+        </NoteDropDownMenu>
+    );
+};
+
+export default Note;

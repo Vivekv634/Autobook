@@ -1,5 +1,5 @@
 "use client"
-import { Notebook, Hash, Star, Trash2, Menu, Clock4, Settings, LogOutIcon, UserRound, FileText } from 'lucide-react';
+import { Hash, StickyNote, Star, Trash2, Menu, Clock4, Settings, LogOutIcon, UserRound, Book } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
@@ -11,18 +11,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { deleteCookie, getCookie, hasCookie } from 'cookies-next';
 import { Switch } from '@/components/ui/switch';
+import { usePathname } from 'next/navigation';
 
 
 const pages = [
     {
         label: 'Notes',
         address: '/dashboard/notes',
-        icon: (<FileText className='h-5' />)
+        icon: (<StickyNote className='h-5' />)
     },
     {
         label: 'Notebooks',
         address: '/dashboard/notebooks',
-        icon: (<Notebook className='h-5' />)
+        icon: (<Book className='h-5' />)
     },
     {
         label: 'Favorites',
@@ -52,6 +53,7 @@ const MobileSidebar = () => {
     const [name, setName] = useState('');
     const [fallbackName, setFallbackName] = useState('');
     const { setTheme } = useTheme();
+    const pathName = usePathname();
 
     useEffect(() => {
         setTheme(isDark ? 'dark' : 'light');
@@ -87,7 +89,7 @@ const MobileSidebar = () => {
                                     {pages.map((page, index) => {
                                         return (
                                             <Link href={page.address} key={index}>
-                                                <Button className='text-lg w-fit mr-1' variant={`${page.label === 'Trash' ? 'destructive' : 'outline'}`}>
+                                                <Button className='text-lg w-fit mr-1' variant={`${page.label === 'Trash' ? 'destructive' : pathName.split('/')[2] === page.id ? 'secondary' : 'outline'}`}>
                                                     {page.icon} {page.label}
                                                 </Button>
                                             </Link>
@@ -115,10 +117,10 @@ const MobileSidebar = () => {
                     </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='mr-3 mt-1'>
-                    <DropdownMenuItem><Link className='flex justify-between text-xl w-40' href='/account/profile'>Profile<UserRound className='h-5' /></Link></DropdownMenuItem>
-                    <DropdownMenuItem><Link className='flex justify-between text-xl w-40' href='/account/settings'>Settings<Settings className='h-5' /></Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className='flex justify-between text-xl w-40 items-center' href='/account/profile'>Profile<UserRound className='h-5' /></Link></DropdownMenuItem>
+                    <DropdownMenuItem><Link className='flex justify-between text-xl w-40 items-center' href='/account/settings'>Settings<Settings className='h-5' /></Link></DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={LogOut} className='text-red-500 flex justify-between text-xl w-full'>Logout<LogOutIcon className='h-5' /></DropdownMenuItem>
+                    <DropdownMenuItem onClick={LogOut} className='text-red-500 flex justify-between text-xl w-full items-center'>Logout<LogOutIcon className='h-5' /></DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </nav>

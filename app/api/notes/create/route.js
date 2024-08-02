@@ -8,35 +8,37 @@ export async function POST(request) {
     const notesDocID = headers().get('notesDocID');
     const notesData = {
         noteID: uid(),
-        creation_date: new Date().toString(),
+        updation_date: new Date().toString(),
         notesbook_ref_id: null,
         tagsList: [],
         isPinned: false,
         isReadOnly: false,
         isFavorite: false,
         isLocked: false,
-        isTrash: true,
+        isTrash: false,
         deletionTimeStamp: new Date().getTime() + (7 * 24 * 60 * 60 * 1000)
     };
-    const { title, body } = await request.json();
+    const body = await request.json();
     const docRef = doc(db, 'notes', notesDocID);
     try {
+        let notes;
         await runTransaction(db, async (transaction) => {
             const docSnap = await transaction.get(docRef);
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 if (!data.notes) {
-                    transaction.set(docRef, { ...data, notes: [{ title, body, ...notesData }] });
+                    notes = [{ ...notesData, ...body }];
+                    transaction.set(docRef, { ...data, notes: notes });
                 } else {
-                    const notes = data.notes;
-                    notes.push({ title, body, ...notesData });
+                    notes = data.notes;
+                    notes.push({ ...notesData, ...body });
                     transaction.update(docRef, { notes: notes });
                 }
             }
-        }).then(() => console.log('Transaction successfully committed!'))
-            .catch(error => console.log(error));
+        });
         return NextResponse.json({ 'result': notes }, { status: 201 });
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ 'error': error.message }, { status: 500 });
     }
 }

@@ -1,13 +1,26 @@
 "use client"
+import Note from '@/app/components/Note';
+import NoteSkeleton from '@/app/components/NoteSkeleton';
+import axios from 'axios';
 import { getCookie, hasCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setDeletedNotes, setNotes, setNoteUpdate } from '@/app/redux/slices/noteSlice';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 const NotesComponent = () => {
     const { user } = useSelector(state => state.userLogin);
+    const { notes, isNoteUpdate } = useSelector(state => state.note);
+    const dispatch = useDispatch();
     const [notesDocID, setNotesDocID] = useState(null);
+    const [notebooks, setNotebooks] = useState({});
     const router = useRouter();
+    const [call, setCall] = useState(true);
+    const { toast } = useToast();
 
     useEffect(() => {
         if (hasCookie('user-session-data')) {
@@ -18,11 +31,118 @@ const NotesComponent = () => {
         }
     }, [user, router]);
 
-    return (
-        <>
-            NotesComponent
-        </>
-    )
+    useEffect(() => {
+        async function fetchData(notesDocID) {
+            const notesResponse = await axios.get(`${process.env.API}/api/notes`, {
+                headers: {
+                    notesDocID: notesDocID
+                }
+            })
+
+            const notebookResponse = await axios.get(`${process.env.API}/api/notebooks`, {
+                headers: {
+                    notesDocID: notesDocID
+                }
+            })
+
+            let temp = {};
+            notebookResponse.data.result.map(notebook => {
+                temp[notebook.notebookID] = notebook.notebookName
+            })
+            setNotebooks(temp);
+
+            let sortedNotes = [];
+            notesResponse.data.result.map(note => {
+                if (!note.isTrash && !note.isLocked && note.isPinned) {
+                    sortedNotes.push(note);
+                }
+            })
+
+            notesResponse.data.result.map(note => {
+                if (!note.isTrash && !note.isLocked && !note.isPinned) {
+                    sortedNotes.push(note);
+                }
+            })
+            dispatch(setNotes(sortedNotes));
+
+            let filterDeletedNotes = [];
+            notesResponse.data.result.map(note => {
+                if (note.isTrash) {
+                    filterDeletedNotes.push(note);
+                }
+            })
+            dispatch(setDeletedNotes(filterDeletedNotes));
+        }
+
+        if (notesDocID && call) {
+            fetchData(notesDocID);
+            setCall(false);
+        }
+    }, [notesDocID, notebooks, call, dispatch]);
+
+    useEffect(() => {
+        if (isNoteUpdate) {
+            let updatedNotes = [];
+            notes && notes.map(note => {
+                if (!note.isTrash && !note.isLocked && note.isPinned) {
+                    updatedNotes.push(note);
+                }
+            })
+            notes && notes.map(note => {
+                if (!note.isTrash && !note.isLocked && !note.isPinned) {
+                    updatedNotes.push(note);
+                }
+            })
+            dispatch(setNotes(updatedNotes));
+            dispatch(setNoteUpdate(false));
+        }
+    }, [notes, dispatch, isNoteUpdate]);
+
+    const createNote = async () => {
+        try {
+            let body = {
+                title: `Note ${new Date().toString()}`
+            }
+            const createResponse = await axios.post(`${process.env.API}/api/notes/create`, body, {
+                headers: {
+                    notesDocID: notesDocID
+                }
+            })
+            dispatch(setNotes(createResponse.data.result));
+            toast({ description: 'Note created!' });
+        } catch (error) {
+            console.error(error);
+            toast({ description: 'Oops! Something went wrong. Try again!', variant:'descriptive' });
+        }
+    }
+
+    if (notes?.length === 0) {
+        return (
+            <section className="p-2 flex flex-col justify-center h-screen items-center text-center">
+                <Label className='text-[2.7rem]'>Empty here!</Label>
+                <Label className='text-md'>Create a note now.</Label>
+            </section>
+        )
+    }
+
+    if (notes?.length) {
+        return (
+            <section className='p-2 flex flex-col'>
+                <Button className='w-fit' onClick={createNote}><Plus/></Button>
+                {notes && notes.length > 0 ? notes.map((note, index) => {
+                    return (
+                        <Note key={index} note={note} notesDocID={notesDocID} notebook_name={notebooks[note.notesbook_ref_id]} />
+                    )
+                }) : <>
+                    <NoteSkeleton />
+                    <NoteSkeleton />
+                    <NoteSkeleton />
+                    <NoteSkeleton />
+                    <NoteSkeleton />
+                </>}
+            </section>
+        )
+    }
 }
 
 export default NotesComponent;

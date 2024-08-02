@@ -7,7 +7,7 @@ export async function PUT(request, { params }) {
     try {
         let notebooks;
         const notesDocID = headers().get('notesDocID');
-        const { newNotebookName } = await request.json();
+        const requestBody = await request.json();
         const { notebookID } = params;
         const notesDocRef = doc(db, 'notes', notesDocID);
         await runTransaction(db, async (transaction) => {
@@ -16,9 +16,11 @@ export async function PUT(request, { params }) {
                 return NextResponse.json({ 'error': 'error getting notes data.' }, { status: 500 });
             } else {
                 notebooks = notesDocSnap.data().notebook;
-                notebooks.map(notebook => {
+                notebooks = notebooks.map(notebook => {
                     if (notebook.notebookID === notebookID) {
-                        notebook.notebookName = newNotebookName;
+                        return { ...notebook, ...requestBody };
+                    } else {
+                        return notebook;
                     }
                 })
             }

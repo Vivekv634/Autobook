@@ -1,6 +1,6 @@
 "use client";
 import React from 'react'
-import { Notebook, Hash, Star, Trash2, Clock4, FileText, Settings, UserRound, LogOutIcon } from 'lucide-react';
+import { Notebook, Hash, Star, Trash2, Clock4, FileText, Settings, UserRound, LogOutIcon, StickyNote, Book } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,13 @@ const pages = [
         label: 'Notes',
         id: 'notes',
         address: '/dashboard/notes',
-        icon: (<FileText className='h-5 my-auto mx-1' />)
+        icon: (<StickyNote className='h-5 my-auto mx-1' />)
     },
     {
         label: 'Notebooks',
         id: 'notebooks',
         address: '/dashboard/notebooks',
-        icon: (<Notebook className='h-5 my-auto mx-1' />)
+        icon: (<Book className='h-5 my-auto mx-1' />)
     },
     {
         label: 'Favorites',
@@ -45,6 +45,12 @@ const pages = [
         address: '/dashboard/trash',
         icon: (<Trash2 className='h-5 my-auto mx-1' />)
     },
+    {
+        label: 'Home',
+        id: 'home',
+        address: '/',
+        icon: (<Trash2 className='h-5 my-auto mx-1' />)
+    },
 ]
 
 const DesktopSidebar = () => {
@@ -56,7 +62,7 @@ const DesktopSidebar = () => {
     }
 
     return (
-        <aside className='border border-neutral-300 h-screen w-full max-w-52 rounded-md p-2'>
+        <aside className='border border-neutral-300 dark:border-neutral-700  h-screen w-full max-w-52 rounded-md p-2'>
             <div className="relative h-full">
                 <div className='text-center mb-4'><Label className='text-3xl'>NotesNook</Label></div>
                 <div className='mt-6'>

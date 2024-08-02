@@ -11,8 +11,8 @@ const ReactQuill = dynamic(() => import('react-quill'), {
     loading: () => <p>Loading...</p>,
 });
 
-export default function QuillEditor() {
-    const [content, setContent] = useState('');
+export default function QuillEditor({data}) {
+    const [content, setContent] = useState(data);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -72,7 +72,6 @@ export default function QuillEditor() {
                     onChange={setContent}
                 />
             )}
-            {content}
         </div>
     );
 }

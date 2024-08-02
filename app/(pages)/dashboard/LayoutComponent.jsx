@@ -1,6 +1,5 @@
 "use client";
 import SideMenubar from '@/app/components/Sidebar';
-import { cn } from '@/lib/utils';
 import { useMediaQuery } from 'usehooks-ts';
 import React, { useEffect, useState } from 'react'
 
@@ -21,7 +20,7 @@ const LayoutComponent = ({ children }) => {
         return (
             <main className='flex p-1 gap-1 box-border'>
                 <SideMenubar />
-                <section className='w-full h-screen border border-neutral-300 rounded-md p-3'>{children}</section>
+                <section className='w-full h-screen border border-neutral-300 dark:border-neutral-700 rounded-md p-3'>{children}</section>
             </main>
         )
     }
