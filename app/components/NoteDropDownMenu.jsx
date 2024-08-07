@@ -1,27 +1,21 @@
 "use client"
-import React from 'react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-    DropdownMenuSubContent,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger
-} from "@/components/ui/dropdown-menu"
-import { Check, Code, Copy, FileTextIcon, Heading, Printer, RotateCcw, SquareArrowOutUpRight, Trash2, Type } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuSubContent, DropdownMenuSub, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu"
+import { Check, Code, Copy, Heading, Pen, Printer, RotateCcw, SquareArrowOutUpRight, Trash2, Type } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { setDeletedNotes, setEditorNote, setNotes, setNoteUpdate } from '../redux/slices/noteSlice';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
+import ExportPdfDialog from './ExportPdfDialog';
+import { uid } from 'uid';
+import NoteConfigDialog from './NoteConfigDialog';
+
 
 const NoteDropDownMenu = ({ note, notesDocID, children }) => {
     const { toast } = useToast();
     const dispatch = useDispatch();
     const router = useRouter();
-
 
     const setEditorNoteState = () => {
         dispatch(setEditorNote(note));
@@ -56,7 +50,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             });
             dispatch(setNotes(response.data.result));
             dispatch(setNoteUpdate(true));
-            toast(toastMessage);
+            toast({ ...toastMessage, className: 'bg-green-400' });
         } catch (error) {
             console.error(error);
             toast({ description: 'Oops! Something went wrong. Try again!', variant: 'destructive' });
@@ -98,6 +92,18 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
         }
     }
 
+    const duplicateNote = async () => {
+        let body = { ...note, updation_date: new Date().toString(), noteID: uid() };
+        const duplicateResponse = await axios.post(`${process.env.API}/api/notes/create`, body, {
+            headers: {
+                notesDocID: notesDocID
+            }
+        });
+        dispatch(setNotes(duplicateResponse.data.result));
+        toast({ description: 'Note duplicated!', className: 'bg-green-400' })
+
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -106,8 +112,10 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             {!note.isTrash ?
                 <DropdownMenuContent className='w-44'>
                     <DropdownMenuItem className='flex justify-between items-center' onClick={setEditorNoteState}>
-                        Open
-                        <SquareArrowOutUpRight className='h-4 w-5' />
+                        Open <SquareArrowOutUpRight className='h-4 w-5' />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        <NoteConfigDialog note={note} />
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className='flex justify-between items-center' onClick={() => updateNote('isPinned')}>
@@ -132,9 +140,8 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
                             Export as
                         </DropdownMenuSubTrigger>
                         <DropdownMenuSubContent>
-                            <DropdownMenuItem className='flex justify-between items-center'>
-                                PDF
-                                <FileTextIcon className='h-4 w-5' />
+                            <DropdownMenuItem>
+                                <ExportPdfDialog note={note} />
                             </DropdownMenuItem>
                             <DropdownMenuItem className='flex justify-between items-center'>
                                 Markdown
@@ -169,7 +176,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
                             </DropdownMenuItem>
                         </DropdownMenuSubContent>
                     </DropdownMenuSub>
-                    <DropdownMenuItem className='flex justify-between items-center'>
+                    <DropdownMenuItem className='flex justify-between items-center' onClick={duplicateNote}>
                         Duplicate
                         <Copy className='h-4 w-5' />
                     </DropdownMenuItem>

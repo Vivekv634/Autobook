@@ -9,16 +9,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { AlertDestructive } from "@/app/components/Alert";
-import InputField from "@/app/components/Input";
 import { hasCookie } from 'cookies-next';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/components/ui/use-toast';
 
 const LoginComponent = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [apiError, setApiError] = useState(null);
     const dispatch = useDispatch();
     const router = useRouter();
+    const { toast } = useToast();
     const { isLoading, error } = useSelector(state => state.userLogin);
 
     useEffect(() => {
@@ -48,46 +50,46 @@ const LoginComponent = () => {
             router.push('/dashboard');
         } catch (error) {
             console.error(error);
-            setApiError(error.message || 'An error occurred');
+            toast({ description: error.message || 'An error occurred', variant: "destructive" });
             dispatch(loginFailure(null));
         }
     }
 
-    if (apiError) {
-        setTimeout(() => {
-            setApiError(null);
-        }, 5000);
-    }
-
     return (
-        <>
-            <main className="h-screen flex flex-col justify-center items-center text-center bg-white">
-                <section className="w-full max-w-md p-6 rounded-md md:border md:shadow-2xl md:border-[#d4cdcd] md:bg-white">
-                    <h1 className="font-semibold text-3xl mb-4 text-black py-5">Welcome to Notebook</h1>
-                    <form className="flex flex-col gap-4" onSubmit={handleFormSubmit}>
-                        <InputField id='email' label='Email' value={email} onChange={setEmail} placeholder='john@example.com' type='email' />
-                        <InputField id='password' label='Password' value={password} onChange={setPassword} placeholder='' type='password' />
-                        <p className="text-red-600 h-5">{error}</p>
-                        {
-                            !error && email && password ?
-                                (
-                                    isLoading ?
-                                        <Button disabled variant='primary' className='bg-black text-white disabled:bg-black'>
-                                            <Loader2 className="h-[18px] animate-spin" />
-                                            Loading...
-                                        </Button> :
-                                        <Button variant='primary' className='bg-black text-white'>Sign In</Button>
-                                ) :
-                                <Button variant='primary' disabled className='bg-black disabled:bg-black text-white'>Sign In</Button>
-                        }
+        <main className='grid place-items-center h-screen'>
+            <Card className='w-11/12 md:w-3/12'>
+                <CardHeader className='text-center'>
+                    <CardTitle>
+                        Welcome to Notesnook
+                    </CardTitle>
+                    <CardDescription>
+                        Write notes in the way you want.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleFormSubmit} className='flex flex-col gap-3'>
+                        <div>
+                            <Label htmlFor='email'>Email address</Label>
+                            <Input id='email' type='email' placeholder='john@example.com' value={email} onChange={e => setEmail(e.target.value)} required />
+                        </div>
+                        <div>
+                            <Label htmlFor='password'>Password</Label>
+                            <Input id='password' type='password' value={password} onChange={e => setPassword(e.target.value)} required />
+                        </div>
+                        <Label className="text-red-600 text-center">{error}</Label>
+                        <Button type='submit' className='w-full' disabled={isLoading || error}>
+                            {isLoading ?
+                                <div className='flex'><Loader2 className='h-[18px] animate-spin' /> Loading...</div> :
+                                'Sign in'
+                            }
+                        </Button>
                     </form>
-                    <span className="block mt-4 text-black">
-                        Don&apos;t have an account? <Link className="underline font-semibold" href='/register'>Create here</Link>
-                    </span>
-                </section>
-                {apiError && (<AlertDestructive variant='destructive' message={apiError} />)}
-            </main>
-        </>
+                </CardContent>
+                <CardFooter className=''>
+                    <Label className='w-full text-center'>Don&apos;t have an account? <strong className='underline'><Link href='/register'>Register here</Link></strong></Label>
+                </CardFooter>
+            </Card>
+        </main>
     );
 }
 

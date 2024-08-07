@@ -8,19 +8,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { AlertRegisterSuccess, AlertDestructive } from "@/app/components/Alert.jsx";
-import InputField from "@/app/components/Input.jsx";
+import { Label } from "@/components/ui/label";
 import { hasCookie } from "cookies-next";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+
 
 const RegisterComponent = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [apiError, setApiError] = useState(null);
-    const [alert, setAlert] = useState(false);
     const dispatch = useDispatch();
     const router = useRouter();
     const { isLoading, error } = useSelector(state => state.userRegister);
+    const { toast } = useToast();
 
     useEffect(() => {
         if (hasCookie('user-session-data')) {
@@ -33,7 +35,7 @@ const RegisterComponent = () => {
         if (email && !isEmail(email)) {
             validationError = 'Email must be valid';
         }
-        if (password && !isStrongPassword(password)) {
+        if (password && !isStrongPassword(password) && password.length < 8) {
             validationError = 'Password must be min 8 characters and alphanumeric';
         }
         dispatch(registerFailure(validationError));
@@ -48,58 +50,53 @@ const RegisterComponent = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            setAlert(true);
+            toast({ description: "Registration successful! Now login to use app.", className: 'bg-green-400' });
             dispatch(registerSuccess(response.data));
         } catch (error) {
-            setApiError(error.response?.data?.error || 'An error occurred');
+            toast({ description: error.response?.data?.error || 'An error occurred', variant: 'destructive' });
             dispatch(registerFailure(null));
         }
     }
 
-    if (apiError) {
-        setTimeout(() => {
-            setApiError(null);
-        }, 5000);
-    }
-
-    if (alert) {
-        setTimeout(() => {
-            setAlert(false);
-        }, 5000);
-    }
-
     return (
-        <>
-            <main className="h-screen flex justify-center items-center text-center bg-white relative">
-                <section className="w-full max-w-md p-6 rounded-md md:border md:shadow-2xl md:border-[#d4cdcd]">
-                    <h1 className="font-semibold text-3xl mb-4 text-black py-5  ">Welcome to Notesbook</h1>
-                    <form className="flex flex-col gap-4" onSubmit={handleFormSubmit}>
-                        <InputField id='name' label='Name' value={name} onChange={setName} placeholder='John Doe' type='text' />
-                        <InputField id='email' label='Email' value={email} onChange={setEmail} placeholder='john@example.com' type='email' />
-                        <InputField id='password' label='Password' value={password} onChange={setPassword} placeholder='' type='password' />
-                        <p className="text-red-400 h-10 md:h-5">{error}</p>
-                        {
-                            !error && name && email && password ?
-                                (
-                                    isLoading ?
-                                        <Button disabled variant='primary' className='bg-black text-white disabled:bg-black'>
-                                            <Loader2 className="h-[18px] animate-spin" />
-                                            Loading...
-                                        </Button> :
-                                        <Button variant='primary' className='bg-black text-white'>Register</Button>
-                                ) :
-                                <Button variant='primary' disabled className='bg-black disabled:bg-black text-white'>Register</Button>
-                        }
+        <main className='grid place-items-center h-screen'>
+            <Card className='w-11/12 md:w-3/12'>
+                <CardHeader className='text-center'>
+                    <CardTitle>
+                        Welcome to Notesnook
+                    </CardTitle>
+                    <CardDescription>
+                        Take notes more concisely.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleFormSubmit} className='flex flex-col gap-3'>
+                        <div>
+                            <Label htmlFor='name'>Name</Label>
+                            <Input id='name' type='text' placeholder='John Doe' value={name} onChange={e => setName(e.target.value)} required />
+                        </div>
+                        <div>
+                            <Label htmlFor='email'>Email address</Label>
+                            <Input id='email' type='email' placeholder='john@example.com' value={email} onChange={e => setEmail(e.target.value)} required />
+                        </div>
+                        <div>
+                            <Label htmlFor='password'>Password</Label>
+                            <Input id='password' type='password' value={password} onChange={e => setPassword(e.target.value)} required />
+                        </div>
+                        <Label className="text-red-600 text-center">{error}</Label>
+                        <Button type='submit' className='w-full' disabled={(isLoading || error) ? true : false}>
+                            {isLoading ?
+                                <div className='flex'><Loader2 className='h-[18px] animate-spin' /> Loading...</div> :
+                                'Sign Up'
+                            }
+                        </Button>
                     </form>
-                    <span className="block mt-4 text-black">
-                        Already have an account? <Link className="underline font-semibold" href='/login'>Login here</Link>
-                    </span>
-                </section>
-            </main>
-            {alert && (<AlertRegisterSuccess message='Your registration is successful, now login to access the power of the application.' />)}
-            {apiError && (<AlertDestructive message={apiError} />)}
-        </>
-
+                </CardContent>
+                <CardFooter>
+                    <Label className='w-full text-center'>Already have an account? <strong className='underline'><Link href='/login'>Login here</Link></strong></Label>
+                </CardFooter>
+            </Card>
+        </main>
     );
 }
 

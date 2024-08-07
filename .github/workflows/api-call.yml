@@ -1,0 +1,14 @@
+name: API Call at Midnight
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # This runs the workflow every day at midnight (UTC)
+  workflow_dispatch:
+
+jobs:
+  api-call:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Make API Call
+      run: curl -X DELETE "https://notesnook-sand.vercel.app/api/utils/deletetrashnotes"

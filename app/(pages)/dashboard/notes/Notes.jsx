@@ -109,29 +109,19 @@ const NotesComponent = () => {
                 }
             })
             dispatch(setNotes(createResponse.data.result));
-            toast({ description: 'Note created!' });
+            toast({ description: 'Note created!', className: 'bg-green-400' });
         } catch (error) {
             console.error(error);
-            toast({ description: 'Oops! Something went wrong. Try again!', variant:'descriptive' });
+            toast({ description: 'Oops! Something went wrong. Try again!', variant: 'descriptive' });
         }
     }
-
-    if (notes?.length === 0) {
-        return (
-            <section className="p-2 flex flex-col justify-center h-screen items-center text-center">
-                <Label className='text-[2.7rem]'>Empty here!</Label>
-                <Label className='text-md'>Create a note now.</Label>
-            </section>
-        )
-    }
-
-    if (notes?.length) {
+    if (notes.length) {
         return (
             <section className='p-2 flex flex-col'>
-                <Button className='w-fit' onClick={createNote}><Plus/></Button>
-                {notes && notes.length > 0 ? notes.map((note, index) => {
+                <Button className='fixed right-4 bottom-4 w-[4rem] h-[4rem] rounded-full' onClick={createNote}><Plus className='h-[2.2rem] w-[2.2rem]' /></Button>
+                {notes.length ? notes.map((note, index) => {
                     return (
-                        <Note key={index} note={note} notesDocID={notesDocID} notebook_name={notebooks[note.notesbook_ref_id]} />
+                            <Note key={index} note={note} notesDocID={notesDocID} notebook_name={notebooks[note.notesbook_ref_id]} />
                     )
                 }) : <>
                     <NoteSkeleton />
@@ -143,6 +133,16 @@ const NotesComponent = () => {
             </section>
         )
     }
+
+    else {
+        return (
+            <section className="p-2 flex flex-col justify-center h-screen items-center text-center">
+                <Label className='text-[2.7rem]'>Empty here!</Label>
+                <Label className='text-md'>Create a note now.</Label>
+            </section>
+        )
+    }
+
 }
 
 export default NotesComponent;

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useMediaQuery } from 'usehooks-ts';
 import NoteDropDownMenu from './NoteDropDownMenu';
 import { Label } from '@/components/ui/label';
-
+import { cn } from '@/lib/utils';
 
 const Note = ({ note, notesDocID, notebook_name }) => {
     // const creationDate = new Date(note.creation_date);
@@ -22,9 +22,7 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                     <CardTitle className='truncate'>{note.title}</CardTitle>
                     <CardDescription></CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {/* Add your content here */}
-                </CardContent>
+                <CardContent></CardContent>
                 <CardFooter className='flex flex-col items-start'>
                     <div className='flex justify-between w-full'>
                         <div className='flex items-center'>
@@ -43,16 +41,13 @@ const Note = ({ note, notesDocID, notebook_name }) => {
     }
 
     return (
-        <NoteDropDownMenu note={note} notesDocID={notesDocID}>
-            <Card className='my-1'>
-                <CardHeader>
-                    <CardTitle className='truncate'>{note.title}</CardTitle>
-                    <CardDescription></CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {/* Add your content here */}
-                </CardContent>
-                <CardFooter className='flex flex-col items-start'>
+        <Card className='my-1'>
+            <NoteDropDownMenu note={note} notesDocID={notesDocID}>
+                <CardContent className=''>
+                    <CardHeader className='px-0'>
+                        <CardTitle className='truncate'>{note.title}</CardTitle>
+                        <CardDescription></CardDescription>
+                    </CardHeader>
                     <div className='flex justify-between w-full'>
                         <div className='flex items-center'>
                             {notebook_name && <Link href={`/dashboard/notebooks/${note.notesbook_ref_id}`}>
@@ -64,9 +59,17 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                         </div>
                         <Label className='flex items-center'>{timeAgo}</Label>
                     </div>
-                </CardFooter>
-            </Card>
-        </NoteDropDownMenu>
+                </CardContent>
+            </NoteDropDownMenu>
+            <CardFooter className={cn('flex flex-col items-start', note?.tagsList?.length > 0 ? 'block':'hidden')}>
+                <div className="w-full flex flex-wrap ">
+                    {note.tagsList &&
+                        note.tagsList.map((tag, index) => {
+                            return <Link className='pr-1 underline text-sm' key={index} href={`/dashboard/tags#${tag}`}>{`#${tag}`}</Link>
+                        })}
+                </div>
+            </CardFooter>
+        </Card>
     );
 };
 
