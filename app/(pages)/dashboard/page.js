@@ -19,7 +19,7 @@ const Dashboard = () => {
     }, [user, router]);
 
     return (
-        <main className='flex justify-center items-center h-screen bg-white text-black text-3xl'>Redirecting...</main>
+        <main className='flex justify-center items-center h-screen text-3xl'>Redirecting...</main>
     )
 }
 

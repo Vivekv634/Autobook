@@ -30,7 +30,7 @@ const ExportPdfDialog = ({ note }) => {
                     <FileTextIcon className='h-4 w-5' />
                 </span>
             </DialogTrigger>
-            <DialogContent aria-describedby={titleId} className='w-11/12 rounded-lg'>
+            <DialogContent aria-describedby={titleId} className='w-11/12 rounded-lg' onClick={(e) => { e.stopPropagation() }}>
                 <DialogTitle id={titleId}>Export Note as PDF</DialogTitle>
                 <DialogDescription>Get your converted PDF by clicking the download button.</DialogDescription>
                 <DialogFooter>

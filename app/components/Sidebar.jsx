@@ -5,7 +5,7 @@ import { useMediaQuery } from 'usehooks-ts';
 import DesktopSidebar from './DesktopSidebar.jsx';
 
 
-const SideMenubar = () => {
+const Menubar = () => {
     const isDesktop = useMediaQuery("(min-width: 640px)");
 
     if (isDesktop) { return <DesktopSidebar /> }
@@ -13,4 +13,4 @@ const SideMenubar = () => {
     return <MobileSidebar />
 };
 
-export default SideMenubar;
+export default Menubar;

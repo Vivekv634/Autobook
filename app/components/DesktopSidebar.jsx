@@ -2,7 +2,7 @@
 import React from 'react'
 import { Notebook, Hash, Star, Trash2, Clock4, FileText, Settings, UserRound, LogOutIcon, StickyNote, Book } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { deleteCookie } from 'cookies-next';
@@ -44,16 +44,10 @@ const pages = [
         id: 'trash',
         address: '/dashboard/trash',
         icon: (<Trash2 className='h-5 my-auto mx-1' />)
-    },
-    {
-        label: 'Home',
-        id: 'home',
-        address: '/',
-        icon: (<Trash2 className='h-5 my-auto mx-1' />)
-    },
+    }
 ]
 
-const DesktopSidebar = () => {
+const DesktopSidebar = ({ theme }) => {
     const pathName = usePathname();
 
     const LogOut = () => {
@@ -76,17 +70,18 @@ const DesktopSidebar = () => {
                                 </Link>
                             )
                         })}
+                        <ScrollBar />
                     </ScrollArea>
                 </div>
                 <div className="bottom-0 absolute left-0">
                     <Link href='/account/profile'>
                         <Button className='w-full mb-1 text-lg' variant='outline'>
-                                <UserRound className='h-5 mx-1 my-auto' />Profile
+                            <UserRound className='h-5 mx-1 my-auto' />Profile
                         </Button>
                     </Link>
                     <Link href='/account/settings'>
                         <Button className='w-full mb-1 text-lg' variant='outline'>
-                                <Settings className='h-5 mx-1 my-auto' />Settings
+                            <Settings className='h-5 mx-1 my-auto' />Settings
                         </Button>
                     </Link>
                     <Button className='w-full mb-1' variant='destructive' onClick={LogOut}>

@@ -11,37 +11,44 @@ import { Switch } from '@/components/ui/switch';
 import { usePathname } from 'next/navigation';
 import { Sheet, SheetFooter, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
 
 
 
 const pages = [
     {
         label: 'Notes',
+        id: 'notes',
         address: '/dashboard/notes',
         icon: (<StickyNote className='h-5' />)
     },
     {
         label: 'Notebooks',
+        id: 'notebooks',
         address: '/dashboard/notebooks',
         icon: (<Book className='h-5' />)
     },
     {
         label: 'Favorites',
+        id: 'favorites',
         address: '/dashboard/favorites',
         icon: (<Star className='h-5' />)
     },
     {
         label: 'Tags',
+        id: 'tags',
         address: '/dashboard/tags',
         icon: (<Hash className='h-5' />)
     },
     {
         label: 'Auto Note',
+        id: 'auto-note',
         address: '/dashboard/auto-note',
         icon: (<Clock4 className='h-5' />)
     },
     {
         label: 'Trash',
+        id: 'trash',
         address: '/dashboard/trash',
         icon: (<Trash2 className='h-5' />)
     },
@@ -49,21 +56,26 @@ const pages = [
 
 
 const MobileSidebar = () => {
-    const [isDark, setIsDark] = useState('');
+    const [userTheme, setUserTheme] = useState(false);
     const [name, setName] = useState('');
     const [fallbackName, setFallbackName] = useState('');
     const { setTheme } = useTheme();
     const pathName = usePathname();
 
     useEffect(() => {
-        setTheme(isDark ? 'dark' : 'light');
         if (hasCookie('user-session-data')) {
             const cookie = JSON.parse(getCookie('user-session-data'));
+            setUserTheme(cookie?.userDoc?.dark_theme);
+            setTheme(cookie?.userDoc?.dark_theme ? 'dark' : 'light');
             setName(cookie.userDoc.name);
             const temp = name.split(' ').map(word => word.substring(0, 1)).reduce((accumulator, currentValue) => accumulator + currentValue);
             setFallbackName(temp);
         }
-    }, [isDark, setTheme, name]);
+    }, [setTheme, name]);
+
+    useEffect(() => {
+        setTheme(userTheme ? 'dark' : 'light');
+    }, [userTheme, setTheme]);
 
     const LogOut = () => {
         deleteCookie('user-session-data');
@@ -89,7 +101,7 @@ const MobileSidebar = () => {
 
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button variant="outline"><Menu /></Button>
+                    <Button variant="outline" className='p-3'><Menu /></Button>
                 </SheetTrigger>
                 <SheetContent side='left' className=''>
                     <SheetHeader className='my-10'>
@@ -103,7 +115,7 @@ const MobileSidebar = () => {
                                     return (
                                         <SheetClose key={index} asChild>
                                             <Link href={page.address}>
-                                                <Button className='text-xl w-full' variant={`${page.label === 'Trash' ? 'destructive' : pathName.split('/')[2] === page.id ? 'secondary' : 'outline'}`}>
+                                                <Button className='text-xl w-full' variant={page.label === 'Trash' ? 'destructive' : pathName.split('/')[2] === page.id ? 'secondary' : 'ghost'}>
                                                     {page.icon} {page.label}
                                                 </Button>
                                             </Link>
@@ -114,8 +126,8 @@ const MobileSidebar = () => {
                         </section>
                         <SheetFooter className='mt-6'>
                             <div className='flex justify-between m-1 p-1'>
-                                <Label className='text-xl my-auto'>Toggle Themes</Label>
-                                <Switch checked={isDark} onCheckedChange={setIsDark} />
+                                <Label className='text-xl my-auto'>Dark Mode</Label>
+                                <Switch checked={userTheme} onCheckedChange={setUserTheme} />
                             </div>
                         </SheetFooter>
                     </div>

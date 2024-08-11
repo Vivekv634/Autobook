@@ -6,7 +6,7 @@ import { getCookie, hasCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { setDeletedNotes, setNotes, setNoteUpdate } from '@/app/redux/slices/noteSlice';
+import { setDeletedNotes, setNotes, setNoteUpdate, setNoteBooks } from '@/app/redux/slices/noteSlice';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -50,6 +50,7 @@ const NotesComponent = () => {
                 temp[notebook.notebookID] = notebook.notebookName
             })
             setNotebooks(temp);
+            dispatch(setNoteBooks(temp))
 
             let sortedNotes = [];
             notesResponse.data.result.map(note => {
@@ -121,7 +122,7 @@ const NotesComponent = () => {
                 <Button className='fixed right-4 bottom-4 w-[4rem] h-[4rem] rounded-full' onClick={createNote}><Plus className='h-[2.2rem] w-[2.2rem]' /></Button>
                 {notes.length ? notes.map((note, index) => {
                     return (
-                            <Note key={index} note={note} notesDocID={notesDocID} notebook_name={notebooks[note.notesbook_ref_id]} />
+                        <Note key={index} note={note} notesDocID={notesDocID} notebook_name={notebooks[note.notesbook_ref_id]} />
                     )
                 }) : <>
                     <NoteSkeleton />
