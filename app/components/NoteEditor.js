@@ -7,11 +7,9 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEditorNote } from '../redux/slices/noteSlice';
-// import Header from "editorjs-header-with-alignment";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import CodeBox from '@bomdi/codebox';
 import Checklist from '@editorjs/checklist';
 import Delimiter from '@editorjs/delimiter';
 import Embed from '@editorjs/embed';
@@ -35,7 +33,7 @@ import Paragraph from 'editorjs-paragraph-with-alignment';
 import ToggleBlock from 'editorjs-toggle-block';
 import Tooltip from 'editorjs-tooltip';
 import Undo from 'editorjs-undo';
-import { ChevronLeft, Pen, PenLine, Loading2, Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2, Pen, PenLine } from 'lucide-react';
 
 const NoteEditor = ({ params }) => {
   const { editorNote } = useSelector(state => state.note);
@@ -52,6 +50,7 @@ const NoteEditor = ({ params }) => {
   useEffect(() => {
     const editor = new EditorJS({
       holder: 'editorjs',
+      readOnly: editorNote?.isReadOnly,
       tools: {
         header: {
           class: Header,
@@ -114,7 +113,6 @@ const NoteEditor = ({ params }) => {
         },
         delimiter: Delimiter,
         warning: Warning,
-        codeBox: CodeBox,
         raw: RawTool,
         underline: {
           class: Underline,

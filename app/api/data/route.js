@@ -5,22 +5,20 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    let deletedNotes = [];
+    let data;
     const notesDocID = headers().get('notesDocID');
     const notesRef = doc(db, 'notes', notesDocID);
     const notesSnap = await getDoc(notesRef);
-    if (notesSnap.exists()) {
-      const notes = notesSnap.data().notes;
-      notes?.map((note) => {
-        if (note.isTrash) {
-          deletedNotes.push(note);
-        }
-      });
+    if (!notesSnap.exists()) {
+      return NextResponse.json(
+        { error: 'getting error while retriving notes data.' },
+        { status: 500 },
+      );
     }
-    return NextResponse.json({ result: deletedNotes }, { status: 200 });
+    data = notesSnap.data();
+    return NextResponse.json({ result: data }, { status: 200 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.log(error);
+    return NextResponse.json({ error: error.message }, { status: 200 });
   }
 }
-

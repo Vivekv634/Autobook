@@ -59,22 +59,6 @@
   }
 }
 
-.dark .ql-toolbar .ql-formats button svg {
-  fill: #ffffff; /* Icon color in dark mode */
-}
-
-.dark .ql-toolbar .ql-stroke {
-  stroke: #ffffff; /* Stroke color for toolbar icons in dark mode */
-}
-
-.dark .ql-toolbar .ql-fill {
-  fill: #ffffff; /* Fill color for toolbar icons in dark mode */
-}
-
-.dark .ql-toolbar .ql-picker-label,
-.dark .ql-toolbar .ql-picker-item {
-  color: #ffffff; /* Text color for toolbar dropdowns in dark mode */
-}
 
 @layer base {
   * {
