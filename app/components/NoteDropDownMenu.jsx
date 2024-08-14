@@ -204,9 +204,6 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Export as</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem>
-                <ExportPdfDialog note={note} />
-              </DropdownMenuItem>
               <DropdownMenuItem className="flex justify-between items-center">
                 Markdown
                 <Heading className="h-4 w-5" />
