@@ -1,21 +1,21 @@
 'use client';
 import Note from '@/app/components/Note';
 import NoteSkeleton from '@/app/components/NoteSkeleton';
-import axios from 'axios';
-import { getCookie, hasCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
   setDeletedNotes,
+  setNoteBooks,
   setNotes,
   setNoteUpdate,
-  setNoteBooks,
 } from '@/app/redux/slices/noteSlice';
-import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import axios from 'axios';
+import { getCookie, hasCookie } from 'cookies-next';
+import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const NotesComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
@@ -24,8 +24,12 @@ const NotesComponent = () => {
   const [notesDocID, setNotesDocID] = useState(null);
   const [notebooks, setNotebooks] = useState({});
   const router = useRouter();
-  const [call, setCall] = useState(true);
+  const [mount, setMount] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    setMount(true);
+  }, [setMount]);
 
   useEffect(() => {
     if (hasCookie('user-session-data')) {
@@ -74,12 +78,11 @@ const NotesComponent = () => {
       dispatch(setDeletedNotes(filterDeletedNotes));
     }
 
-    if (notesDocID && call) {
+    if (notesDocID && mount) {
       fetchData(notesDocID);
-      setCall(false);
       console.log('fetch data from notes page...');
     }
-  }, [notesDocID, notebooks, call, dispatch]);
+  }, [notesDocID, notebooks, mount, dispatch]);
 
   useEffect(() => {
     if (isNoteUpdate) {
@@ -142,7 +145,7 @@ const NotesComponent = () => {
                 key={index}
                 note={note}
                 notesDocID={notesDocID}
-                notebook_name={notebooks[note.notesbook_ref_id]}
+                notebook_name={notebooks[note.notebook_ref_id]}
               />
             );
           })

@@ -7,13 +7,12 @@ import { uid } from 'uid';
 export async function POST(request) {
   try {
     const notesDocID = headers().get('notesDocID');
-    const { notebookName } = await request.json();
+    const body = await request.json();
     const notesDocRef = doc(db, 'notes', notesDocID);
     const newNotebook = {
       notebookID: uid(),
-      notebookName: notebookName,
-      notebookCreationDate: new Date().getTime(),
-      notes: [],
+      notebookName: body.notebookName,
+      notebookCreationDate: new Date().toString(),
     };
     let updatedData;
     await runTransaction(db, async (transaction) => {
@@ -28,14 +27,17 @@ export async function POST(request) {
         if (!notesData?.notebooks) {
           updatedData = { ...notesData, notebooks: [newNotebook] };
         } else {
-          const notebook = notesData.notebooks;
-          notebook.push(newNotebook);
-          updatedData = { ...notesData, notebooks: notebook };
+          const allNotebooks = notesData.notebooks;
+          allNotebooks.push(newNotebook);
+          updatedData = { ...notesData, notebooks: allNotebooks };
         }
       }
       transaction.update(notesDocRef, updatedData);
     });
-    return NextResponse.json({ result: updatedData }, { status: 201 });
+    return NextResponse.json(
+      { result: updatedData.notebooks },
+      { status: 201 },
+    );
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

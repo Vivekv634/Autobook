@@ -18,12 +18,12 @@ export async function DELETE(request, { params }) {
           { status: 500 },
         );
       } else {
-        notebooks = notesDocSnap.data().notebook;
+        notebooks = notesDocSnap.data().notebooks;
         notebooks = notebooks.filter(
           (notebook) => notebook.notebookID !== notebookID,
         );
       }
-      transaction.update(notesDocRef, { notebook: notebooks });
+      transaction.update(notesDocRef, { notebooks: notebooks });
     });
     return NextResponse.json({ result: notebooks }, { status: 200 });
   } catch (error) {

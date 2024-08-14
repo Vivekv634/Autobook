@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import EditorJS from "@editorjs/editorjs";
+import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -20,7 +20,7 @@ import Marker from '@editorjs/marker';
 import NestedList from '@editorjs/nested-list';
 import Quote from '@editorjs/quote';
 import RawTool from '@editorjs/raw';
-import SimpleImage from "@editorjs/simple-image";
+import SimpleImage from '@editorjs/simple-image';
 import Table from '@editorjs/table';
 import TextVariantTune from '@editorjs/text-variant-tune';
 import Underline from '@editorjs/underline';
@@ -36,7 +36,7 @@ import Undo from 'editorjs-undo';
 import { ChevronLeft, Loader2, Pen, PenLine } from 'lucide-react';
 
 const NoteEditor = ({ params }) => {
-  const { editorNote } = useSelector(state => state.note);
+  const { editorNote } = useSelector((state) => state.note);
   const { noteID, notesDocID } = params;
   const router = useRouter();
   const { toast } = useToast();
@@ -44,7 +44,9 @@ const NoteEditor = ({ params }) => {
   const editorInstance = useRef(null);
   const [noteTitle, setNoteTitle] = useState(editorNote?.title);
   const [tagsEditable, setTagsEditable] = useState(false);
-  const [noteTagsInput, setNoteTagsInput] = useState(editorNote?.tagsList?.join(" "));
+  const [noteTagsInput, setNoteTagsInput] = useState(
+    editorNote?.tagsList?.join(' '),
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -54,7 +56,7 @@ const NoteEditor = ({ params }) => {
       tools: {
         header: {
           class: Header,
-          inlineToolbar: true
+          inlineToolbar: true,
         },
         paragraph: {
           class: Paragraph,
@@ -71,7 +73,7 @@ const NoteEditor = ({ params }) => {
             backgroundColor: '#154360',
             textColor: '#FDFEFE',
             holder: 'editorId',
-          }
+          },
         },
         quote: {
           class: Quote,
@@ -79,14 +81,14 @@ const NoteEditor = ({ params }) => {
           shortcut: 'CMD+SHIFT+O',
           config: {
             quotePlaceholder: 'Enter a quote',
-            captionPlaceholder: 'Quote\'s author',
+            captionPlaceholder: "Quote's author",
           },
         },
         list: {
           class: NestedList,
           inlineToolbar: true,
           config: {
-            defaultStyle: 'unordered'
+            defaultStyle: 'unordered',
           },
         },
         strikethrough: Strikethrough,
@@ -95,8 +97,8 @@ const NoteEditor = ({ params }) => {
           inlineToolbar: true,
           config: {
             showLocaleOption: true,
-            locale: 'tr'
-          }
+            locale: 'tr',
+          },
         },
         checklist: {
           class: Checklist,
@@ -117,7 +119,7 @@ const NoteEditor = ({ params }) => {
         underline: {
           class: Underline,
           inlineToolbar: true,
-          shortcut: 'CTRL+SHIFT+U'
+          shortcut: 'CTRL+SHIFT+U',
         },
         textVariant: TextVariantTune,
         Marker: {
@@ -134,7 +136,16 @@ const NoteEditor = ({ params }) => {
           inlineToolbar: true,
           shortcut: 'CMD+SHIFT+A',
           config: {
-            alertTypes: ['primary', 'secondary', 'info', 'success', 'warning', 'danger', 'light', 'dark'],
+            alertTypes: [
+              'primary',
+              'secondary',
+              'info',
+              'success',
+              'warning',
+              'danger',
+              'light',
+              'dark',
+            ],
             defaultType: 'primary',
             messagePlaceholder: 'Enter something',
           },
@@ -149,9 +160,9 @@ const NoteEditor = ({ params }) => {
           config: {
             services: {
               youtube: true,
-              coub: true
-            }
-          }
+              coub: true,
+            },
+          },
         },
       },
       placeholder: 'Start writing your notes...',
@@ -160,9 +171,11 @@ const NoteEditor = ({ params }) => {
         new Undo({ editor });
         new DragDrop(editor);
       },
-      data: editorNote?.body ? JSON.parse(editorNote.body) : {
-        "blocks": [],
-      }
+      data: editorNote?.body
+        ? JSON.parse(editorNote.body)
+        : {
+            blocks: [],
+          },
     });
 
     editorInstance.current = editor;
@@ -175,54 +188,103 @@ const NoteEditor = ({ params }) => {
 
   const save = () => {
     setLoading(true);
-    editorInstance.current.save().then(async (outputData) => {
-      const body = {
-        body: JSON.stringify(outputData),
-        title: noteTitle,
-        tagsList: noteTagsInput.split(" ")
-      }
-      const response = await axios.put(`${process.env.API}/api/notes/update/${noteID}`, body, {
-        headers: {
-          notesDocID: notesDocID
-        }
+    editorInstance.current
+      .save()
+      .then(async (outputData) => {
+        const body = {
+          body: JSON.stringify(outputData),
+          title: noteTitle,
+          tagsList: noteTagsInput.split(' ').filter((tag) => tag.trim() !== ''),
+        };
+        const response = await axios.put(
+          `${process.env.API}/api/notes/update/${noteID}`,
+          body,
+          {
+            headers: {
+              notesDocID: notesDocID,
+            },
+          },
+        );
+        response?.data?.result?.map((note) => {
+          if (note.noteID == noteID) {
+            dispatch(setEditorNote(note));
+          }
+        });
+        toast({ description: 'Changes Saved!', className: 'bg-green-400' });
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.log('Saving failed: ', error);
       });
-      response?.data?.result?.map(note => {
-        if (note.noteID == noteID) {
-          dispatch(setEditorNote(note));
-        }
-      });
-      toast({ description: 'Changes Saved!', className: 'bg-green-400' });
-      setLoading(false);
-    }).catch((error) => {
-      setLoading(false);
-      console.log('Saving failed: ', error);
-    });
   };
 
   return (
-    <section className='m-2 block box-border'>
-      <div className='flex items-center mt-4 mb-1 justify-between'>
-        <span onClick={() => router.back()} className='flex underline items-center'><ChevronLeft className='h-5 w-5' /> Back to notes</span>
-        <Button disabled={loading} onClick={save} className=''>{loading ?
-          <div className='flex items-center'><Loader2 className='h-[18px] animate-spin' /> Loading...</div> : 'Save changes'}
+    <section className="m-2 block box-border">
+      <div className="flex items-center mt-4 mb-1 justify-between">
+        <span
+          onClick={() => router.back()}
+          className="flex underline items-center"
+        >
+          <ChevronLeft className="h-5 w-5" /> Back to notes
+        </span>
+        <Button disabled={loading} onClick={save} className="">
+          {loading ? (
+            <div className="flex items-center">
+              <Loader2 className="h-[18px] animate-spin" /> Loading...
+            </div>
+          ) : (
+            'Save changes'
+          )}
         </Button>
       </div>
-      <Separator className='my-2' />
-      <div className='flex px-1 border rounded-md pr-4 items-center mb-3'><Input value={noteTitle} onChange={e => setNoteTitle(e.target.value)} required className='bg-transparent px-1 outline-none border-none text-2xl font-semibold w-full truncate' /><Pen className='h-5 w-5' /></div>
-      <div className='w-full px-2 mb-3'>
-        {noteTagsInput != '' ?
-          !tagsEditable && <Label className='flex flex-wrap items-center gap-1' onClick={() => setTagsEditable(true)}>
-            {
-              noteTagsInput && noteTagsInput.split(" ").map((tag, index) => {
-                return <span key={index}>{`#${tag} `}</span>
-              })
-            }
-            <Pen className='h-3 w-3' />
-          </Label> :
-          !tagsEditable && <Label onClick={() => setTagsEditable(true)} className='flex gap-1 items-center'>Add tags <PenLine className='h-3 w-3' /></Label>}
-        {tagsEditable && <Input autoFocus onBlur={() => { setTagsEditable(false) }} value={noteTagsInput} onChange={e => setNoteTagsInput(e.target.value)} />}
+      <Separator className="my-2" />
+      <div className="flex px-1 border rounded-md pr-4 items-center mb-3">
+        <Input
+          value={noteTitle}
+          onChange={(e) => setNoteTitle(e.target.value)}
+          required
+          className="bg-transparent px-1 outline-none border-none text-2xl font-semibold w-full truncate"
+        />
+        <Pen className="h-5 w-5" />
       </div>
-      <div id="editorjs" className='border rounded-md p-2 h-full'></div>
+      <div className="w-full px-2 mb-3">
+        {noteTagsInput.split(' ').filter((tag) => tag.trim() !== '').length != 0
+          ? !tagsEditable && (
+              <Label
+                className="flex flex-wrap items-center gap-1"
+                onClick={() => setTagsEditable(true)}
+              >
+                {noteTagsInput &&
+                  noteTagsInput
+                    .split(' ')
+                    .filter((tag) => tag.trim() !== '')
+                    .map((tag, index) => {
+                      return <span key={index}>{`#${tag} `}</span>;
+                    })}
+                <Pen className="h-3 w-3" />
+              </Label>
+            )
+          : !tagsEditable && (
+              <Label
+                onClick={() => setTagsEditable(true)}
+                className="flex gap-1 items-center"
+              >
+                Add tags <PenLine className="h-3 w-3" />
+              </Label>
+            )}
+        {tagsEditable && (
+          <Input
+            autoFocus
+            onBlur={() => {
+              setTagsEditable(false);
+            }}
+            value={noteTagsInput}
+            onChange={(e) => setNoteTagsInput(e.target.value)}
+          />
+        )}
+      </div>
+      <div id="editorjs" className="border rounded-md p-2 h-full"></div>
     </section>
   );
 };

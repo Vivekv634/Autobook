@@ -1,13 +1,12 @@
-import NotebookComponent from "./Notebook";
+import NotebookComponent from './Notebooks';
 
 export const metadata = {
-  title: 'Notebooks - Notesnook'
-}
+  title: 'Notebooks - Notesnook',
+};
 
 const Notebooks = () => {
-  return (
-    <NotebookComponent />
-  )
-}
+  return <NotebookComponent />;
+};
 
 export default Notebooks;
+

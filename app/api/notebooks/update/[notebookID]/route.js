@@ -18,7 +18,7 @@ export async function PUT(request, { params }) {
           { status: 500 },
         );
       } else {
-        notebooks = notesDocSnap.data().notebook;
+        notebooks = notesDocSnap.data().notebooks;
         notebooks = notebooks.map((notebook) => {
           if (notebook.notebookID === notebookID) {
             return { ...notebook, ...requestBody };
@@ -27,11 +27,10 @@ export async function PUT(request, { params }) {
           }
         });
       }
-      transaction.update(notesDocRef, { notebook: notebooks });
+      transaction.update(notesDocRef, { notebooks: notebooks });
     });
     return NextResponse.json({ result: notebooks }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
