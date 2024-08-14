@@ -30,7 +30,6 @@ import {
 } from '../redux/slices/noteSlice';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
-import ExportPdfDialog from './ExportPdfDialog';
 import { uid } from 'uid';
 import { usePathname } from 'next/navigation';
 

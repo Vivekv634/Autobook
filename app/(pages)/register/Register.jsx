@@ -1,11 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  registerStart,
-  registerFailure,
-  registerSuccess,
-} from '@/app/redux/slices/userRegisterSlice';
 import axios from 'axios';
 import { isStrongPassword, isEmail } from 'validator';
 import Link from 'next/link';
