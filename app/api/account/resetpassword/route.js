@@ -3,7 +3,8 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+// eslint-disable-next-line
+export async function GET(request) {
   const email = headers().get('email');
   try {
     sendPasswordResetEmail(auth, email).then(() => {

@@ -3,7 +3,8 @@ import { doc, getDoc } from 'firebase/firestore';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+// eslint-disable-next-line
+export async function GET(request) {
   const notesDocID = headers().get('notesDocID');
   try {
     const notesRef = doc(db, 'notes', notesDocID);

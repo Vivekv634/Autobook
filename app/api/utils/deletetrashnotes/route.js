@@ -2,7 +2,8 @@ import { db } from '@/firebase.config';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 
-export async function DELETE() {
+// eslint-disable-next-line
+export async function DELETE(request) {
   try {
     const currentTime = new Date().getTime();
     const notesCollection = collection(db, 'notes');

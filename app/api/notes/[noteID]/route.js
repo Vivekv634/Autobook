@@ -3,13 +3,15 @@ import { doc, getDoc } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 
-export async function GET({ params }) {
+// eslint-disable-next-line
+export async function GET(request, { params }) {
   const notesDocID = headers().get('notesDocID');
   const { noteID } = params;
   try {
     let filterednotes;
     const notesRef = doc(db, 'notes', notesDocID);
     const notesSnap = await getDoc(notesRef);
+    console.log(notesSnap.data().notes);
     if (notesSnap.exists()) {
       const notes = notesSnap.data().notes;
       filterednotes = notes.filter((note) => note.noteID === noteID);
@@ -20,4 +22,3 @@ export async function GET({ params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
