@@ -1,9 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  registerStart,
+  registerFailure,
+  registerSuccess,
+} from '@/app/redux/slices/userRegisterSlice';
 import axios from 'axios';
+import { isStrongPassword, isEmail } from 'validator';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { hasCookie } from 'cookies-next';
 import {
@@ -21,7 +29,9 @@ const RegisterComponent = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
   const router = useRouter();
+  const { isLoading, error } = useSelector((state) => state.userRegister);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -30,10 +40,22 @@ const RegisterComponent = () => {
     }
   }, [router]);
 
+  useEffect(() => {
+    let validationError = null;
+    if (email && !isEmail(email)) {
+      validationError = 'Email must be valid';
+    }
+    if (password && !isStrongPassword(password) && password.length < 8) {
+      validationError = 'Password must be min 8 characters and alphanumeric';
+    }
+    dispatch(registerFailure(validationError));
+  }, [email, password, dispatch]);
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    dispatch(registerStart());
     try {
-      await axios.post(
+      const response = await axios.post(
         `${process.env.API}/api/register`,
         { name, email, password },
         {
@@ -46,11 +68,13 @@ const RegisterComponent = () => {
         description: 'Registration successful! Now login to use app.',
         className: 'bg-green-400',
       });
+      dispatch(registerSuccess(response.data));
     } catch (error) {
       toast({
         description: error.response?.data?.error || 'An error occurred',
         variant: 'destructive',
       });
+      dispatch(registerFailure(null));
     }
   };
 
@@ -95,8 +119,19 @@ const RegisterComponent = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
-              Sign Up
+            <Label className="text-red-600 text-center">{error}</Label>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading || error ? true : false}
+            >
+              {isLoading ? (
+                <div className="flex">
+                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                </div>
+              ) : (
+                'Sign Up'
+              )}
             </Button>
           </form>
         </CardContent>
@@ -114,4 +149,3 @@ const RegisterComponent = () => {
 };
 
 export default RegisterComponent;
-

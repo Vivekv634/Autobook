@@ -1,30 +1,32 @@
-// import NoteEditor from '@/app/components/NoteEditor';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import React from 'react';
 
-const NoteEditor = dynamic(() => import('@/app/components/NoteEditor'), { ssr: false });
+const NoteEditor = dynamic(() => import('@/app/components/NoteEditor'), {
+  ssr: false,
+});
 
 export async function generateMetadata({ params }) {
-    const { notesDocID, noteID } = params;
+  const { notesDocID, noteID } = params;
 
-    const response = await axios.get(`${process.env.API}/api/notes/${noteID}`, {
-        headers: {
-            notesDocID: notesDocID
-        }
-    })
+  const response = await axios.get(`${process.env.API}/api/notes/${noteID}`, {
+    headers: {
+      notesDocID: notesDocID,
+    },
+  });
 
-    return {
-        title: response.data.result.title ?? 'Title - Notesnook'
-    }
+  return {
+    title: response.data.result.title ?? 'Title - Notesnook',
+  };
 }
 
 const NoteEditorPage = ({ params }) => {
-    return (
-        <>
-            <NoteEditor params={params} />
-        </>
-    )
-}
+  return (
+    <>
+      <NoteEditor params={params} />
+    </>
+  );
+};
 
 export default NoteEditorPage;
+

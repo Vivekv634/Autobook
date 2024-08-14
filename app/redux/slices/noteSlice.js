@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   notes: [],
@@ -7,8 +7,8 @@ const initialState = {
   isEditorNote: false,
   deletedNotes: [],
   isDeletedNotes: false,
-  notebooks: {}
-}
+  notebooks: {},
+};
 
 const noteSlice = createSlice({
   name: 'note',
@@ -42,10 +42,18 @@ const noteSlice = createSlice({
     },
     setNoteBooks: (state, action) => {
       state.notebooks = action.payload;
-    }
-
-  }
+    },
+  },
 });
 
-export const { setNotes, setNoteUpdate, removeNotes, setEditorNote, removeEditorNote, setDeletedNotes, removeDeletedNotes, setNoteBooks } = noteSlice.actions;
+export const {
+  setNotes,
+  setNoteUpdate,
+  removeNotes,
+  setEditorNote,
+  removeEditorNote,
+  setDeletedNotes,
+  removeDeletedNotes,
+  setNoteBooks,
+} = noteSlice.actions;
 export default noteSlice.reducer;

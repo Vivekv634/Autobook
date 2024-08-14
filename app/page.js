@@ -1,14 +1,14 @@
-import HomeComponent from "./Home.jsx";
+import HomeComponent from './Home.jsx';
 
 export const metadata = {
-  title: 'Notesnook'
-}
+  title: 'Notesnook',
+};
 
 export default function Home() {
-
   return (
     <>
       <HomeComponent />
     </>
   );
 }
+

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 import { getCookie, hasCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const TagsComponent = () => {
-  const { user } = useSelector(state => state.userLogin);
+  const { user } = useSelector((state) => state.userLogin);
   const [notesDocID, setNotesDocID] = useState(null);
   const router = useRouter();
 
@@ -19,8 +19,12 @@ const TagsComponent = () => {
   }, [user, router]);
 
   return (
-    <div>TagsComponent</div>
-  )
-}
+    <div>
+      {console.log(notesDocID)}
+      TagsComponent
+    </div>
+  );
+};
 
 export default TagsComponent;
+

@@ -1,4 +1,6 @@
 {
+  "version": "1.0.0",
+  "manifest_version": 2,
   "name": "Notesnook",
   "short_name": "Notesnook",
   "start_url": "/",
@@ -14,3 +16,4 @@
     }
   ]
 }
+

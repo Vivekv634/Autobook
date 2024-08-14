@@ -6,4 +6,3 @@ export const rootReducer = combineReducers({
   userLogin: userLoginSlice,
   note: noteSlice,
 });
-
