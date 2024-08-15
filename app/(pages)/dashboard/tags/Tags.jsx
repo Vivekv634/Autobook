@@ -7,11 +7,14 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Accordion } from '@/components/ui/accordion';
 import Tag from '@/app/components/Tag';
+import { CommandDialog, CommandInput } from '@/components/ui/command';
+import SearchDialog from '@/app/components/SearchDialog';
 
 const TagsComponent = () => {
   const [notesDocID, setNotesDocID] = useState(null);
   const { notes, tagsData, notebooks } = useSelector((state) => state.note);
   const [mount, setMount] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -74,11 +77,29 @@ const TagsComponent = () => {
 
   return (
     <section className="p-2 flex flex-col">
+      <div
+        onClick={() => {
+          setCommandOpen(true);
+        }}
+        className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full"
+      >
+        <span className="ml-2">Search your tags...</span>
+      </div>
+      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+        <CommandInput placeholder="Search your tags..." />
+        <div className="m-3">
+          <SearchDialog
+            searchData={Object.keys(tagsData)}
+            noFoundPrompt="No tags found."
+            setOpen={setCommandOpen}
+          />
+        </div>
+      </CommandDialog>
       {tagsData && notebooks && (
         <Accordion
-          // collapsible="true"
+          collapsible="true"
           type="multiple"
-          className="w-full border rounded-md px-2"
+          className="w-full border rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
           defaultValue={Object.keys(tagsData)}
         >
           {Object.keys(tagsData).length != 0 &&

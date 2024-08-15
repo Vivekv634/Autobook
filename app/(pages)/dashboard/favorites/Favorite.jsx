@@ -51,18 +51,22 @@ const FavoriteComponent = () => {
   }, [isNoteUpdate, notes, dispatch]);
 
   return (
-    <div>
-      {favoriteNotes.map((note, index) => {
-        return (
-          <Note
-            key={index}
-            note={note}
-            notesDocID={notesDocID}
-            notebook_name={notebooks[note.notebook_ref_id]}
-          />
-        );
-      })}
-    </div>
+    <section className="p-2 flex flex-col">
+      {favoriteNotes.length ? (
+        favoriteNotes.map((note, index) => {
+          return (
+            <Note
+              key={index}
+              note={note}
+              notesDocID={notesDocID}
+              notebook_name={notebooks[note.notebook_ref_id]}
+            />
+          );
+        })
+      ) : (
+        <div className="">No favorite notes here.</div>
+      )}
+    </section>
   );
 };
 

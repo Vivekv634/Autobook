@@ -10,11 +10,14 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { CommandDialog, CommandInput } from '@/components/ui/command';
+import SearchDialog from '@/app/components/SearchDialog';
 
 const NotebookComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
   const { notes, notebooks } = useSelector((state) => state.note);
   const [notesDocID, setNotesDocID] = useState(null);
+  const [commandOpen, setCommandOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
   const { toast } = useToast();
@@ -82,17 +85,34 @@ const NotebookComponent = () => {
   }
   return (
     <section className="p-2 flex flex-col">
-      <Button
-        onClick={createNotebook}
-        className="fixed right-4 bottom-4 w-[4rem] h-[4rem] rounded-full"
-      >
-        <Plus className="h-[2.2rem] w-[2.2rem]" />
-      </Button>
+      <div className="flex justify-between gap-1">
+        <div
+          onClick={() => {
+            setCommandOpen(true);
+          }}
+          className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full"
+        >
+          <span className="ml-2">Search notebooks...</span>
+        </div>
+        <Button variant="secondary" onClick={createNotebook} className="p-2">
+          <Plus />
+        </Button>
+      </div>
+      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+        <CommandInput placeholder="Search your notebooks..." />
+        <div className="m-3">
+          <SearchDialog
+            searchData={notebooks}
+            noFoundPrompt="No notebooks found."
+            setOpen={setCommandOpen}
+          />
+        </div>
+      </CommandDialog>
       {notes && notebooks ? (
         <Accordion
           collapsible="true"
           type="multiple"
-          className="w-full border rounded-md px-2"
+          className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-800"
           defaultValue={Object.keys(notebooks)}
         >
           {Object.keys(notebooks).length !== 0 &&

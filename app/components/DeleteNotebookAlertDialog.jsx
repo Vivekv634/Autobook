@@ -1,3 +1,4 @@
+'use client';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +35,7 @@ export default function DeleteNotebookAlertDialog({
       );
       let notebooks = {};
       deleteNotebookResponse.data.result.map((notebook) => {
-        notebooks[notebook.notebookID] = notebook.notebookname;
+        notebooks[notebook.notebookID] = notebook.notebookName;
       });
       dispatch(setNoteBooks(notebooks));
       toast({ description: 'Notebook deleted!', className: 'bg-green-400' });

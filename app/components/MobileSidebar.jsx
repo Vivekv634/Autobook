@@ -109,46 +109,6 @@ const MobileSidebar = () => {
 
   return (
     <nav className="border-b flex justify-between p-2 px-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar>
-            <AvatarImage
-              src={`https://source.boringavatars.com/beam/120/${name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`}
-              alt="@shadcn"
-            />
-            <AvatarFallback>{fallbackName}</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="mr-3 mt-1">
-          <DropdownMenuItem>
-            <Link
-              className="flex justify-between text-xl w-40 items-center"
-              href="/account/profile"
-            >
-              Profile
-              <UserRound className="h-5" />
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Link
-              className="flex justify-between text-xl w-40 items-center"
-              href="/account/settings"
-            >
-              Settings
-              <Settings className="h-5" />
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={LogOut}
-            className="text-red-500 flex justify-between text-xl w-full items-center"
-          >
-            Logout
-            <LogOutIcon className="h-5" />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" className="p-3">
@@ -196,6 +156,46 @@ const MobileSidebar = () => {
           </div>
         </SheetContent>
       </Sheet>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar>
+            <AvatarImage
+              src={`https://source.boringavatars.com/beam/120/${name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`}
+              alt="@shadcn"
+            />
+            <AvatarFallback>{fallbackName}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="mr-3 mt-1">
+          <DropdownMenuItem>
+            <Link
+              className="flex justify-between text-xl w-40 items-center"
+              href="/account/profile"
+            >
+              Profile
+              <UserRound className="h-5" />
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link
+              className="flex justify-between text-xl w-40 items-center"
+              href="/account/settings"
+            >
+              Settings
+              <Settings className="h-5" />
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={LogOut}
+            className="text-red-500 flex justify-between text-xl w-full items-center"
+          >
+            Logout
+            <LogOutIcon className="h-5" />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </nav>
   );
 };

@@ -19,7 +19,7 @@ import DeleteNotebookAlertDialog from './DeleteNotebookAlertDialog';
 
 export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
   return (
-    <AccordionItem key={notebook_id} value={notebook_id}>
+    <AccordionItem key={notebook_id} value={notebook_id} id={notebook_id}>
       <AccordionHeader className="flex justify-between px-1 items-center w-full">
         <AccordionTrigger className="min-w-full mr-2">
           {notebooks[notebook_id]}

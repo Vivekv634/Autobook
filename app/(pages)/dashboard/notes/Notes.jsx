@@ -1,6 +1,7 @@
 'use client';
 import Note from '@/app/components/Note';
 import NoteSkeleton from '@/app/components/NoteSkeleton';
+import SearchDialog from '@/app/components/SearchDialog';
 import {
   setDeletedNotes,
   setNoteBooks,
@@ -8,6 +9,7 @@ import {
   setNoteUpdate,
 } from '@/app/redux/slices/noteSlice';
 import { Button } from '@/components/ui/button';
+import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
@@ -20,11 +22,12 @@ import { useDispatch, useSelector } from 'react-redux';
 const NotesComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
   const { notes, isNoteUpdate } = useSelector((state) => state.note);
-  const dispatch = useDispatch();
   const [notesDocID, setNotesDocID] = useState(null);
   const [notebooks, setNotebooks] = useState({});
-  const router = useRouter();
   const [mount, setMount] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -80,6 +83,7 @@ const NotesComponent = () => {
 
     if (notesDocID && mount) {
       fetchData(notesDocID);
+      setMount(false);
       console.log('fetch data from notes page...');
     }
   }, [notesDocID, notebooks, mount, dispatch]);
@@ -132,12 +136,29 @@ const NotesComponent = () => {
   if (notes.length) {
     return (
       <section className="p-2 flex flex-col">
-        <Button
-          className="fixed right-4 bottom-4 w-[4rem] h-[4rem] rounded-full"
-          onClick={createNote}
-        >
-          <Plus className="h-[2.2rem] w-[2.2rem]" />
-        </Button>
+        <div className="flex justify-between gap-1">
+          <div
+            onClick={() => {
+              setCommandOpen(true);
+            }}
+            className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full"
+          >
+            <span className="ml-2">Search notes...</span>
+          </div>
+          <Button variant="secondary" onClick={createNote} className="p-2">
+            <Plus />
+          </Button>
+        </div>
+        <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+          <CommandInput placeholder="Search your notes..." />
+          <div className="m-3">
+            <SearchDialog
+              searchData={notes}
+              noFoundPrompt="No notes found."
+              setOpen={setCommandOpen}
+            />
+          </div>
+        </CommandDialog>
         {notes.length ? (
           notes.map((note, index) => {
             return (

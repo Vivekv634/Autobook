@@ -2,6 +2,8 @@
 import Menubar from '../../components/Sidebar';
 import { useMediaQuery } from 'usehooks-ts';
 import React, { useEffect, useState } from 'react';
+import { Heart } from 'lucide-react';
+import Link from 'next/link';
 
 const LayoutComponent = ({ children }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -27,12 +29,25 @@ const LayoutComponent = ({ children }) => {
   }
 
   return (
-    <main className="h-screen">
+    <main className="h-screen box-border">
       <Menubar />
-      <section className="h-full">{children}</section>
+      <section>
+        {children}
+        <div className="fixed w-full border-t bottom-0 p-4">
+          <div className="flex justify-center items-center gap-1">
+            Made with <Heart className="text-red-400" /> by
+            <Link
+              target="_blank"
+              className="underline font-bold"
+              href="https://github.com/Vivekv634"
+            >
+              @Vivekv634
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 };
 
 export default LayoutComponent;
-

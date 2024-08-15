@@ -42,9 +42,11 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                   </Badge>
                 </Link>
               )}
-              {note.isPinned && <PinIcon className="h-4 w-5" />}
-              {note.isReadOnly && <PenOff className="h-4 w-5" />}
-              {note.isFavorite && <Star className="h-4 w-5" />}
+              {note.isPinned && <PinIcon className="h-4 w-5 text-green-400" />}
+              {note.isReadOnly && (
+                <PenOff className="h-4 w-5 text-orange-400" />
+              )}
+              {note.isFavorite && <Star className="h-4 w-5 text-red-400" />}
             </div>
             {timeAgo}
           </div>
@@ -75,9 +77,9 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                 </Badge>
               </Link>
             )}
-            {note.isPinned && <PinIcon className="h-4 w-5" />}
-            {note.isReadOnly && <PenOff className="h-4 w-5" />}
-            {note.isFavorite && <Star className="h-4 w-5" />}
+            {note.isPinned && <PinIcon className="h-4 w-5 text-green-400" />}
+            {note.isReadOnly && <PenOff className="h-4 w-5 text-orange-400" />}
+            {note.isFavorite && <Star className="h-4 w-5 text-red-400" />}
           </div>
           <Label className="flex items-center">{timeAgo}</Label>
         </div>

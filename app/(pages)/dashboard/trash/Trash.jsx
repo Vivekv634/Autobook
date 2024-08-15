@@ -12,6 +12,7 @@ import {
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
 
 const TrashComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
@@ -105,9 +106,13 @@ const TrashComponent = () => {
   };
 
   return (
-    <section className="p-2 flex flex-col">
-      {console.log(deletedNotes)}
-      {deletedNotes == [] && (
+    <section
+      className={cn(
+        'p-2 flex flex-col',
+        deletedNotes.length == 0 && 'items-center h-full justify-center',
+      )}
+    >
+      {deletedNotes.length != 0 && (
         <div className="flex justify-around">
           <Button className="w-[47%]" onClick={restoreAll}>
             Restore all
@@ -117,7 +122,7 @@ const TrashComponent = () => {
           </Button>
         </div>
       )}
-      {deletedNotes == [] &&
+      {deletedNotes.length != 0 &&
         deletedNotes.map((note, index) => {
           return (
             <Note
@@ -128,8 +133,8 @@ const TrashComponent = () => {
             />
           );
         })}
-      {deletedNotes != [] && (
-        <div className="flex items-center justify-between h-screen w-full text-3xl">
+      {deletedNotes.length == 0 && (
+        <div className="flex items-center justify-between h-full text-3xl">
           Empty bin!
         </div>
       )}
