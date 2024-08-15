@@ -13,6 +13,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
+import { useMediaQuery } from 'usehooks-ts';
 
 const TrashComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
@@ -23,6 +24,7 @@ const TrashComponent = () => {
   const dispatch = useDispatch();
   const [call, setCall] = useState(true);
   const { toast } = useToast();
+  const isDesktop = useMediaQuery('(min-width: 640px)');
 
   useEffect(() => {
     if (hasCookie('user-session-data')) {
@@ -113,11 +115,21 @@ const TrashComponent = () => {
       )}
     >
       {deletedNotes.length != 0 && (
-        <div className="flex justify-around">
-          <Button className="w-[47%]" onClick={restoreAll}>
+        <div
+          className={cn(
+            'flex',
+            !isDesktop && 'justify-around',
+            isDesktop && 'gap-2',
+          )}
+        >
+          <Button className={cn(!isDesktop && 'w-[47%]')} onClick={restoreAll}>
             Restore all
           </Button>
-          <Button className="w-[47%]" onClick={deleteAll} variant="destructive">
+          <Button
+            className={cn(!isDesktop && 'w-[47%]')}
+            onClick={deleteAll}
+            variant="destructive"
+          >
             Delete All
           </Button>
         </div>

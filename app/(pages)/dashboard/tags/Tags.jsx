@@ -9,6 +9,8 @@ import { Accordion } from '@/components/ui/accordion';
 import Tag from '@/app/components/Tag';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
 import SearchDialog from '@/app/components/SearchDialog';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useMediaQuery } from 'usehooks-ts';
 
 const TagsComponent = () => {
   const [notesDocID, setNotesDocID] = useState(null);
@@ -17,6 +19,7 @@ const TagsComponent = () => {
   const [commandOpen, setCommandOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
+  const isDesktop = useMediaQuery('(min-width: 640px)');
 
   useEffect(() => {
     setMount(true);
@@ -55,6 +58,8 @@ const TagsComponent = () => {
     }
     if (notesDocID && mount) {
       fetchData();
+      setMount(false);
+      console.log('fetch data from tags page...');
     }
   }, [dispatch, mount, notesDocID]);
 
@@ -81,9 +86,9 @@ const TagsComponent = () => {
         onClick={() => {
           setCommandOpen(true);
         }}
-        className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full"
+        className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
       >
-        <span className="ml-2">Search your tags...</span>
+        <span className="ml-2 cursor-pointer">Search your tags...</span>
       </div>
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Search your tags..." />
@@ -102,7 +107,24 @@ const TagsComponent = () => {
           className="w-full border rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
           defaultValue={Object.keys(tagsData)}
         >
-          {Object.keys(tagsData).length != 0 &&
+          {isDesktop ? (
+            <ScrollArea className="scroll">
+              {Object.keys(tagsData).length != 0 &&
+                Object.keys(tagsData).map((tag) => {
+                  return (
+                    <Tag
+                      key={tag}
+                      notesDocID={notesDocID}
+                      notebooks={notebooks}
+                      tagName={tag}
+                      tagNotes={tagsData[tag]}
+                    />
+                  );
+                })}
+              <ScrollBar />
+            </ScrollArea>
+          ) : (
+            Object.keys(tagsData).length != 0 &&
             Object.keys(tagsData).map((tag) => {
               return (
                 <Tag
@@ -113,7 +135,8 @@ const TagsComponent = () => {
                   tagNotes={tagsData[tag]}
                 />
               );
-            })}
+            })
+          )}
         </Accordion>
       )}
     </section>

@@ -19,17 +19,19 @@ const LayoutComponent = ({ children }) => {
 
   if (isDesktop) {
     return (
-      <main className="flex p-1 gap-1 box-border">
-        <Menubar />
-        <section className="w-full h-screen border border-neutral-300 dark:border-neutral-700 rounded-md p-3">
-          {children}
-        </section>
+      <main className="">
+        <div className="flex border-box p-1 gap-1">
+          <Menubar />
+          <div className="w-full h-screen border border-neutral-300 dark:border-neutral-700 rounded-md p-3 border-box overflow-auto">
+            {children}
+          </div>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="h-screen box-border">
+    <main className="h-screen">
       <Menubar />
       <section>
         {children}

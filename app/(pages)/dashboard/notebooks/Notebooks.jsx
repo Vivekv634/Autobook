@@ -13,6 +13,12 @@ import { useToast } from '@/components/ui/use-toast';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
 import SearchDialog from '@/app/components/SearchDialog';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 const NotebookComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
   const { notes, notebooks } = useSelector((state) => state.note);
@@ -84,57 +90,68 @@ const NotebookComponent = () => {
     }
   }
   return (
-    <section className="p-2 flex flex-col">
-      <div className="flex justify-between gap-1">
-        <div
-          onClick={() => {
-            setCommandOpen(true);
-          }}
-          className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full"
-        >
-          <span className="ml-2">Search notebooks...</span>
-        </div>
-        <Button variant="secondary" onClick={createNotebook} className="p-2">
-          <Plus />
-        </Button>
-      </div>
-      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-        <CommandInput placeholder="Search your notebooks..." />
-        <div className="m-3">
-          <SearchDialog
-            searchData={notebooks}
-            noFoundPrompt="No notebooks found."
-            setOpen={setCommandOpen}
-          />
-        </div>
-      </CommandDialog>
-      {notes && notebooks ? (
-        <Accordion
-          collapsible="true"
-          type="multiple"
-          className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-800"
-          defaultValue={Object.keys(notebooks)}
-        >
-          {Object.keys(notebooks).length !== 0 &&
-            Object.keys(notebooks).map((notebook_id) => {
-              const filteredNotes = notes.filter(
-                (note) => note.notebook_ref_id === notebook_id,
-              );
-              return (
-                <Notebook
-                  notebooks={notebooks}
-                  notes={filteredNotes}
-                  notebook_id={notebook_id}
-                  key={notebook_id}
-                  notesDocID={notesDocID}
-                />
-              );
-            })}
-        </Accordion>
-      ) : (
-        <div className="">No notebooks here.</div>
-      )}
-    </section>
+    <TooltipProvider>
+      <Tooltip>
+        <section className="p-2 flex flex-col">
+          <div className="flex justify-between gap-1 mb-2">
+            <div
+              onClick={() => {
+                setCommandOpen(true);
+              }}
+              className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+            >
+              <span className="ml-2 cursor-pointer">Search notebooks...</span>
+            </div>
+            <TooltipTrigger>
+              <Button
+                variant="secondary"
+                onClick={createNotebook}
+                className="p-2"
+              >
+                <Plus />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Add new notebook.</TooltipContent>
+          </div>
+          <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+            <CommandInput placeholder="Search your notebooks..." />
+            <div className="m-3">
+              <SearchDialog
+                searchData={notebooks}
+                noFoundPrompt="No notebooks found."
+                setOpen={setCommandOpen}
+              />
+            </div>
+          </CommandDialog>
+          {notes && notebooks ? (
+            <Accordion
+              collapsible="true"
+              type="multiple"
+              className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-800"
+              defaultValue={Object.keys(notebooks)}
+            >
+              {Object.keys(notebooks).length !== 0 &&
+                Object.keys(notebooks).map((notebook_id) => {
+                  const filteredNotes = notes.filter(
+                    (note) => note.notebook_ref_id === notebook_id,
+                  );
+                  return (
+                    <Notebook
+                      notebooks={notebooks}
+                      notes={filteredNotes}
+                      notebook_id={notebook_id}
+                      key={notebook_id}
+                      notesDocID={notesDocID}
+                    />
+                  );
+                })}
+            </Accordion>
+          ) : (
+            <div className="">No notebooks here.</div>
+          )}
+        </section>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 

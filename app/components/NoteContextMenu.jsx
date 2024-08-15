@@ -1,16 +1,5 @@
 'use client';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuSubContent,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Check,
   Code,
   Copy,
   Heading,
@@ -32,8 +21,19 @@ import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { uid } from 'uid';
 import { usePathname } from 'next/navigation';
+import {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 
-const NoteDropDownMenu = ({ note, notesDocID, children }) => {
+export default function NoteContextMenu({ children, notesDocID, note }) {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const router = useRouter();
@@ -41,7 +41,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
 
   const setEditorNoteState = () => {
     dispatch(setEditorNote(note));
-    router.push(`/dashboard/${notesDocID}/${note.noteID}`);
+    router.push(`dashboard/${notesDocID}/${note.noteID}`);
   };
 
   const updateNote = async (props) => {
@@ -162,116 +162,107 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
     dispatch(setNotes(duplicateResponse.data.result));
     toast({ description: 'Note duplicated!', className: 'bg-green-400' });
   };
-  // NOTE: add move to vault option to the drop down menu
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
+    <ContextMenu>
+      <ContextMenuTrigger>{children}</ContextMenuTrigger>
       {pathName.split('/')[2] != 'trash' ? (
-        <DropdownMenuContent className="w-44 mr-2">
-          <DropdownMenuItem
+        <ContextMenuContent className="min-w-48">
+          <ContextMenuItem
             className="flex justify-between items-center"
             onClick={setEditorNoteState}
           >
-            Edit <SquareArrowOutUpRight className="h-4 w-5" />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="flex justify-between items-center"
+            Edit
+            <SquareArrowOutUpRight className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem
+            checked={note.isPinned}
             onClick={() => updateNote('isPinned')}
           >
             Pin
-            {note.isPinned && <Check className="h-4 w-5" />}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex justify-between items-center"
+          </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            checked={note.isReadOnly}
             onClick={() => updateNote('isReadOnly')}
           >
             Read Only
-            {note.isReadOnly && <Check className="h-4 w-5" />}
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex justify-between items-center"
+          </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            checked={note.isFavorite}
             onClick={() => updateNote('isFavorite')}
           >
             Favorite
-            {note.isFavorite && <Check className="h-4 w-5" />}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex justify-between items-center">
+          </ContextMenuCheckboxItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem className="flex justify-between items-center">
             Print
             <Printer className="h-4 w-5" />
-          </DropdownMenuItem>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Export as</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem className="flex justify-between items-center">
-                Markdown
-                <Heading className="h-4 w-5" />
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
-                HTML
-                <Code className="h-4 w-5" />
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
-                Text
-                <Type className="h-4 w-5" />
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Copy as</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem className="flex justify-between items-center">
-                Markdown
-                <Heading className="h-4 w-5" />
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
-                HTML
-                <Code className="h-4 w-5" />
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
-                Text
-                <Type className="h-4 w-5" />
-              </DropdownMenuItem>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-          <DropdownMenuItem
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Export as</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem className="flex justify-between items-center">
+                Markdown <Heading className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem className="flex justify-between items-center">
+                HTML <Code className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem className="flex justify-between items-center">
+                Text <Type className="h-4 w-5" />
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Copy as</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem className="flex justify-between items-center">
+                Markdown <Heading className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem className="flex justify-between items-center">
+                HTML <Code className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem className="flex justify-between items-center">
+                Text <Type className="h-4 w-5" />
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuItem
             className="flex justify-between items-center"
             onClick={duplicateNote}
           >
             Duplicate
             <Copy className="h-4 w-5" />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
             className="flex justify-between items-center text-red-500"
             onClick={() => updateNote('moveToTrash')}
           >
-            Move to Trash
+            Move to trash
             <Trash2 className="h-4 w-5" />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
+          </ContextMenuItem>
+        </ContextMenuContent>
       ) : (
-        <DropdownMenuContent className="w-44">
-          <DropdownMenuItem
+        <ContextMenuContent>
+          <ContextMenuItem
             className="flex justify-between items-center"
             onClick={restoreNote}
           >
             Restore
             <RotateCcw className="h-4 w-5" />
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
             className="flex justify-between items-center text-red-500"
             onClick={deleteNote}
           >
-            Delete forever
+            Delete
             <Trash2 className="h-4 w-5" />
-          </DropdownMenuItem>
-        </DropdownMenuContent>
+          </ContextMenuItem>
+        </ContextMenuContent>
       )}
-    </DropdownMenu>
+    </ContextMenu>
   );
-};
-
-export default NoteDropDownMenu;
+}

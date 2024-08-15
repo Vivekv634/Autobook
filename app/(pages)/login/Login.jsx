@@ -65,8 +65,12 @@ const LoginComponent = () => {
       router.push('/dashboard');
     } catch (error) {
       console.error(error);
+      let message = 'An error occurred';
+      if (error.response.data.error.includes('invalid-credential')) {
+        message = 'Invalid Credentials';
+      }
       toast({
-        description: error.message || 'An error occurred',
+        description: message,
         variant: 'destructive',
       });
       dispatch(loginFailure(null));
@@ -133,4 +137,3 @@ const LoginComponent = () => {
 };
 
 export default LoginComponent;
-

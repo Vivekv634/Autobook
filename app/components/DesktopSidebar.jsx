@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Hash,
   Star,
@@ -15,8 +15,10 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { deleteCookie } from 'cookies-next';
+import { deleteCookie, getCookie, hasCookie } from 'cookies-next';
 import { usePathname } from 'next/navigation';
+import { Switch } from '@/components/ui/switch';
+import { useTheme } from 'next-themes';
 
 const pages = [
   {
@@ -58,7 +60,21 @@ const pages = [
 ];
 
 const DesktopSidebar = () => {
+  const [userTheme, setUserTheme] = useState(false);
   const pathName = usePathname();
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    if (hasCookie('user-session-data')) {
+      const cookie = JSON.parse(getCookie('user-session-data'));
+      setUserTheme(cookie?.userDoc?.dark_theme);
+      setTheme(cookie?.userDoc?.dark_theme ? 'dark' : 'light');
+    }
+  }, [setTheme]);
+
+  useEffect(() => {
+    setTheme(userTheme ? 'dark' : 'light');
+  }, [userTheme, setTheme]);
 
   const LogOut = () => {
     deleteCookie('user-session-data');
@@ -66,10 +82,13 @@ const DesktopSidebar = () => {
   };
 
   return (
-    <aside className="border border-neutral-300 dark:border-neutral-700  h-screen w-full max-w-52 rounded-md p-2">
+    <aside className="border border-neutral-300 dark:border-neutral-700  h-screen w-full max-w-52 rounded-md p-2 border-box">
       <div className="relative h-full">
-        <div className="text-center mb-4">
+        <div className="text-center mb-4 flex flex-col">
           <Label className="text-3xl">NotesNook</Label>
+          <Label className="text-[.7rem]">
+            Take your notes more efficiently.
+          </Label>
         </div>
         <div className="mt-6">
           <ScrollArea>
@@ -78,7 +97,11 @@ const DesktopSidebar = () => {
                 <Link href={page.address} key={index} className="">
                   <Button
                     variant={
-                      pathName.split('/')[2] === page.id ? 'secondary' : 'ghost'
+                      page.label === 'Trash'
+                        ? 'destructive'
+                        : pathName.split('/')[2] === page.id
+                          ? 'secondary'
+                          : 'ghost'
                     }
                     className="w-full my-1"
                   >
@@ -94,6 +117,10 @@ const DesktopSidebar = () => {
           </ScrollArea>
         </div>
         <div className="bottom-0 absolute left-0">
+          <div className="flex justify-between m-1 p-1">
+            <Label className="text-xl my-auto">Dark Mode</Label>
+            <Switch checked={userTheme} onCheckedChange={setUserTheme} />
+          </div>
           <Link href="/account/profile">
             <Button className="w-full mb-1 text-lg" variant="outline">
               <UserRound className="h-5 mx-1 my-auto" />

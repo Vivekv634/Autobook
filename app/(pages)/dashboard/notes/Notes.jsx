@@ -18,6 +18,12 @@ import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const NotesComponent = () => {
   const { user } = useSelector((state) => state.userLogin);
@@ -135,51 +141,62 @@ const NotesComponent = () => {
 
   if (notes.length) {
     return (
-      <section className="p-2 flex flex-col">
-        <div className="flex justify-between gap-1">
-          <div
-            onClick={() => {
-              setCommandOpen(true);
-            }}
-            className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full"
-          >
-            <span className="ml-2">Search notes...</span>
-          </div>
-          <Button variant="secondary" onClick={createNote} className="p-2">
-            <Plus />
-          </Button>
-        </div>
-        <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-          <CommandInput placeholder="Search your notes..." />
-          <div className="m-3">
-            <SearchDialog
-              searchData={notes}
-              noFoundPrompt="No notes found."
-              setOpen={setCommandOpen}
-            />
-          </div>
-        </CommandDialog>
-        {notes.length ? (
-          notes.map((note, index) => {
-            return (
-              <Note
-                key={index}
-                note={note}
-                notesDocID={notesDocID}
-                notebook_name={notebooks[note.notebook_ref_id]}
-              />
-            );
-          })
-        ) : (
-          <>
-            <NoteSkeleton />
-            <NoteSkeleton />
-            <NoteSkeleton />
-            <NoteSkeleton />
-            <NoteSkeleton />
-          </>
-        )}
-      </section>
+      <TooltipProvider>
+        <Tooltip>
+          <section className="p-2 flex flex-col">
+            <div className="flex justify-between gap-1 mb-2">
+              <div
+                onClick={() => {
+                  setCommandOpen(true);
+                }}
+                className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+              >
+                <span className="ml-2 cursor-pointer">Search notes...</span>
+              </div>
+              <TooltipTrigger>
+                <Button
+                  variant="secondary"
+                  onClick={createNote}
+                  className="p-2"
+                >
+                  <Plus />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Add new note.</TooltipContent>
+            </div>
+            <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+              <CommandInput placeholder="Search your notes..." />
+              <div className="m-3">
+                <SearchDialog
+                  searchData={notes}
+                  noFoundPrompt="No notes found."
+                  setOpen={setCommandOpen}
+                />
+              </div>
+            </CommandDialog>
+            {notes.length ? (
+              notes.map((note, index) => {
+                return (
+                  <Note
+                    key={index}
+                    note={note}
+                    notesDocID={notesDocID}
+                    notebook_name={notebooks[note.notebook_ref_id]}
+                  />
+                );
+              })
+            ) : (
+              <>
+                <NoteSkeleton />
+                <NoteSkeleton />
+                <NoteSkeleton />
+                <NoteSkeleton />
+                <NoteSkeleton />
+              </>
+            )}
+          </section>
+        </Tooltip>
+      </TooltipProvider>
     );
   } else {
     return (
