@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { collection, getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 const firebaseConfig = {
   apiKey: 'AIzaSyA5_c62BX-wMQtR9jLRutQI201SuYTVS1w',
   authDomain: 'notesnook1.firebaseapp.com',
@@ -16,4 +17,4 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const userDB = collection(db, 'users');
 export const notesDB = collection(db, 'notes');
-
+export const storage = getStorage(app);

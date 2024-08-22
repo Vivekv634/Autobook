@@ -1,25 +1,13 @@
 'use client';
-import {
-  Hash,
-  StickyNote,
-  Star,
-  Trash2,
-  Menu,
-  Clock4,
-  Settings,
-  LogOutIcon,
-  UserRound,
-  Book,
-} from 'lucide-react';
+import { Menu, Settings, LogOutIcon, UserRound } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { deleteCookie, getCookie, hasCookie } from 'cookies-next';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sheet,
   SheetFooter,
@@ -37,73 +25,37 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-const pages = [
-  {
-    label: 'Notes',
-    id: 'notes',
-    address: '/dashboard/notes',
-    icon: <StickyNote className="h-5" />,
-  },
-  {
-    label: 'Notebooks',
-    id: 'notebooks',
-    address: '/dashboard/notebooks',
-    icon: <Book className="h-5" />,
-  },
-  {
-    label: 'Favorites',
-    id: 'favorites',
-    address: '/dashboard/favorites',
-    icon: <Star className="h-5" />,
-  },
-  {
-    label: 'Tags',
-    id: 'tags',
-    address: '/dashboard/tags',
-    icon: <Hash className="h-5" />,
-  },
-  {
-    label: 'Auto Note',
-    id: 'auto-note',
-    address: '/dashboard/auto-note',
-    icon: <Clock4 className="h-5" />,
-  },
-  {
-    label: 'Trash',
-    id: 'trash',
-    address: '/dashboard/trash',
-    icon: <Trash2 className="h-5" />,
-  },
-];
+import { auth } from '@/firebase.config';
+import { pages } from '../utils/pageData';
+import { useSelector } from 'react-redux';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const MobileSidebar = () => {
+  const { user } = useSelector((state) => state.note);
   const [userTheme, setUserTheme] = useState(false);
   const [name, setName] = useState('');
-  const [fallbackName, setFallbackName] = useState('');
   const { setTheme } = useTheme();
   const pathName = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      const cookie = JSON.parse(getCookie('user-session-data'));
-      setUserTheme(cookie?.userDoc?.dark_theme);
-      setTheme(cookie?.userDoc?.dark_theme ? 'dark' : 'light');
-      setName(cookie.userDoc.name);
-      const temp = name
-        .split(' ')
-        .map((word) => word.substring(0, 1))
-        .reduce((accumulator, currentValue) => accumulator + currentValue);
-      setFallbackName(temp);
-    }
-  }, [setTheme, name]);
+    onAuthStateChanged(auth, (User) => {
+      if (User) {
+        setUserTheme(user?.userData?.theme);
+        setTheme(user?.userData?.theme ? 'dark' : 'light');
+        setName(user?.userData?.name);
+      } else {
+        router.push('/login');
+      }
+    });
+  }, [setTheme, name, user?.userData?.theme, user?.userData?.name, router]);
 
   useEffect(() => {
     setTheme(userTheme ? 'dark' : 'light');
   }, [userTheme, setTheme]);
 
   const LogOut = () => {
-    deleteCookie('user-session-data');
+    auth.signOut();
     window.location.reload();
   };
 
@@ -161,10 +113,9 @@ const MobileSidebar = () => {
         <DropdownMenuTrigger>
           <Avatar>
             <AvatarImage
-              src={`https://source.boringavatars.com/beam/120/${name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51`}
+              src={`https://ui-avatars.com/api/?background=random&name=${name}`}
               alt="@shadcn"
             />
-            <AvatarFallback>{fallbackName}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="mr-3 mt-1">

@@ -9,6 +9,7 @@ const initialState = {
   isDeletedNotes: false,
   notebooks: {},
   tagsData: {},
+  user: {},
 };
 
 const noteSlice = createSlice({
@@ -47,6 +48,9 @@ const noteSlice = createSlice({
     setTagsData: (state, action) => {
       state.tagsData = action.payload;
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 
@@ -60,5 +64,6 @@ export const {
   removeDeletedNotes,
   setNoteBooks,
   setTagsData,
+  setUser,
 } = noteSlice.actions;
 export default noteSlice.reducer;

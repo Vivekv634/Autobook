@@ -38,7 +38,7 @@ const Note = ({ note, notesDocID, notebook_name }) => {
               <CardContent className="cursor-pointer">
                 <CardHeader className="px-0">
                   <CardTitle className="flex items-center justify-between">
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <div className="truncate">{note.title}</div>
                     </TooltipTrigger>
                     <TooltipContent>{note.title}</TooltipContent>

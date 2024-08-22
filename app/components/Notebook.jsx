@@ -1,27 +1,27 @@
 'use client';
-import {
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-} from '@/components/ui/dropdown-menu';
+import Note from '@/app/components/Note';
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import Note from '@/app/components/Note';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { AccordionHeader } from '@radix-ui/react-accordion';
-import { Ellipsis, Trash2, Pen } from 'lucide-react';
-import EditNotebookNameAlertDialog from './EditNotebookNameAlertDialog';
+import { Ellipsis, Pen, Trash2 } from 'lucide-react';
 import DeleteNotebookAlertDialog from './DeleteNotebookAlertDialog';
+import EditNotebookNameAlertDialog from './EditNotebookNameAlertDialog';
 
 export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
   return (
-    <AccordionItem key={notebook_id} value={notebook_id} id={notebook_id}>
-      <AccordionHeader className="flex justify-between px-1 items-center w-full">
-        <AccordionTrigger className="min-w-full mr-2">
+    <AccordionItem key={notebook_id} value={notebook_id}>
+      <AccordionHeader className="flex justify-between px-3 items-center w-full">
+        <AccordionTrigger className="min-w-full mr-2" id={notebook_id}>
           {notebooks[notebook_id]}
         </AccordionTrigger>
         <DropdownMenu>
@@ -52,14 +52,16 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
       </AccordionHeader>
       <AccordionContent>
         {notes.length > 0 ? (
-          notes.map((note, index) => (
-            <Note
-              key={index}
-              notesDocID={notesDocID}
-              notebook_name={notebooks[notebook_id]}
-              note={note}
-            />
-          ))
+          notes.map((note, index) => {
+            return (
+              <Note
+                key={index}
+                notesDocID={notesDocID}
+                notebook_name={notebooks[notebook_id]}
+                note={note}
+              />
+            );
+          })
         ) : (
           <div className="">No notes here.</div>
         )}

@@ -32,6 +32,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import editorJsToHtml from '../utils/editorJSToHTML';
 
 export default function NoteContextMenu({ children, notesDocID, note }) {
   const { toast } = useToast();
@@ -41,7 +42,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
 
   const setEditorNoteState = () => {
     dispatch(setEditorNote(note));
-    router.push(`dashboard/${notesDocID}/${note.noteID}`);
+    router.push(`/dashboard/${notesDocID}/${note.noteID}`);
   };
 
   const updateNote = async (props) => {
@@ -162,7 +163,11 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
     dispatch(setNotes(duplicateResponse.data.result));
     toast({ description: 'Note duplicated!', className: 'bg-green-400' });
   };
-
+  const handleCopyAsHTML = () => {
+    const body = JSON.parse(note.body);
+    const result = editorJsToHtml(body.blocks);
+    console.log(result);
+  };
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -220,7 +225,10 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
               <ContextMenuItem className="flex justify-between items-center">
                 Markdown <Heading className="h-4 w-5" />
               </ContextMenuItem>
-              <ContextMenuItem className="flex justify-between items-center">
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={handleCopyAsHTML}
+              >
                 HTML <Code className="h-4 w-5" />
               </ContextMenuItem>
               <ContextMenuItem className="flex justify-between items-center">

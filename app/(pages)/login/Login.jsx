@@ -7,13 +7,11 @@ import {
   loginStart,
   loginSuccess,
 } from '@/app/redux/slices/userLoginSlice';
-import axios from 'axios';
 import { isEmail } from 'validator';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { hasCookie } from 'cookies-next';
 import {
   Card,
   CardContent,
@@ -25,6 +23,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/firebase.config';
 
 const LoginComponent = () => {
   const [email, setEmail] = useState('');
@@ -35,9 +35,11 @@ const LoginComponent = () => {
   const { isLoading, error } = useSelector((state) => state.userLogin);
 
   useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      router.push('/dashboard');
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push('/dashboard');
+      }
+    });
   }, [router]);
 
   useEffect(() => {
@@ -48,30 +50,19 @@ const LoginComponent = () => {
     dispatch(loginFailure(validationError));
   }, [email, dispatch]);
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const response = await axios.post(
-        `${process.env.API}/api/login`,
-        { email, password },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      dispatch(loginSuccess(response.data));
-      router.push('/dashboard');
+      signInWithEmailAndPassword(auth, email, password).then((data) => {
+        dispatch(loginSuccess(data.user));
+        toast({ description: 'Login Successful', className: 'bg-green-400' });
+      });
     } catch (error) {
       console.error(error);
-      let message = 'An error occurred';
-      if (error.response.data.error.includes('invalid-credential')) {
-        message = 'Invalid Credentials';
-      }
       toast({
-        description: message,
-        variant: 'destructive',
+        description: 'Oops! something went wrong!',
+        className: 'bg-red-400',
       });
       dispatch(loginFailure(null));
     }

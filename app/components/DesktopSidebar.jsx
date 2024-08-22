@@ -1,88 +1,48 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import {
-  Hash,
-  Star,
-  Trash2,
-  Clock4,
-  Settings,
-  UserRound,
-  LogOutIcon,
-  StickyNote,
-  Book,
-} from 'lucide-react';
+import { Settings, UserRound, LogOutIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { deleteCookie, getCookie, hasCookie } from 'cookies-next';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
+import { auth } from '@/firebase.config';
 
-const pages = [
-  {
-    label: 'Notes',
-    id: 'notes',
-    address: '/dashboard/notes',
-    icon: <StickyNote className="h-5 my-auto mx-1" />,
-  },
-  {
-    label: 'Notebooks',
-    id: 'notebooks',
-    address: '/dashboard/notebooks',
-    icon: <Book className="h-5 my-auto mx-1" />,
-  },
-  {
-    label: 'Favorites',
-    id: 'favorites',
-    address: '/dashboard/favorites',
-    icon: <Star className="h-5 my-auto mx-1" />,
-  },
-  {
-    label: 'Tags',
-    id: 'tags',
-    address: '/dashboard/tags',
-    icon: <Hash className="h-5 my-auto mx-1" />,
-  },
-  {
-    label: 'Auto Note',
-    id: 'auto-note',
-    address: '/dashboard/auto-note',
-    icon: <Clock4 className="h-5 my-auto mx-1" />,
-  },
-  {
-    label: 'Trash',
-    id: 'trash',
-    address: '/dashboard/trash',
-    icon: <Trash2 className="h-5 my-auto mx-1" />,
-  },
-];
+import { pages } from '../utils/pageData';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useSelector } from 'react-redux';
 
 const DesktopSidebar = () => {
+  const router = useRouter();
+  const { user } = useSelector((state) => state.note);
   const [userTheme, setUserTheme] = useState(false);
   const pathName = usePathname();
   const { setTheme } = useTheme();
 
   useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      const cookie = JSON.parse(getCookie('user-session-data'));
-      setUserTheme(cookie?.userDoc?.dark_theme);
-      setTheme(cookie?.userDoc?.dark_theme ? 'dark' : 'light');
-    }
-  }, [setTheme]);
+    onAuthStateChanged(auth, (User) => {
+      if (User) {
+        setUserTheme(user?.userData?.theme);
+        setTheme(user?.userData?.theme ? 'dark' : 'light');
+      } else {
+        router.push('/login');
+      }
+    });
+  }, [setTheme, router, user?.userData?.theme]);
 
   useEffect(() => {
     setTheme(userTheme ? 'dark' : 'light');
   }, [userTheme, setTheme]);
 
   const LogOut = () => {
-    deleteCookie('user-session-data');
+    auth.signOut();
     window.location.reload();
   };
 
   return (
-    <aside className="border border-neutral-300 dark:border-neutral-700  h-screen w-full max-w-52 rounded-md p-2 border-box">
+    <aside className="border border-neutral-300 dark:border-neutral-700  h-screen w-full max-w-52 rounded-md p-2 border-box sticky top-0 print:hidden">
       <div className="relative h-full">
         <div className="text-center mb-4 flex flex-col">
           <Label className="text-3xl">NotesNook</Label>

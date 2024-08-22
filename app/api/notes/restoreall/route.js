@@ -17,7 +17,6 @@ export async function GET(request) {
           { status: 500 },
         );
       }
-      console.log(notesSnap.data());
       if (notesSnap.data().notes.length != 0) {
         updatedNotes = notesSnap.data().notes.map((note) => {
           if (note.isTrash) {

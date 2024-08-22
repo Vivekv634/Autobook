@@ -6,12 +6,19 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEditorNote } from '../redux/slices/noteSlice';
 
 export default function SearchDialog({ searchData, noFoundPrompt, setOpen }) {
-  const pathName = usePathname();
+  const { user } = useSelector((state) => state.note);
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const handleOnClickCommandItem = (noteData) => {
+    dispatch(setEditorNote(noteData));
+    router.push(`/dashboard/${user?.userData?.notesDocID}/${noteData.noteID}`);
+    setOpen(false);
+  };
   return (
     <CommandList>
       <CommandEmpty>{noFoundPrompt}</CommandEmpty>
@@ -20,8 +27,7 @@ export default function SearchDialog({ searchData, noFoundPrompt, setOpen }) {
           <CommandItem key={index}>
             <div
               onClick={() => {
-                router.push(`${pathName}#${data?.noteID ?? data}`);
-                setOpen(false);
+                handleOnClickCommandItem(data);
               }}
             >
               {data?.title ?? data}

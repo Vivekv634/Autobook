@@ -9,9 +9,9 @@ import { AccordionHeader } from '@radix-ui/react-accordion';
 
 export default function Tag({ tagName, tagNotes, notesDocID, notebooks }) {
   return (
-    <AccordionItem key={tagName} value={tagName} id={tagName}>
+    <AccordionItem key={tagName} value={tagName}>
       <AccordionHeader>
-        <AccordionTrigger>{tagName}</AccordionTrigger>
+        <AccordionTrigger id={tagName}>{tagName}</AccordionTrigger>
       </AccordionHeader>
       <AccordionContent>
         {tagNotes.map((note, index) => {

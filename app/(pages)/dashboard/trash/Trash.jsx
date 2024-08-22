@@ -1,39 +1,25 @@
 'use client';
 import Note from '@/app/components/Note';
-import { getCookie, hasCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   removeDeletedNotes,
-  setNotes,
   setDeletedNotes,
+  setNotes,
 } from '@/app/redux/slices/noteSlice';
-import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 
 const TrashComponent = () => {
-  const { user } = useSelector((state) => state.userLogin);
-  const { deletedNotes } = useSelector((state) => state.note);
-  const [notesDocID, setNotesDocID] = useState(null);
-  const router = useRouter();
+  const { deletedNotes, user } = useSelector((state) => state.note);
   const [notebooks, setNotebooks] = useState({});
   const dispatch = useDispatch();
   const [call, setCall] = useState(true);
   const { toast } = useToast();
   const isDesktop = useMediaQuery('(min-width: 640px)');
-
-  useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      const cookie = JSON.parse(getCookie('user-session-data'));
-      setNotesDocID(cookie.userDoc.notesDocID);
-    } else {
-      router.push('/login');
-    }
-  }, [user, router]);
 
   useEffect(() => {
     async function fetchData(notesDocID) {
@@ -63,11 +49,11 @@ const TrashComponent = () => {
       setNotebooks(temp);
     }
 
-    if (notesDocID && call) {
-      fetchData(notesDocID);
+    if (user.userData.notesDocID && call) {
+      fetchData(user.userData.notesDocID);
       setCall(false);
     }
-  }, [notesDocID, notebooks, dispatch, call]);
+  }, [user.userData.notesDocID, notebooks, dispatch, call]);
 
   const restoreAll = async () => {
     try {
@@ -75,7 +61,7 @@ const TrashComponent = () => {
         `${process.env.API}/api/notes/restoreall`,
         {
           headers: {
-            notesDocID: notesDocID,
+            notesDocID: user.userData.notesDocID,
           },
         },
       );
@@ -94,7 +80,7 @@ const TrashComponent = () => {
         `${process.env.API}/api/notes/deleteall`,
         {
           headers: {
-            notesDocID: notesDocID,
+            notesDocID: user.userData.notesDocID,
           },
         },
       );
@@ -119,7 +105,7 @@ const TrashComponent = () => {
           className={cn(
             'flex',
             !isDesktop && 'justify-around',
-            isDesktop && 'gap-2',
+            isDesktop && 'gap-2 mb-2',
           )}
         >
           <Button className={cn(!isDesktop && 'w-[47%]')} onClick={restoreAll}>
@@ -140,7 +126,7 @@ const TrashComponent = () => {
             <Note
               key={index}
               note={note}
-              notesDocID={notesDocID}
+              notesDocID={user.userData.notesDocID}
               notebook_name={notebooks[note.notesbook_ref_id]}
             />
           );

@@ -1,53 +1,40 @@
 'use client';
 import Note from '@/app/components/Note';
-import NoteSkeleton from '@/app/components/NoteSkeleton';
 import SearchDialog from '@/app/components/SearchDialog';
 import {
   setDeletedNotes,
   setNoteBooks,
   setNotes,
   setNoteUpdate,
+  setTagsData,
 } from '@/app/redux/slices/noteSlice';
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import axios from 'axios';
-import { getCookie, hasCookie } from 'cookies-next';
-import { Plus } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useToast } from '@/components/ui/use-toast';
+import axios from 'axios';
+import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const NotesComponent = () => {
-  const { user } = useSelector((state) => state.userLogin);
-  const { notes, isNoteUpdate } = useSelector((state) => state.note);
-  const [notesDocID, setNotesDocID] = useState(null);
-  const [notebooks, setNotebooks] = useState({});
+  const { notes, isNoteUpdate, user, notebooks } = useSelector(
+    (state) => state.note,
+  );
   const [mount, setMount] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch();
   const { toast } = useToast();
 
   useEffect(() => {
     setMount(true);
   }, [setMount]);
-
-  useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      const cookie = JSON.parse(getCookie('user-session-data'));
-      setNotesDocID(cookie.userDoc.notesDocID);
-    } else {
-      router.push('/login');
-    }
-  }, [user, router]);
 
   useEffect(() => {
     async function fetchData(notesDocID) {
@@ -61,8 +48,20 @@ const NotesComponent = () => {
       dataResponse.data.result.notebooks.map((notebook) => {
         temp[notebook.notebookID] = notebook.notebookName;
       });
-      setNotebooks(temp);
       dispatch(setNoteBooks(temp));
+
+      let tagData = {};
+      dataResponse.data.result.notes.map((note) => {
+        note.tagsList.length != 0 &&
+          note.tagsList.map((tag) => {
+            if (Object.keys(tagData).includes(tag)) {
+              tagData[tag] = [...tagData[tag], note];
+            } else {
+              tagData[tag] = [note];
+            }
+          });
+      });
+      dispatch(setTagsData(tagData));
 
       let sortedNotes = [];
       dataResponse.data.result.notes.map((note) => {
@@ -87,12 +86,12 @@ const NotesComponent = () => {
       dispatch(setDeletedNotes(filterDeletedNotes));
     }
 
-    if (notesDocID && mount) {
-      fetchData(notesDocID);
+    if (user.userData?.notesDocID && mount) {
+      fetchData(user.userData.notesDocID);
       setMount(false);
       console.log('fetch data from notes page...');
     }
-  }, [notesDocID, notebooks, mount, dispatch]);
+  }, [user.userData?.notesDocID, mount, dispatch]);
 
   useEffect(() => {
     if (isNoteUpdate) {
@@ -109,6 +108,18 @@ const NotesComponent = () => {
             updatedNotes.push(note);
           }
         });
+      let tagData = {};
+      notes.data.result.notes.map((note) => {
+        note.tagsList.length != 0 &&
+          note.tagsList.map((tag) => {
+            if (Object.keys(tagData).includes(tag)) {
+              tagData[tag] = [...tagData[tag], note];
+            } else {
+              tagData[tag] = [note];
+            }
+          });
+      });
+      dispatch(setTagsData(tagData));
       dispatch(setNotes(updatedNotes));
       dispatch(setNoteUpdate(false));
     }
@@ -124,7 +135,7 @@ const NotesComponent = () => {
         body,
         {
           headers: {
-            notesDocID: notesDocID,
+            notesDocID: user.userData.notesDocID,
           },
         },
       );
@@ -153,7 +164,7 @@ const NotesComponent = () => {
               >
                 <span className="ml-2 cursor-pointer">Search notes...</span>
               </div>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Button
                   variant="secondary"
                   onClick={createNote}
@@ -174,26 +185,16 @@ const NotesComponent = () => {
                 />
               </div>
             </CommandDialog>
-            {notes.length ? (
-              notes.map((note, index) => {
-                return (
-                  <Note
-                    key={index}
-                    note={note}
-                    notesDocID={notesDocID}
-                    notebook_name={notebooks[note.notebook_ref_id]}
-                  />
-                );
-              })
-            ) : (
-              <>
-                <NoteSkeleton />
-                <NoteSkeleton />
-                <NoteSkeleton />
-                <NoteSkeleton />
-                <NoteSkeleton />
-              </>
-            )}
+            {notes.map((note, index) => {
+              return (
+                <Note
+                  key={index}
+                  note={note}
+                  notesDocID={user.userData.notesDocID}
+                  notebook_name={notebooks[note.notebook_ref_id]}
+                />
+              );
+            })}
           </section>
         </Tooltip>
       </TooltipProvider>

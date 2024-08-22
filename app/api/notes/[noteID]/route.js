@@ -11,7 +11,6 @@ export async function GET(request, { params }) {
     let filterednotes;
     const notesRef = doc(db, 'notes', notesDocID);
     const notesSnap = await getDoc(notesRef);
-    console.log(notesSnap.data().notes);
     if (notesSnap.exists()) {
       const notes = notesSnap.data().notes;
       filterednotes = notes.filter((note) => note.noteID === noteID);

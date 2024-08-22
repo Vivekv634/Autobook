@@ -1,17 +1,20 @@
 'use client';
-import { getCookie, hasCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setNoteBooks, setNotes } from '@/app/redux/slices/noteSlice';
-import { Accordion } from '@/components/ui/accordion';
 import { Notebook } from '@/app/components/Notebook';
+import SearchDialog from '@/app/components/SearchDialog';
+import {
+  setDeletedNotes,
+  setNoteBooks,
+  setNotes,
+  setTagsData,
+} from '@/app/redux/slices/noteSlice';
+import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
+import { CommandDialog, CommandInput } from '@/components/ui/command';
+import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { CommandDialog, CommandInput } from '@/components/ui/command';
-import SearchDialog from '@/app/components/SearchDialog';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   Tooltip,
@@ -20,46 +23,71 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 const NotebookComponent = () => {
-  const { user } = useSelector((state) => state.userLogin);
-  const { notes, notebooks } = useSelector((state) => state.note);
-  const [notesDocID, setNotesDocID] = useState(null);
+  const { notes, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
-  const router = useRouter();
+  const [mount, setMount] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      const cookie = JSON.parse(getCookie('user-session-data'));
-      setNotesDocID(cookie.userDoc.notesDocID);
-    } else {
-      router.push('/login');
-    }
-  }, [user, router]);
+    setMount(true);
+  }, [mount]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData(notesDocID) {
       const dataResponse = await axios.get(`${process.env.API}/api/data`, {
         headers: {
           notesDocID: notesDocID,
         },
       });
+
       let temp = {};
-      dispatch(setNotes(dataResponse.data.result.notes));
-      dataResponse.data.result.notebooks.forEach((notebook) => {
+      dataResponse.data.result.notebooks.map((notebook) => {
         temp[notebook.notebookID] = notebook.notebookName;
       });
       dispatch(setNoteBooks(temp));
-    };
-    if (notesDocID) {
-      fetchData();
-      console.log('fetch data from notebook page...');
-    }
-  }, [dispatch, notesDocID]);
 
-  useEffect(() => {
-    dispatch(setNoteBooks(notebooks));
-  }, [notebooks, dispatch]);
+      let tagData = {};
+      dataResponse.data.result.notes.map((note) => {
+        note.tagsList.length != 0 &&
+          note.tagsList.map((tag) => {
+            if (Object.keys(tagData).includes(tag)) {
+              tagData[tag] = [...tagData[tag], note];
+            } else {
+              tagData[tag] = [note];
+            }
+          });
+      });
+      dispatch(setTagsData(tagData));
+
+      let sortedNotes = [];
+      dataResponse.data.result.notes.map((note) => {
+        if (!note.isTrash && !note.isLocked && note.isPinned) {
+          sortedNotes.push(note);
+        }
+      });
+
+      dataResponse.data.result.notes.map((note) => {
+        if (!note.isTrash && !note.isLocked && !note.isPinned) {
+          sortedNotes.push(note);
+        }
+      });
+      dispatch(setNotes(sortedNotes));
+
+      let filterDeletedNotes = [];
+      dataResponse.data.result.notes.map((note) => {
+        if (note.isTrash) {
+          filterDeletedNotes.push(note);
+        }
+      });
+      dispatch(setDeletedNotes(filterDeletedNotes));
+    }
+
+    if (user.userData.notesDocID && mount) {
+      fetchData(user.userData.notesDocID);
+      console.log('fetch data from notebooks page...');
+    }
+  }, [dispatch, mount, user.userData.notesDocID]);
 
   async function createNotebook() {
     try {
@@ -68,7 +96,7 @@ const NotebookComponent = () => {
         { notebookName: `Notebook ${Object.keys(notebooks).length + 1}` },
         {
           headers: {
-            notesDocID: notesDocID,
+            notesDocID: user.userData.notesDocID,
           },
         },
       );
@@ -89,6 +117,7 @@ const NotebookComponent = () => {
       });
     }
   }
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -102,7 +131,7 @@ const NotebookComponent = () => {
             >
               <span className="ml-2 cursor-pointer">Search notebooks...</span>
             </div>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant="secondary"
                 onClick={createNotebook}
@@ -141,7 +170,7 @@ const NotebookComponent = () => {
                       notes={filteredNotes}
                       notebook_id={notebook_id}
                       key={notebook_id}
-                      notesDocID={notesDocID}
+                      notesDocID={user.userData.notesDocID}
                     />
                   );
                 })}

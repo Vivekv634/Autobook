@@ -1,71 +1,55 @@
 'use client';
-import { setTagsData } from '@/app/redux/slices/noteSlice';
-import axios from 'axios';
-import { getCookie, hasCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Accordion } from '@/components/ui/accordion';
-import Tag from '@/app/components/Tag';
-import { CommandDialog, CommandInput } from '@/components/ui/command';
 import SearchDialog from '@/app/components/SearchDialog';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { useMediaQuery } from 'usehooks-ts';
+import Tag from '@/app/components/Tag';
+import { setTagsData } from '@/app/redux/slices/noteSlice';
+import { Accordion } from '@/components/ui/accordion';
+import { CommandDialog, CommandInput } from '@/components/ui/command';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const TagsComponent = () => {
-  const [notesDocID, setNotesDocID] = useState(null);
-  const { notes, tagsData, notebooks } = useSelector((state) => state.note);
+  const { notes, tagsData, notebooks, user } = useSelector(
+    (state) => state.note,
+  );
   const [mount, setMount] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
-  const router = useRouter();
   const dispatch = useDispatch();
-  const isDesktop = useMediaQuery('(min-width: 640px)');
 
   useEffect(() => {
     setMount(true);
   }, [setMount]);
 
   useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      const cookie = JSON.parse(getCookie('user-session-data'));
-      setNotesDocID(cookie.userDoc.notesDocID);
-    } else {
-      router.push('/login');
-    }
-  }, [router]);
-
-  useEffect(() => {
     async function fetchData() {
       const response = await axios.get(`${process.env.API}/api/notes`, {
         headers: {
-          notesDocID: notesDocID,
+          notesDocID: user.userData.notesDocID,
         },
       });
       let tagData = {};
-      if (notesDocID && mount) {
-        response.data.result.map((note) => {
-          note.tagsList.length != 0 &&
-            note.tagsList.map((tag) => {
-              if (Object.keys(tagData).includes(tag)) {
-                tagData[tag] = [...tagData[tag], note];
-              } else {
-                tagData[tag] = [note];
-              }
-            });
-        });
-      }
+      response.data.result.map((note) => {
+        note.tagsList.length != 0 &&
+          note.tagsList.map((tag) => {
+            if (Object.keys(tagData).includes(tag)) {
+              tagData[tag] = [...tagData[tag], note];
+            } else {
+              tagData[tag] = [note];
+            }
+          });
+      });
       dispatch(setTagsData(tagData));
     }
-    if (notesDocID && mount) {
+    if (user.userData.notesDocID && mount) {
       fetchData();
       setMount(false);
       console.log('fetch data from tags page...');
     }
-  }, [dispatch, mount, notesDocID]);
+  }, [dispatch, mount, user.userData.notesDocID]);
 
   useEffect(() => {
     let tagData = {};
-    if (notesDocID && mount) {
+    if (user.userData.notesDocID && mount) {
       notes.map((note) => {
         note.tagsList.length != 0 &&
           note.tagsList.map((tag) => {
@@ -78,7 +62,7 @@ const TagsComponent = () => {
       });
     }
     dispatch(setTagsData(tagData));
-  }, [notes, dispatch, mount, notesDocID]);
+  }, [notes, dispatch, mount, user.userData.notesDocID]);
 
   return (
     <section className="p-2 flex flex-col">
@@ -100,44 +84,28 @@ const TagsComponent = () => {
           />
         </div>
       </CommandDialog>
-      {tagsData && notebooks && (
+      {tagsData && notebooks ? (
         <Accordion
           collapsible="true"
           type="multiple"
-          className="w-full border rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
+          className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
           defaultValue={Object.keys(tagsData)}
         >
-          {isDesktop ? (
-            <ScrollArea className="scroll">
-              {Object.keys(tagsData).length != 0 &&
-                Object.keys(tagsData).map((tag) => {
-                  return (
-                    <Tag
-                      key={tag}
-                      notesDocID={notesDocID}
-                      notebooks={notebooks}
-                      tagName={tag}
-                      tagNotes={tagsData[tag]}
-                    />
-                  );
-                })}
-              <ScrollBar />
-            </ScrollArea>
-          ) : (
-            Object.keys(tagsData).length != 0 &&
+          {Object.keys(tagsData).length != 0 &&
             Object.keys(tagsData).map((tag) => {
               return (
                 <Tag
                   key={tag}
-                  notesDocID={notesDocID}
+                  notesDocID={user.userData.notesDocID}
                   notebooks={notebooks}
                   tagName={tag}
                   tagNotes={tagsData[tag]}
                 />
               );
-            })
-          )}
+            })}
         </Accordion>
+      ) : (
+        <div className="">No tags here.</div>
       )}
     </section>
   );

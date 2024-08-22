@@ -1,13 +1,13 @@
-import React from 'react'
+import React from 'react';
+import SettingsComponent from './Settings';
 
 export const metadata = {
-  title: "Settings - NotesNook"
-}
+  title: 'Settings - NotesNook',
+};
 
 const Settings = () => {
-  return (
-    <div>Settings</div>
-  )
-}
+  return <SettingsComponent />;
+};
 
 export default Settings;
+

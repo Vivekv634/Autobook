@@ -32,6 +32,7 @@ import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { uid } from 'uid';
 import { usePathname } from 'next/navigation';
+import parser from 'editorjs-html';
 
 const NoteDropDownMenu = ({ note, notesDocID, children }) => {
   const { toast } = useToast();
@@ -162,6 +163,11 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
     dispatch(setNotes(duplicateResponse.data.result));
     toast({ description: 'Note duplicated!', className: 'bg-green-400' });
   };
+
+  const handleCopyAsHTML = () => {
+    const edjsParser = parser.parse(note.body);
+    console.log(edjsParser);
+  };
   // NOTE: add move to vault option to the drop down menu
   return (
     <DropdownMenu>
@@ -225,7 +231,10 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
                 Markdown
                 <Heading className="h-4 w-5" />
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={handleCopyAsHTML}
+              >
                 HTML
                 <Code className="h-4 w-5" />
               </DropdownMenuItem>

@@ -1,11 +1,185 @@
-"use client";
-import React from 'react'
-
+'use client';
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import React, { useState } from 'react';
+import { useMediaQuery } from 'usehooks-ts';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTheme } from 'next-themes';
+import axios from 'axios';
+import { setUser } from '@/app/redux/slices/noteSlice';
+import { useToast } from '@/components/ui/use-toast';
+import { pages } from '@/app/utils/pageData';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 const SettingsComponent = () => {
+  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const { user } = useSelector((state) => state.note);
+  const [theme, SetTheme] = useState(user.userData?.theme);
+  // eslint-disable-next-line
+  const [homePage, setHomePage] = useState(user.userData?.defaultHomePage);
+  // eslint-disable-next-line
+  const [interval, setInterval] = useState(user.userData?.trashInterval);
+  const { setTheme } = useTheme();
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+
+  const handleThemeChange = async (theme) => {
+    SetTheme(theme);
+    const response = await axios.put(
+      `${process.env.API}/api/account/update/${user.userID}`,
+      { theme: theme },
+    );
+    dispatch(setUser({ ...user, ...response.data.result }));
+    toast({ description: 'Theme updated!', className: 'bg-green-400' });
+    setTheme(theme);
+  };
+
+  const handleDefaultHomePageChange = async (page) => {
+    const response = await axios.put(
+      `${process.env.API}/api/account/update/${user.userID}`,
+      { defaultHomePage: page },
+    );
+    dispatch(setUser({ ...user, ...response.data.result }));
+    toast({
+      description: 'Default home page updated!',
+      className: 'bg-green-400',
+    });
+  };
+
+  const handleDeletionIntervalChange = async (days) => {
+    const response = await axios.put(
+      `${process.env.API}/api/account/update/${user.userID}`,
+      { trashInterval: days },
+    );
+    dispatch(setUser({ ...user, ...response.data.result }));
+    toast({
+      description: 'Trash interval updated!',
+      className: 'bg-green-400',
+    });
+  };
   return (
-    <div>SettingsComponent</div>
-  )
-}
+    <section className={cn(isDesktop && 'container')}>
+      <div className="p-2 border rounded-md mt-2 mx-1">
+        <Label className="text-2xl font-extrabold block">Appearance</Label>
+        <Separator className="my-2" />
+        <div className="flex justify-between items-center">
+          <div>
+            <Label className="block font-bold">Default Theme</Label>
+            <Label className="text-muted-foreground">
+              Set your prefered app theme
+            </Label>
+          </div>
+          <Select
+            value={theme}
+            onValueChange={(e) => {
+              handleThemeChange(e);
+            }}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="light">Light</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="p-2 border rounded-md mt-2 mx-1">
+        <Label className="text-2xl font-extrabold block">Behaviour</Label>
+        <Separator className="my-2" />
+        <div className="flex justify-between items-center">
+          <div>
+            <Label className="block font-bold">Home Page</Label>
+            <Label className="text-muted-foreground">
+              Default home page on login
+            </Label>
+          </div>
+          <Select
+            value={homePage}
+            onValueChange={(e) => {
+              handleDefaultHomePageChange(e);
+            }}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {pages.map((page) => {
+                if (page.label == 'Trash') {
+                  return;
+                } else {
+                  return (
+                    <SelectItem key={page.label} value={page.id}>
+                      {page.label}
+                    </SelectItem>
+                  );
+                }
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+        <Separator className="my-2" />
+        <div className="flex justify-between items-center">
+          <div>
+            <Label className="block font-bold">Cleanup interval</Label>
+            <Label className="text-muted-foreground">
+              All the trash notes will be deleted permanently after this
+              interval.
+            </Label>
+          </div>
+          <Select
+            value={interval}
+            onValueChange={(e) => {
+              handleDeletionIntervalChange(e);
+            }}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="7">7 days</SelectItem>
+              <SelectItem value="15">15 days</SelectItem>
+              <SelectItem value="30">30 days</SelectItem>
+              <SelectItem value="60">60 days</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="p-2 border rounded-md mt-2 mx-1">
+        <Label className="text-2xl font-extrabold block">Export</Label>
+        <Separator className="my-2" />
+        <div className="flex justify-between items-center">
+          <div>
+            <Label className="block font-bold">Export Notes</Label>
+            <Label className="text-muted-foreground">
+              Export notes as PDF or Markdown
+            </Label>
+          </div>
+          <Button variant="secondary">Export</Button>
+        </div>
+        <Separator className="my-2" />
+        <div className="flex justify-between items-center">
+          <div>
+            <Label className="block font-bold">Export Notebooks</Label>
+            <Label className="text-muted-foreground">
+              Export notebooks as PDF or Markdown
+            </Label>
+          </div>
+          <Button variant="secondary">Export</Button>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default SettingsComponent;
+

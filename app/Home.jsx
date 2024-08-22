@@ -6,16 +6,20 @@ import { logout } from '@/app/redux/slices/userLoginSlice';
 import Link from 'next/link';
 import { getCookie, hasCookie } from 'cookies-next';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const HomeComponent = () => {
   const dispatch = useDispatch();
   const [cookie, setCookie] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (hasCookie('user-session-data')) {
       setCookie(getCookie('user-session-data'));
+    } else {
+      router.push('/dashboard');
     }
-  }, []);
+  }, [router]);
 
   const Logout = () => {
     dispatch(logout());

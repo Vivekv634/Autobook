@@ -67,3 +67,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: 100%;
+  /* padding: 1rem; */
+  min-height: 100%;
+}
+
+.codex-editor__redactor {
+  min-height: 100%;
+}
