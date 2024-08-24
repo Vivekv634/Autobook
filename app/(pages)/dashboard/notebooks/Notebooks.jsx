@@ -22,7 +22,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useRouter } from 'next/navigation';
 const NotebookComponent = () => {
   const { notes, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
