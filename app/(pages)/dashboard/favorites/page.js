@@ -1,14 +1,13 @@
-import React from 'react'
+import React from 'react';
 import FavoriteComponent from './Favorite';
 
 export const metadata = {
-    title: "Favorites - NotesNook"
-}
+  title: 'Favorites - AutoBook',
+};
 
 const Favorite = () => {
-    return (
-      <FavoriteComponent />
-  )
-}
+  return <FavoriteComponent />;
+};
 
 export default Favorite;
+

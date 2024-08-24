@@ -45,7 +45,7 @@ const DesktopSidebar = () => {
     <aside className="border border-neutral-300 dark:border-neutral-700  h-screen w-full max-w-52 rounded-md p-2 border-box sticky top-0 print:hidden">
       <div className="relative h-full">
         <div className="text-center mb-4 flex flex-col">
-          <Label className="text-3xl">NotesNook</Label>
+          <Label className="text-3xl">AutoBook</Label>
           <Label className="text-[.7rem]">
             Take your notes more efficiently.
           </Label>

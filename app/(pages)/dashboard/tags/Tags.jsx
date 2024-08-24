@@ -1,5 +1,5 @@
 'use client';
-import SearchDialog from '@/app/components/SearchDialog';
+import TagsSearchDialog from '@/app/components/TagsSearchDialog';
 import Tag from '@/app/components/Tag';
 import { setTagsData } from '@/app/redux/slices/noteSlice';
 import { Accordion } from '@/components/ui/accordion';
@@ -40,16 +40,16 @@ const TagsComponent = () => {
       });
       dispatch(setTagsData(tagData));
     }
-    if (user.userData.notesDocID && mount) {
+    if (user.userData?.notesDocID && mount) {
       fetchData();
       setMount(false);
       console.log('fetch data from tags page...');
     }
-  }, [dispatch, mount, user.userData.notesDocID]);
+  }, [dispatch, mount, user.userData?.notesDocID]);
 
   useEffect(() => {
     let tagData = {};
-    if (user.userData.notesDocID && mount) {
+    if (user.userData?.notesDocID && mount) {
       notes.map((note) => {
         note.tagsList.length != 0 &&
           note.tagsList.map((tag) => {
@@ -62,7 +62,7 @@ const TagsComponent = () => {
       });
     }
     dispatch(setTagsData(tagData));
-  }, [notes, dispatch, mount, user.userData.notesDocID]);
+  }, [notes, dispatch, mount, user.userData?.notesDocID]);
 
   return (
     <section className="p-2 flex flex-col">
@@ -77,7 +77,7 @@ const TagsComponent = () => {
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
         <CommandInput placeholder="Search your tags..." />
         <div className="m-3">
-          <SearchDialog
+          <TagsSearchDialog
             searchData={Object.keys(tagsData)}
             noFoundPrompt="No tags found."
             setOpen={setCommandOpen}

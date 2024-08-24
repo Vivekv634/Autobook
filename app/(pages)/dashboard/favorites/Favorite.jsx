@@ -18,8 +18,12 @@ const FavoriteComponent = () => {
   const [favoriteNotes, setFavoriteNotes] = useState(
     notes.filter((note) => note.isFavorite),
   );
+  const [mount, setMount] = useState(false);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    setMount(true);
+  }, [mount]);
   useEffect(() => {
     async function fetchData(notesDocID) {
       const dataResponse = await axios.get(`${process.env.API}/api/data`, {
@@ -70,11 +74,11 @@ const FavoriteComponent = () => {
       dispatch(setDeletedNotes(filterDeletedNotes));
     }
 
-    if (user.userData.notesDocID) {
-      fetchData(user.userData.notesDocID);
+    if (user.userData?.notesDocID && mount) {
+      fetchData(user.userData?.notesDocID);
       console.log('fetch data from Favorites page...');
     }
-  }, [dispatch, user.userData.notesDocID]);
+  }, [dispatch, user.userData?.notesDocID, mount]);
 
   useEffect(() => {
     if (isNoteUpdate) {

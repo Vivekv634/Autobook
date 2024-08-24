@@ -205,11 +205,11 @@ const NoteEditor = ({ params }) => {
     editorInstance.current
       .save()
       .then(async (outputData) => {
-        console.log(outputData);
         const body = {
           body: JSON.stringify(outputData),
           title: noteTitle,
           tagsList: noteTagsInput.split(' ').filter((tag) => tag.trim() !== ''),
+          notebook_ref_id: notebookValue,
         };
         const response = await axios.put(
           `${process.env.API}/api/notes/update/${noteID}`,

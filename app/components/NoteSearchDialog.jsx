@@ -10,7 +10,11 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEditorNote } from '../redux/slices/noteSlice';
 
-export default function SearchDialog({ searchData, noFoundPrompt, setOpen }) {
+export default function NoteSearchDialog({
+  searchData,
+  noFoundPrompt,
+  setOpen,
+}) {
   const { user } = useSelector((state) => state.note);
   const router = useRouter();
   const dispatch = useDispatch();

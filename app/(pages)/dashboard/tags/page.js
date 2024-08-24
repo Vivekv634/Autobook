@@ -1,14 +1,13 @@
-import React from 'react'
+import React from 'react';
 import TagsComponent from './Tags';
 
 export const metadata = {
-    title: "Tags - NotesNook"
-}
+  title: 'Tags - AutoBook',
+};
 
 const Tags = () => {
-    return (
-      <TagsComponent />
-  )
-}
+  return <TagsComponent />;
+};
 
 export default Tags;
+

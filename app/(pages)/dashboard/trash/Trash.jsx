@@ -49,11 +49,11 @@ const TrashComponent = () => {
       setNotebooks(temp);
     }
 
-    if (user.userData.notesDocID && call) {
-      fetchData(user.userData.notesDocID);
+    if (user.userData?.notesDocID && call) {
+      fetchData(user.userData?.notesDocID);
       setCall(false);
     }
-  }, [user.userData.notesDocID, notebooks, dispatch, call]);
+  }, [user.userData?.notesDocID, notebooks, dispatch, call]);
 
   const restoreAll = async () => {
     try {
@@ -61,7 +61,7 @@ const TrashComponent = () => {
         `${process.env.API}/api/notes/restoreall`,
         {
           headers: {
-            notesDocID: user.userData.notesDocID,
+            notesDocID: user.userData?.notesDocID,
           },
         },
       );
@@ -80,7 +80,7 @@ const TrashComponent = () => {
         `${process.env.API}/api/notes/deleteall`,
         {
           headers: {
-            notesDocID: user.userData.notesDocID,
+            notesDocID: user.userData?.notesDocID,
           },
         },
       );

@@ -1,7 +1,7 @@
 import HomeComponent from './Home.jsx';
 
 export const metadata = {
-  title: 'Notesnook',
+  title: 'Autobook',
 };
 
 export default function Home() {
@@ -11,4 +11,3 @@ export default function Home() {
     </>
   );
 }
-

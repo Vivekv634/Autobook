@@ -1,11 +1,11 @@
-import RegisterComponent from "./Register.jsx";
+import RegisterComponent from './Register.jsx';
 
 export const metadata = {
-    title: 'Register - Notesnook',
-    description: 'Register to grab access of Notesnook.',
-    keywords: ['register', 'signup', 'Notesnook']
-}
+  title: 'Register - AutoBook',
+  description: 'Register to grab access of AutoBook.',
+  keywords: ['register', 'signup', 'AutoBook'],
+};
 
 export default function Register() {
-    return <RegisterComponent />
+  return <RegisterComponent />;
 }

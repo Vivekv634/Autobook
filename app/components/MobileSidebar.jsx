@@ -69,7 +69,7 @@ const MobileSidebar = () => {
         </SheetTrigger>
         <SheetContent side="left" className="">
           <SheetHeader className="my-10">
-            <SheetTitle className="text-3xl">NotesNook</SheetTitle>
+            <SheetTitle className="text-3xl">AutoBook</SheetTitle>
             <SheetDescription>
               Take your notes more efficiently.
             </SheetDescription>

@@ -1,13 +1,12 @@
-import React from 'react'
+import React from 'react';
+import AutoNoteComponent from './AutoNote';
 
 export const metadata = {
-    title: "AutoNote - NotesNook"
-}
+  title: 'AutoNote - AutoBook',
+};
 
 const AutoNote = () => {
-  return (
-    <div>AutoNote</div>
-  )
-}
+  return <AutoNoteComponent />;
+};
 
 export default AutoNote;

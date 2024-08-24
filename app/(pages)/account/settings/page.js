@@ -2,7 +2,7 @@ import React from 'react';
 import SettingsComponent from './Settings';
 
 export const metadata = {
-  title: 'Settings - NotesNook',
+  title: 'Settings - AutoBook',
 };
 
 const Settings = () => {
@@ -10,4 +10,3 @@ const Settings = () => {
 };
 
 export default Settings;
-

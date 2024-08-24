@@ -1,14 +1,13 @@
-import React from 'react'
+import React from 'react';
 import TrashComponent from './Trash';
 
 export const metadata = {
-    title: "Trash - NotesNook"
-}
+  title: 'Trash - AutoBook',
+};
 
 const Trash = () => {
-  return (
-    <TrashComponent />
-  )
-}
+  return <TrashComponent />;
+};
 
 export default Trash;
+

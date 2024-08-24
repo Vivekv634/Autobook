@@ -33,7 +33,7 @@ const LayoutComponent = ({ children }) => {
       <Menubar />
       <section>
         {children}
-        <div className="fixed w-full border-t bottom-0 p-4">
+        <div className="fixed w-full border-t bottom-0 p-4 z-10 dark:bg-black bg-white">
           <div className="flex justify-center items-center gap-1">
             Made with <Heart className="text-red-400" /> by
             <Link

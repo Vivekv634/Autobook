@@ -1,7 +1,7 @@
 import NotebookComponent from './Notebooks';
 
 export const metadata = {
-  title: 'Notebooks - Notesnook',
+  title: 'Notebooks - AutoBook',
 };
 
 const Notebooks = () => {
@@ -9,4 +9,3 @@ const Notebooks = () => {
 };
 
 export default Notebooks;
-

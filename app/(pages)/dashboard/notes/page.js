@@ -1,14 +1,12 @@
-import NotesComponent from "./Notes";
+import NotesComponent from './Notes';
 
 export const metadata = {
-  title: 'Notes - Notesnook'
-}
+  title: 'Notes - AutoBook',
+};
 
 const Notes = () => {
-
-  return (
-    <NotesComponent />
-  )
-}
+  return <NotesComponent />;
+};
 
 export default Notes;
+

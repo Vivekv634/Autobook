@@ -1,6 +1,6 @@
 'use client';
 import { Notebook } from '@/app/components/Notebook';
-import SearchDialog from '@/app/components/SearchDialog';
+import NoteBookSearchDialog from '@/app/components/NotebookSearchDialog';
 import {
   setDeletedNotes,
   setNoteBooks,
@@ -22,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useRouter } from 'next/navigation';
 const NotebookComponent = () => {
   const { notes, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -83,11 +84,11 @@ const NotebookComponent = () => {
       dispatch(setDeletedNotes(filterDeletedNotes));
     }
 
-    if (user.userData.notesDocID && mount) {
+    if (user.userData?.notesDocID && mount) {
       fetchData(user.userData.notesDocID);
       console.log('fetch data from notebooks page...');
     }
-  }, [dispatch, mount, user.userData.notesDocID]);
+  }, [dispatch, mount, user.userData?.notesDocID]);
 
   async function createNotebook() {
     try {
@@ -127,9 +128,9 @@ const NotebookComponent = () => {
               onClick={() => {
                 setCommandOpen(true);
               }}
-              className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+              className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto cursor-pointer"
             >
-              <span className="ml-2 cursor-pointer">Search notebooks...</span>
+              <span className="ml-2">Search notebooks...</span>
             </div>
             <TooltipTrigger asChild>
               <Button
@@ -145,7 +146,7 @@ const NotebookComponent = () => {
           <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
             <CommandInput placeholder="Search your notebooks..." />
             <div className="m-3">
-              <SearchDialog
+              <NoteBookSearchDialog
                 searchData={notebooks}
                 noFoundPrompt="No notebooks found."
                 setOpen={setCommandOpen}

@@ -1,6 +1,6 @@
 'use client';
 import Note from '@/app/components/Note';
-import SearchDialog from '@/app/components/SearchDialog';
+import NoteSearchDialog from '@/app/components/NoteSearchDialog';
 import {
   setDeletedNotes,
   setNoteBooks,
@@ -178,23 +178,24 @@ const NotesComponent = () => {
             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
               <CommandInput placeholder="Search your notes..." />
               <div className="m-3">
-                <SearchDialog
+                <NoteSearchDialog
                   searchData={notes}
                   noFoundPrompt="No notes found."
                   setOpen={setCommandOpen}
                 />
               </div>
             </CommandDialog>
-            {notes.map((note, index) => {
-              return (
-                <Note
-                  key={index}
-                  note={note}
-                  notesDocID={user.userData.notesDocID}
-                  notebook_name={notebooks[note.notebook_ref_id]}
-                />
-              );
-            })}
+            {notes &&
+              notes.map((note, index) => {
+                return (
+                  <Note
+                    key={index}
+                    note={note}
+                    notesDocID={user.userData.notesDocID}
+                    notebook_name={notebooks[note.notebook_ref_id]}
+                  />
+                );
+              })}
           </section>
         </Tooltip>
       </TooltipProvider>

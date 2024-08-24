@@ -1,14 +1,13 @@
-import React from 'react'
+import React from 'react';
 import ProfileComponent from './Profile';
 
 export const metadata = {
-  title: "Profile - NotesNook"
-}
+  title: 'Profile - AutoBook',
+};
 
 const Profile = () => {
-    return (
-      <ProfileComponent />
-  )
-}
+  return <ProfileComponent />;
+};
 
 export default Profile;
+
