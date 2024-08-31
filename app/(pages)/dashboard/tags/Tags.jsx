@@ -1,68 +1,14 @@
 'use client';
 import TagsSearchDialog from '@/app/components/TagsSearchDialog';
 import Tag from '@/app/components/Tag';
-import { setTagsData } from '@/app/redux/slices/noteSlice';
 import { Accordion } from '@/components/ui/accordion';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const TagsComponent = () => {
-  const { notes, tagsData, notebooks, user } = useSelector(
-    (state) => state.note,
-  );
-  const [mount, setMount] = useState(false);
+  const { tagsData, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    setMount(true);
-  }, [setMount]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = await axios.get(`${process.env.API}/api/notes`, {
-        headers: {
-          notesDocID: user.userData.notesDocID,
-        },
-      });
-      let tagData = {};
-      response.data.result.map((note) => {
-        note.tagsList.length != 0 &&
-          note.tagsList.map((tag) => {
-            if (Object.keys(tagData).includes(tag)) {
-              tagData[tag] = [...tagData[tag], note];
-            } else {
-              tagData[tag] = [note];
-            }
-          });
-      });
-      dispatch(setTagsData(tagData));
-    }
-    if (user.userData?.notesDocID && mount) {
-      fetchData();
-      setMount(false);
-      console.log('fetch data from tags page...');
-    }
-  }, [dispatch, mount, user.userData?.notesDocID]);
-
-  useEffect(() => {
-    let tagData = {};
-    if (user.userData?.notesDocID && mount) {
-      notes.map((note) => {
-        note.tagsList.length != 0 &&
-          note.tagsList.map((tag) => {
-            if (Object.keys(tagData).includes(tag)) {
-              tagData[tag] = [...tagData[tag], note];
-            } else {
-              tagData[tag] = [note];
-            }
-          });
-      });
-    }
-    dispatch(setTagsData(tagData));
-  }, [notes, dispatch, mount, user.userData?.notesDocID]);
 
   return (
     <section className="p-2 flex flex-col">

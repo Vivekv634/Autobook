@@ -2,22 +2,11 @@ import { db } from '@/firebase.config';
 import { doc, runTransaction } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
-import { uid } from 'uid';
+import { notes } from '@/app/utils/schema';
 
 export async function POST(request) {
   const notesDocID = headers().get('notesDocID');
-  const notesData = {
-    noteID: uid(),
-    updation_date: new Date().toString(),
-    notebook_ref_id: null,
-    tagsList: [],
-    isPinned: false,
-    isReadOnly: false,
-    isFavorite: false,
-    isLocked: false,
-    isTrash: false,
-    deletionTimeStamp: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
-  };
+  const notesData = notes;
   const body = await request.json();
   const docRef = doc(db, 'notes', notesDocID);
   try {

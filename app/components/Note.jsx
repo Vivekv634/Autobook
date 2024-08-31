@@ -51,14 +51,22 @@ const Note = ({ note, notesDocID, notebook_name }) => {
               <div className="flex justify-between w-full">
                 <div className="flex items-center">
                   {notebook_name && (
-                    <Link
-                      href={`/dashboard/notebooks/#${note.notebook_ref_id}`}
-                    >
-                      <Badge variant="outline" className="flex items-center">
-                        <Book className="h-3 w-4 p-0 m-0" />
-                        {notebook_name}
-                      </Badge>
-                    </Link>
+                    <>
+                      <TooltipTrigger>
+                        <Link
+                          href={`/dashboard/notebooks/#${note.notebook_ref_id}`}
+                        >
+                          <Badge
+                            variant="outline"
+                            className="flex items-center"
+                          >
+                            <Book className="h-3 w-4 p-0 m-0" />
+                            {notebook_name}
+                          </Badge>
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>Go to {notebook_name}</TooltipContent>
+                    </>
                   )}
                   {note.isPinned && (
                     <PinIcon className="h-4 w-5 text-green-500" />

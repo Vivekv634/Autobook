@@ -38,6 +38,7 @@ const Dashboard = () => {
           }
         }
       } else {
+        console.log('logged out');
         router.push('/login');
       }
     });

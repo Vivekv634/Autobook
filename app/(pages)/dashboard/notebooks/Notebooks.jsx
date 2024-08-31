@@ -1,12 +1,7 @@
 'use client';
 import { Notebook } from '@/app/components/Notebook';
 import NoteBookSearchDialog from '@/app/components/NotebookSearchDialog';
-import {
-  setDeletedNotes,
-  setNoteBooks,
-  setNotes,
-  setTagsData,
-} from '@/app/redux/slices/noteSlice';
+import { setNoteBooks } from '@/app/redux/slices/noteSlice';
 import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
@@ -33,62 +28,6 @@ const NotebookComponent = () => {
     setMount(true);
   }, [mount]);
 
-  useEffect(() => {
-    async function fetchData(notesDocID) {
-      const dataResponse = await axios.get(`${process.env.API}/api/data`, {
-        headers: {
-          notesDocID: notesDocID,
-        },
-      });
-
-      let temp = {};
-      dataResponse.data.result.notebooks.map((notebook) => {
-        temp[notebook.notebookID] = notebook.notebookName;
-      });
-      dispatch(setNoteBooks(temp));
-
-      let tagData = {};
-      dataResponse.data.result.notes.map((note) => {
-        note.tagsList.length != 0 &&
-          note.tagsList.map((tag) => {
-            if (Object.keys(tagData).includes(tag)) {
-              tagData[tag] = [...tagData[tag], note];
-            } else {
-              tagData[tag] = [note];
-            }
-          });
-      });
-      dispatch(setTagsData(tagData));
-
-      let sortedNotes = [];
-      dataResponse.data.result.notes.map((note) => {
-        if (!note.isTrash && !note.isLocked && note.isPinned) {
-          sortedNotes.push(note);
-        }
-      });
-
-      dataResponse.data.result.notes.map((note) => {
-        if (!note.isTrash && !note.isLocked && !note.isPinned) {
-          sortedNotes.push(note);
-        }
-      });
-      dispatch(setNotes(sortedNotes));
-
-      let filterDeletedNotes = [];
-      dataResponse.data.result.notes.map((note) => {
-        if (note.isTrash) {
-          filterDeletedNotes.push(note);
-        }
-      });
-      dispatch(setDeletedNotes(filterDeletedNotes));
-    }
-
-    if (user.userData?.notesDocID && mount) {
-      fetchData(user.userData.notesDocID);
-      console.log('fetch data from notebooks page...');
-    }
-  }, [dispatch, mount, user.userData?.notesDocID]);
-
   async function createNotebook() {
     try {
       const notebookResponse = await axios.post(
@@ -102,7 +41,10 @@ const NotebookComponent = () => {
       );
       let newNotebooks = {};
       notebookResponse.data.result.map((notebook) => {
-        newNotebooks[notebook.notebookID] = notebook.notebookName;
+        newNotebooks[notebook.notebookID] = {
+          notebookName: notebook.notebookName,
+          usedInTemplate: notebook.usedInTemplate,
+        };
       });
       dispatch(setNoteBooks(newNotebooks));
       toast({

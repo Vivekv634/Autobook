@@ -37,7 +37,10 @@ const LoginComponent = () => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        console.log('logged in');
         router.push('/dashboard');
+      } else {
+        console.log('logged out');
       }
     });
   }, [router]);

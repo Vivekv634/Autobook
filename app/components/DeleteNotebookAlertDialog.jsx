@@ -35,7 +35,10 @@ export default function DeleteNotebookAlertDialog({
       );
       let notebooks = {};
       deleteNotebookResponse.data.result.map((notebook) => {
-        notebooks[notebook.notebookID] = notebook.notebookName;
+        notebooks[notebook.notebookID] = {
+          notebookName: notebook.notebookName,
+          usedInTemplate: notebook.usedInTemplate,
+        };
       });
       dispatch(setNoteBooks(notebooks));
       toast({ description: 'Notebook deleted!', className: 'bg-green-400' });

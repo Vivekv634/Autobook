@@ -256,7 +256,7 @@ const NoteEditor = ({ params }) => {
                 {Object.keys(notebooks).map((notebook_id, index) => {
                   return (
                     <SelectItem key={index} value={notebook_id}>
-                      {notebooks[notebook_id]}
+                      {notebooks[notebook_id].notebookName}
                     </SelectItem>
                   );
                 })}

@@ -1,59 +1,18 @@
 'use client';
 import Note from '@/app/components/Note';
-import {
-  removeDeletedNotes,
-  setDeletedNotes,
-  setNotes,
-} from '@/app/redux/slices/noteSlice';
+import { removeDeletedNotes, setNotes } from '@/app/redux/slices/noteSlice';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 
 const TrashComponent = () => {
-  const { deletedNotes, user } = useSelector((state) => state.note);
-  const [notebooks, setNotebooks] = useState({});
+  const { deletedNotes, user, notebooks } = useSelector((state) => state.note);
   const dispatch = useDispatch();
-  const [call, setCall] = useState(true);
   const { toast } = useToast();
   const isDesktop = useMediaQuery('(min-width: 640px)');
-
-  useEffect(() => {
-    async function fetchData(notesDocID) {
-      const deletedNotesResponse = await axios.get(
-        `${process.env.API}/api/notes/get-deleted-notes`,
-        {
-          headers: {
-            notesDocID: notesDocID,
-          },
-        },
-      );
-      dispatch(setDeletedNotes(deletedNotesResponse.data.result));
-
-      const notebookResponse = await axios.get(
-        `${process.env.API}/api/notebooks`,
-        {
-          headers: {
-            notesDocID: notesDocID,
-          },
-        },
-      );
-
-      let temp = {};
-      notebookResponse.data.result.map((notebook) => {
-        temp[notebook.notebookID] = notebook.notebookName;
-      });
-      setNotebooks(temp);
-    }
-
-    if (user.userData?.notesDocID && call) {
-      fetchData(user.userData?.notesDocID);
-      setCall(false);
-    }
-  }, [user.userData?.notesDocID, notebooks, dispatch, call]);
 
   const restoreAll = async () => {
     try {
@@ -127,7 +86,7 @@ const TrashComponent = () => {
               key={index}
               note={note}
               notesDocID={user.userData.notesDocID}
-              notebook_name={notebooks[note.notesbook_ref_id]}
+              notebook_name={notebooks[note.notesbook_ref_id].notebookName}
             />
           );
         })}

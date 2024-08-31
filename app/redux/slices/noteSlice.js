@@ -10,6 +10,7 @@ const initialState = {
   notebooks: {},
   tagsData: {},
   user: {},
+  autoNotes: [],
 };
 
 const noteSlice = createSlice({
@@ -51,6 +52,9 @@ const noteSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    setAutoNotes: (state, action) => {
+      state.autoNotes = action.payload;
+    },
   },
 });
 
@@ -65,5 +69,6 @@ export const {
   setNoteBooks,
   setTagsData,
   setUser,
+  setAutoNotes,
 } = noteSlice.actions;
 export default noteSlice.reducer;

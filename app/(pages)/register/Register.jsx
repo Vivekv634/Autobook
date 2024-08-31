@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { hasCookie } from 'cookies-next';
 import {
   Card,
   CardContent,
@@ -20,6 +19,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase.config';
 
 const RegisterComponent = () => {
   const [name, setName] = useState('');
@@ -32,9 +33,11 @@ const RegisterComponent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (hasCookie('user-session-data')) {
-      router.push('/dashboard');
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push('/dashboard');
+      }
+    });
   }, [router]);
 
   useEffect(() => {

@@ -8,28 +8,28 @@ import {
 } from '@/components/ui/command';
 import { useRouter } from 'next/navigation';
 
-export default function NoteBookSearchDialog({
+export default function AutoNoteSearchDialog({
   searchData,
   noFoundPrompt,
   setOpen,
 }) {
   const router = useRouter();
-  const handleOnClickCommandItem = (notebook_id) => {
-    router.push(`/dashboard/notebooks#${notebook_id}`);
+  const handleOnClickCommandItem = (autoNote) => {
+    router.push(`/dashboard/auto-note#${autoNote.autoNoteID}`);
     setOpen(false);
   };
   return (
     <CommandList>
       <CommandEmpty>{noFoundPrompt}</CommandEmpty>
-      {Object.keys(searchData).map((notebook_id, index) => {
+      {searchData.map((data, index) => {
         return (
-          <CommandItem key={index} className="cursor-pointer">
+          <CommandItem key={index}>
             <div
               onClick={() => {
-                handleOnClickCommandItem(notebook_id);
+                handleOnClickCommandItem(data);
               }}
             >
-              {searchData[notebook_id].notebookName}
+              {data.autoNoteName ?? data}
             </div>
           </CommandItem>
         );

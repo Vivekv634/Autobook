@@ -1,13 +1,7 @@
 'use client';
 import Note from '@/app/components/Note';
 import NoteSearchDialog from '@/app/components/NoteSearchDialog';
-import {
-  setDeletedNotes,
-  setNoteBooks,
-  setNotes,
-  setNoteUpdate,
-  setTagsData,
-} from '@/app/redux/slices/noteSlice';
+import { setNotes } from '@/app/redux/slices/noteSlice';
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Label } from '@/components/ui/label';
@@ -20,110 +14,14 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const NotesComponent = () => {
-  const { notes, isNoteUpdate, user, notebooks } = useSelector(
-    (state) => state.note,
-  );
-  const [mount, setMount] = useState(false);
+  const { notes, user, notebooks } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();
-
-  useEffect(() => {
-    setMount(true);
-  }, [setMount]);
-
-  useEffect(() => {
-    async function fetchData(notesDocID) {
-      const dataResponse = await axios.get(`${process.env.API}/api/data`, {
-        headers: {
-          notesDocID: notesDocID,
-        },
-      });
-
-      let temp = {};
-      dataResponse.data.result.notebooks.map((notebook) => {
-        temp[notebook.notebookID] = notebook.notebookName;
-      });
-      dispatch(setNoteBooks(temp));
-
-      let tagData = {};
-      dataResponse.data.result.notes.map((note) => {
-        note.tagsList.length != 0 &&
-          note.tagsList.map((tag) => {
-            if (Object.keys(tagData).includes(tag)) {
-              tagData[tag] = [...tagData[tag], note];
-            } else {
-              tagData[tag] = [note];
-            }
-          });
-      });
-      dispatch(setTagsData(tagData));
-
-      let sortedNotes = [];
-      dataResponse.data.result.notes.map((note) => {
-        if (!note.isTrash && !note.isLocked && note.isPinned) {
-          sortedNotes.push(note);
-        }
-      });
-
-      dataResponse.data.result.notes.map((note) => {
-        if (!note.isTrash && !note.isLocked && !note.isPinned) {
-          sortedNotes.push(note);
-        }
-      });
-      dispatch(setNotes(sortedNotes));
-
-      let filterDeletedNotes = [];
-      dataResponse.data.result.notes.map((note) => {
-        if (note.isTrash) {
-          filterDeletedNotes.push(note);
-        }
-      });
-      dispatch(setDeletedNotes(filterDeletedNotes));
-    }
-
-    if (user.userData?.notesDocID && mount) {
-      fetchData(user.userData.notesDocID);
-      setMount(false);
-      console.log('fetch data from notes page...');
-    }
-  }, [user.userData?.notesDocID, mount, dispatch]);
-
-  useEffect(() => {
-    if (isNoteUpdate) {
-      let updatedNotes = [];
-      notes &&
-        notes.map((note) => {
-          if (!note.isTrash && !note.isLocked && note.isPinned) {
-            updatedNotes.push(note);
-          }
-        });
-      notes &&
-        notes.map((note) => {
-          if (!note.isTrash && !note.isLocked && !note.isPinned) {
-            updatedNotes.push(note);
-          }
-        });
-      let tagData = {};
-      notes.data.result.notes.map((note) => {
-        note.tagsList.length != 0 &&
-          note.tagsList.map((tag) => {
-            if (Object.keys(tagData).includes(tag)) {
-              tagData[tag] = [...tagData[tag], note];
-            } else {
-              tagData[tag] = [note];
-            }
-          });
-      });
-      dispatch(setTagsData(tagData));
-      dispatch(setNotes(updatedNotes));
-      dispatch(setNoteUpdate(false));
-    }
-  }, [notes, dispatch, isNoteUpdate]);
 
   const createNote = async () => {
     try {
@@ -192,7 +90,7 @@ const NotesComponent = () => {
                     key={index}
                     note={note}
                     notesDocID={user.userData.notesDocID}
-                    notebook_name={notebooks[note.notebook_ref_id]}
+                    notebook_name={notebooks[note.notebook_ref_id].notebookName}
                   />
                 );
               })}

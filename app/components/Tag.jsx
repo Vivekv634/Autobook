@@ -19,7 +19,7 @@ export default function Tag({ tagName, tagNotes, notesDocID, notebooks }) {
             <Note
               key={index}
               notesDocID={notesDocID}
-              notebook_name={notebooks[note.notebook_ref_id]}
+              notebook_name={notebooks[note.notebook_ref_id].notebookName}
               note={note}
             />
           );

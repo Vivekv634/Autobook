@@ -1,19 +1,15 @@
+import { notebooks } from '@/app/utils/schema';
 import { db } from '@/firebase.config';
 import { doc, runTransaction } from 'firebase/firestore';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { uid } from 'uid';
 
 export async function POST(request) {
   try {
     const notesDocID = headers().get('notesDocID');
     const body = await request.json();
     const notesDocRef = doc(db, 'notes', notesDocID);
-    const newNotebook = {
-      notebookID: uid(),
-      notebookName: body.notebookName,
-      notebookCreationDate: new Date().toString(),
-    };
+    const newNotebook = { ...notebooks, ...body };
     let updatedData;
     await runTransaction(db, async (transaction) => {
       const notesDocSnap = await transaction.get(notesDocRef);
