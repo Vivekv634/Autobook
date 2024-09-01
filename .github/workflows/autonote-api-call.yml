@@ -1,0 +1,14 @@
+name: AutoNote api call
+
+on:
+  schedule:
+    - cron: '* * * * *'
+  workflow_dispatch:
+
+jobs:
+  api-call:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Make API Call
+        run: curl -X PATCH "https://notesnook-sand.vercel.app/api/utils/create-autonote-notes"

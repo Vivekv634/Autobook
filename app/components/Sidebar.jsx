@@ -47,32 +47,31 @@ const Menubar = () => {
           const docRef = doc(db, 'notes', notesDocID);
           const unsubscribe = onSnapshot(docRef, (doc) => {
             const { notes, notebooks, autoNotes } = doc.data();
-
             let updatedNotes = [];
+            let tagsData = {};
+            let deletedNotes = [];
             notes?.map((note) => {
-              if (!note.isTrash && !note.isLocked && note.isPinned) {
-                updatedNotes.push(note);
+              if (!note.isTrash && !note.isLocked) {
+                if (note.isPinned) {
+                  updatedNotes.unshift(note);
+                } else {
+                  updatedNotes.push(note);
+                }
+                note?.tagsList?.map((tag) => {
+                  if (tagsData[tag]) {
+                    tagsData[tag].push(note);
+                  } else {
+                    tagsData[tag] = [note];
+                  }
+                });
               }
-            });
-            notes?.map((note) => {
-              if (!note.isTrash && !note.isLocked && !note.isPinned) {
-                updatedNotes.push(note);
+              if (note.isTrash) {
+                deletedNotes.push(note);
               }
             });
             dispatch(setNotes(updatedNotes));
-
-            let tagData = {};
-            notes?.map((note) => {
-              note.tagsList.length != 0 &&
-                note.tagsList.map((tag) => {
-                  if (Object.keys(tagData).includes(tag)) {
-                    tagData[tag] = [...tagData[tag], note];
-                  } else {
-                    tagData[tag] = [note];
-                  }
-                });
-            });
-            dispatch(setTagsData(tagData));
+            dispatch(setTagsData(tagsData));
+            dispatch(setDeletedNotes(deletedNotes));
 
             let Notebooks = {};
             notebooks.map((notebook) => {
@@ -82,14 +81,6 @@ const Menubar = () => {
               };
             });
             dispatch(setNoteBooks(Notebooks));
-
-            let filterDeletedNotes = [];
-            notes.map((note) => {
-              if (note.isTrash) {
-                filterDeletedNotes.push(note);
-              }
-            });
-            dispatch(setDeletedNotes(filterDeletedNotes));
 
             dispatch(setAutoNotes(autoNotes));
             console.log('fetching data from snap shot...');

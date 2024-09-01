@@ -24,7 +24,7 @@ export const autoNote = {
   autoNoteID: uid(),
   autoNoteName: '',
   titleFormat: '',
-  state: 'ready',
+  state: 'running',
   noteGenerationPeriod: '1 day',
   noteGenerated: 0,
   autoNoteNotebookID: null,

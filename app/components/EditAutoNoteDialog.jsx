@@ -18,8 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { generationPeriod, state } from '../utils/schema';
-import { Separator } from '@/components/ui/separator';
+import { generationPeriod } from '../utils/schema';
 import { Button, buttonVariants } from '@/components/ui/button';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,6 +27,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { titleFormatter } from '../utils/titleFormatter';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from 'usehooks-ts';
+import { Separator } from '@/components/ui/separator';
 
 const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -35,7 +35,7 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
   const [titleFormat, setTitleFormat] = useState(autoNote.titleFormat);
   const [showHelp, setShowHelp] = useState(false);
   const [period, setPeriod] = useState(autoNote.noteGenerationPeriod);
-  const [autoNoteState, setAutoNoteState] = useState(autoNote.state);
+  const [autoNoteState] = useState(autoNote.state);
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.note);
   const dispatch = useDispatch();
@@ -122,6 +122,7 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
             )}
           </Label>
         </div>
+        <Separator />
         <div className="flex items-center justify-between">
           <div className="text-lg font-semibold">generation period</div>
           <Select value={period} onValueChange={(e) => setPeriod(e)}>
@@ -133,27 +134,6 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
                 return (
                   <SelectItem key={index} value={period.value}>
                     {period.label}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator />
-        <div className="flex items-center justify-between">
-          <div className="text-lg font-semibold">State</div>
-          <Select
-            value={autoNoteState}
-            onValueChange={(e) => setAutoNoteState(e)}
-          >
-            <SelectTrigger className="w-fit">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" side="top" align="end">
-              {state.map((state, index) => {
-                return (
-                  <SelectItem key={index} value={state.value}>
-                    {state.label}
                   </SelectItem>
                 );
               })}
