@@ -31,7 +31,7 @@ export async function PATCH(request) {
               ...Notes,
               title: titleFormatter(autoNote.titleFormat),
               notebook_ref_id: autoNote.autoNoteNotebookID,
-              body: autoNote.template.body.blocks,
+              body: JSON.stringify(autoNote.template.body.blocks),
             };
             notesData.notes.push(newNoteBody);
 
