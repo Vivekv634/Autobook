@@ -20,9 +20,7 @@ import {
 } from '@/components/ui/select';
 import { generationPeriod } from '../utils/schema';
 import { Button, buttonVariants } from '@/components/ui/button';
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
-import { setAutoNotes, setNoteBooks } from '../redux/slices/noteSlice';
+import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
 import { titleFormatter } from '../utils/titleFormatter';
 import { cn } from '@/lib/utils';
@@ -42,8 +40,7 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
   const [anNotebook, setANNotebook] = useState(autoNote.autoNoteNotebookID);
   const [newNotebookFlag, setNewNotebookFlag] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
-  const { user, notebooks } = useSelector((state) => state.note);
-  const dispatch = useDispatch();
+  const { notebooks } = useSelector((state) => state.note);
   const { toast } = useToast();
 
   const handleSaveChanges = async () => {
