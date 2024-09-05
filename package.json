@@ -48,6 +48,7 @@
     "@son_xx/editor-js-parser": "^1.0.7",
     "@sotaproject/strikethrough": "^1.0.1",
     "@tabler/icons-react": "^3.11.0",
+    "@vercel/speed-insights": "^1.0.12",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
