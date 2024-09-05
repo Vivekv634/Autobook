@@ -11,12 +11,13 @@ export const notes = {
   isLocked: false,
   isTrash: false,
   deletionTimeStamp: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
+  title: '',
+  body: null,
 };
 
 export const notebooks = {
   notebookID: uid(),
   notebookName: '',
-  notebookCreationDate: new Date().toString(),
   usedInTemplate: false,
 };
 

@@ -38,7 +38,6 @@ export async function PATCH(request) {
             const updatedAutoNoteBody = {
               ...AutoNote,
               ...autoNote,
-              noteGenerated: autoNote.noteGenerated + 1,
               lastNoteGenerationTime: currentTime,
             };
 

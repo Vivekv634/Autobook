@@ -25,7 +25,7 @@ import AutoNoteContextMenu from './AutoNoteContextMenu';
 
 const AutoNote = ({ autoNote }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
-  const timeAgo = formatDistanceToNowStrict(autoNote?.autoNoteUpdationDate, {
+  const timeAgo = formatDistanceToNowStrict(autoNote?.lastNoteGenerationTime, {
     addSuffix: true,
   });
 
@@ -64,14 +64,14 @@ const AutoNote = ({ autoNote }) => {
                             <Book className="h-3 w-4 p-0 m-0" />
                             {
                               notebooks[autoNote.autoNoteNotebookID]
-                                .notebookName
+                                ?.notebookName
                             }
                           </Badge>
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent>
                         Go to{' '}
-                        {notebooks[autoNote.autoNoteNotebookID].notebookName}
+                        {notebooks[autoNote.autoNoteNotebookID]?.notebookName}
                       </TooltipContent>
                     </>
                   )}
@@ -82,7 +82,7 @@ const AutoNote = ({ autoNote }) => {
             <CardFooter className="flex flex-col">
               <Separator />
               <div className="flex justify-between w-full">
-                <div>Note generated : {autoNote.noteGenerated}</div>
+                <div>Note Generated {timeAgo} </div>
                 <div>Period : {autoNote.noteGenerationPeriod}</div>
               </div>
             </CardFooter>

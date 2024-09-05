@@ -8,15 +8,16 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { Dialog } from '@/components/ui/dialog';
-import { PenLine, Trash2 } from 'lucide-react';
+import { PenLine, SquarePlus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import EditAutoNoteDialog from './EditAutoNoteDialog';
 import DeleteAutoNoteDialog from './DeleteAutoNoteDialog';
-import { state } from '../utils/schema';
+import { notes, state } from '../utils/schema';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAutoNotes } from '../redux/slices/noteSlice';
+import { setAutoNotes, setNotes } from '../redux/slices/noteSlice';
 import { useToast } from '@/components/ui/use-toast';
+import { titleFormatter } from '../utils/titleFormatter';
 
 const AutoNoteContextMenu = ({ autoNote, children }) => {
   const [deleteDialogOpen, setDeteleDialogOpen] = useState(false);
@@ -43,13 +44,47 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       dispatch(setAutoNotes(autoNoteResponse.data.result));
       toast({
         description: 'Auto Note updated successfully',
-        className: 'bg-green-400',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);
       toast({
         description: 'Oops! Something went wrong. Please try again later.',
-        className: 'bg-red-400',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCreateNote = async () => {
+    try {
+      const newNoteBody = {
+        ...notes,
+        title: titleFormatter(autoNote.titleFormat),
+        notebook_ref_id: autoNote.autoNoteNotebookID,
+        body: JSON.stringify(autoNote.template.body.blocks),
+      };
+      const notesResponse = await axios.post(
+        `${process.env.API}/api/notes/create`,
+        newNoteBody,
+        { headers: { notesDocID: user.userData.notesDocID } },
+      );
+      dispatch(setNotes(notesResponse.data.result));
+
+      const autoNoteResponse = await axios.put(
+        `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
+        { noteGenerated: autoNote.noteGenerated + 1 },
+        { headers: { notesDocID: user.userData.notesDocID } },
+      );
+      dispatch(setAutoNotes(autoNoteResponse.data.result));
+      toast({
+        description: 'New Note created successfully',
+        className: 'bg-green-500',
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: 'Oops! Something went wrong. Please try again later.',
+        variant: 'destructive',
       });
     }
   };
@@ -58,7 +93,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
     <Dialog>
       <ContextMenu>
         <ContextMenuTrigger>{children}</ContextMenuTrigger>
-        <ContextMenuContent>
+        <ContextMenuContent className="w-48">
           <ContextMenuItem
             onClick={() => setEditDialogOpen(true)}
             className="flex justify-between items-center"
@@ -82,6 +117,13 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
               );
             })}
           </ContextMenuRadioGroup>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={handleCreateNote}
+            className="flex justify-between items-center"
+          >
+            Create note now <SquarePlus className="h-4 w-5" />
+          </ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem
             onClick={() => setDeteleDialogOpen(true)}

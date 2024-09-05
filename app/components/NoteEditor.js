@@ -57,7 +57,9 @@ const NoteEditor = ({ params }) => {
   );
   const [loading, setLoading] = useState(false);
   const [notebookValue, setNotebookValue] = useState(
-    editorNote?.notebook_ref_id ?? 'none',
+    notebooks[editorNote?.notebook_ref_id]
+      ? editorNote?.notebook_ref_id
+      : 'none',
   );
 
   useEffect(() => {
@@ -240,7 +242,7 @@ const NoteEditor = ({ params }) => {
         <div
           className={cn(
             !isDesktop &&
-              'flex items-center mt-4 mb-1 justify-between print:hidden',
+              'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
             isDesktop && 'flex justify-end gap-2 print:hidden',
           )}
         >
@@ -287,23 +289,22 @@ const NoteEditor = ({ params }) => {
           {noteTagsInput != ''
             ? !tagsEditable && (
                 <Label
-                  className="flex flex-wrap items-center gap-1"
+                  className="flex flex-wrap items-center gap-1 cursor-pointer"
                   onClick={() => setTagsEditable(true)}
                 >
                   {noteTagsInput &&
                     noteTagsInput
                       .split(' ')
                       .filter((tag) => tag.trim() !== '')
-                      .map((tag, index) => {
-                        return <span key={index}>{`#${tag} `}</span>;
-                      })}
+                      .map((tag) => `#${tag}`)
+                      .join(' ')}
                   <Pen className="h-3 w-3" />
                 </Label>
               )
             : !tagsEditable && (
                 <Label
                   onClick={() => setTagsEditable(true)}
-                  className="flex gap-1 items-center"
+                  className="flex gap-1 items-center cursor-pointer"
                 >
                   Add tags <PenLine className="h-3 w-3" />
                 </Label>
@@ -319,7 +320,10 @@ const NoteEditor = ({ params }) => {
             />
           )}
         </div>
-        <div id="editorjs" className="px-20 py-4 border rounded-md"></div>
+        <div
+          id="editorjs"
+          className={cn(isDesktop && 'px-20 py-4 ', 'border rounded-md')}
+        ></div>
         <ScrollBar />
       </ScrollArea>
     </section>

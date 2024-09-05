@@ -91,7 +91,7 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                   note.tagsList.map((tag, index) => {
                     return (
                       <Link
-                        className="pr-1 underline text-sm hover:text-green-500"
+                        className="pr-1 transition-all underline text-sm hover:text-green-500"
                         key={index}
                         href={`/dashboard/tags#${tag}`}
                       >{`#${tag}`}</Link>

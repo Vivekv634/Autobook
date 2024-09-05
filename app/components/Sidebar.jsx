@@ -42,7 +42,7 @@ const Menubar = () => {
     onAuthStateChanged(auth, (User) => {
       if (!User) {
         router.push('/login');
-      } else if (mount && Object.keys(user).length == 0) {
+      } else if (mount && Object.keys(user).length === 0) {
         fetchData(User.uid).then((notesDocID) => {
           const docRef = doc(db, 'notes', notesDocID);
           const unsubscribe = onSnapshot(docRef, (doc) => {
@@ -50,6 +50,7 @@ const Menubar = () => {
             let updatedNotes = [];
             let tagsData = {};
             let deletedNotes = [];
+
             notes?.map((note) => {
               if (!note.isTrash && !note.isLocked) {
                 if (note.isPinned) {
@@ -57,33 +58,36 @@ const Menubar = () => {
                 } else {
                   updatedNotes.push(note);
                 }
-                note?.tagsList?.map((tag) => {
-                  if (tagsData[tag]) {
-                    tagsData[tag].push(note);
-                  } else {
-                    tagsData[tag] = [note];
-                  }
-                });
+                note.tagsList &&
+                  note.tagsList.map((tag) => {
+                    if (tagsData[tag]) {
+                      tagsData[tag].push(note);
+                    } else {
+                      tagsData[tag] = [note];
+                    }
+                  });
               }
               if (note.isTrash) {
                 deletedNotes.push(note);
               }
             });
+
             dispatch(setNotes(updatedNotes));
             dispatch(setTagsData(tagsData));
             dispatch(setDeletedNotes(deletedNotes));
 
             let Notebooks = {};
-            notebooks.map((notebook) => {
+            notebooks?.map((notebook) => {
               Notebooks[notebook.notebookID] = {
                 notebookName: notebook.notebookName,
                 usedInTemplate: notebook.usedInTemplate,
               };
             });
-            dispatch(setNoteBooks(Notebooks));
 
+            dispatch(setNoteBooks(Notebooks));
             dispatch(setAutoNotes(autoNotes));
-            console.log('fetching data from snap shot...');
+
+            console.log('fetching data from snapshot...');
           });
           return () => unsubscribe();
         });

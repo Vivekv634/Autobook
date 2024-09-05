@@ -26,7 +26,6 @@ import {
   setDeletedNotes,
   setEditorNote,
   setNotes,
-  setNoteUpdate,
 } from '../redux/slices/noteSlice';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
@@ -86,8 +85,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
         },
       );
       dispatch(setNotes(response.data.result));
-      dispatch(setNoteUpdate(true));
-      toast({ ...toastMessage, className: 'bg-green-400 text-white' });
+      toast({ ...toastMessage, className: 'bg-green-500 text-white' });
     } catch (error) {
       console.error(error);
       toast({
@@ -110,7 +108,6 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
         },
       );
       dispatch(setNotes(restoreResponse.data.result));
-      dispatch(setNoteUpdate(true));
       let filterDeletedNotes = restoreResponse.data.result.filter(
         (note) => note.isTrash === true,
       );
@@ -161,7 +158,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
       },
     );
     dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', className: 'bg-green-400' });
+    toast({ description: 'Note duplicated!', className: 'bg-green-500' });
   };
 
   const handleCopyAsHTML = () => {

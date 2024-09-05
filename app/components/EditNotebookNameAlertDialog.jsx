@@ -13,8 +13,6 @@ import {
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setNoteBooks } from '../redux/slices/noteSlice';
 import { useToast } from '@/components/ui/use-toast';
 
 export default function EditNotebookNameAlertDialog({
@@ -25,11 +23,10 @@ export default function EditNotebookNameAlertDialog({
 }) {
   const [newNotebookName, setNewNotebookName] = useState(notebookName);
   const { toast } = useToast();
-  const dispatch = useDispatch();
 
   async function handleSave() {
     try {
-      const notebookResponse = await axios.put(
+      await axios.put(
         `${process.env.API}/api/notebooks/update/${notebook_id}`,
         { notebookName: newNotebookName },
         {
@@ -38,23 +35,15 @@ export default function EditNotebookNameAlertDialog({
           },
         },
       );
-      let notebooks = {};
-      notebookResponse.data.result.map((notebook) => {
-        notebooks[notebook.notebookID] = {
-          notebookName: notebook.notebookName,
-          usedInTemplate: notebook.usedInTemplate,
-        };
-      });
-      dispatch(setNoteBooks(notebooks));
       toast({
         description: 'Notebook name updated!',
-        className: 'bg-green-400',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);
       toast({
         description: 'Oops! something went wrong. Try again later!',
-        className: 'bg-red-400',
+        variant: 'destructive',
       });
     }
   }

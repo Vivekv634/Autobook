@@ -30,29 +30,26 @@ const TagsComponent = () => {
           />
         </div>
       </CommandDialog>
-      {tagsData && notebooks ? (
+      {tagsData && (
         <Accordion
           collapsible="true"
           type="multiple"
           className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
           defaultValue={Object.keys(tagsData)}
         >
-          {Object.keys(tagsData).length != 0 &&
-            Object.keys(tagsData).map((tag) => {
-              return (
-                <Tag
-                  key={tag}
-                  notesDocID={user.userData.notesDocID}
-                  notebooks={notebooks}
-                  tagName={tag}
-                  tagNotes={tagsData[tag]}
-                />
-              );
-            })}
+          {Object.keys(tagsData).length !== 0 &&
+            Object.keys(tagsData).map((tag) => (
+              <Tag
+                key={tag}
+                notesDocID={user.userData.notesDocID}
+                notebooks={notebooks}
+                tagName={tag}
+                tagNotes={tagsData[tag]}
+              />
+            ))}
         </Accordion>
-      ) : (
-        <div className="">No tags here.</div>
       )}
+      {!tagsData && <div>No tags here.</div>}
     </section>
   );
 };

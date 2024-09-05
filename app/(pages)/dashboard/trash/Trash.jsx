@@ -86,7 +86,7 @@ const TrashComponent = () => {
               key={index}
               note={note}
               notesDocID={user.userData.notesDocID}
-              notebook_name={notebooks[note.notebook_ref_id].notebookName}
+              notebook_name={notebooks[note.notebook_ref_id]?.notebookName}
             />
           );
         })}

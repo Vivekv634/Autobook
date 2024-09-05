@@ -63,13 +63,13 @@ const ProfileComponent = () => {
       .then(() => {
         toast({
           description: 'Verification email sent!',
-          className: 'bg-green-400',
+          className: 'bg-green-500',
         });
       })
       .catch((error) => {
         toast({
           description: 'Oops! something went wrong!',
-          className: 'bg-red-400',
+          variant: 'destructive',
         });
         console.log(error);
       });
@@ -83,13 +83,13 @@ const ProfileComponent = () => {
         { name: newName },
       );
       dispatch(setUser({ ...user, ...response.data.result }));
-      toast({ description: 'Name updated!', className: 'bg-green-400' });
+      toast({ description: 'Name updated!', className: 'bg-green-500' });
       router.refresh();
     } catch (error) {
       console.error(error);
       toast({
         description: 'Oops! something went wrong. Try again.',
-        className: 'bg-red-400',
+        variant: 'destructive',
       });
     }
   };
@@ -121,7 +121,7 @@ const ProfileComponent = () => {
       console.error('Error updating email:', error);
       toast({
         description: `Oops! ${error.message}`,
-        className: 'bg-red-400',
+        variant: 'destructive',
       });
     }
   };

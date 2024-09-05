@@ -38,7 +38,7 @@ const SettingsComponent = () => {
       { theme: theme },
     );
     dispatch(setUser({ ...user, ...response.data.result }));
-    toast({ description: 'Theme updated!', className: 'bg-green-400' });
+    toast({ description: 'Theme updated!', className: 'bg-green-500' });
     setTheme(theme);
   };
 
@@ -50,7 +50,7 @@ const SettingsComponent = () => {
     dispatch(setUser({ ...user, ...response.data.result }));
     toast({
       description: 'Default home page updated!',
-      className: 'bg-green-400',
+      className: 'bg-green-500',
     });
   };
 
@@ -62,7 +62,7 @@ const SettingsComponent = () => {
     dispatch(setUser({ ...user, ...response.data.result }));
     toast({
       description: 'Trash interval updated!',
-      className: 'bg-green-400',
+      className: 'bg-green-500',
     });
   };
   return (

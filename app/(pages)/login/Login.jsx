@@ -59,13 +59,13 @@ const LoginComponent = () => {
     try {
       signInWithEmailAndPassword(auth, email, password).then((data) => {
         dispatch(loginSuccess(data.user));
-        toast({ description: 'Login Successful', className: 'bg-green-400' });
+        toast({ description: 'Login Successful', className: 'bg-green-500' });
       });
     } catch (error) {
       console.error(error);
       toast({
         description: 'Oops! something went wrong!',
-        className: 'bg-red-400',
+        variant: 'destructive',
       });
       dispatch(loginFailure(null));
     }

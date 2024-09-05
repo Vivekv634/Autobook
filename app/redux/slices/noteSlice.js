@@ -2,11 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   notes: [],
-  isNoteUpdate: false,
   editorNote: null,
   isEditorNote: false,
   deletedNotes: [],
-  isDeletedNotes: false,
   notebooks: {},
   tagsData: {},
   user: {},
@@ -19,9 +17,6 @@ const noteSlice = createSlice({
   reducers: {
     setNotes: (state, action) => {
       state.notes = action.payload;
-    },
-    setNoteUpdate: (state, action) => {
-      state.isNoteUpdate = action.payload;
     },
     setEditorNote: (state, action) => {
       state.editorNote = action.payload;
@@ -37,11 +32,9 @@ const noteSlice = createSlice({
     },
     setDeletedNotes: (state, action) => {
       state.deletedNotes = action.payload;
-      state.isDeletedNotes = state.deletedNotes.length > 0;
     },
     removeDeletedNotes: (state) => {
       state.deletedNotes = [];
-      state.isDeletedNotes = state.deletedNotes.length > 0;
     },
     setNoteBooks: (state, action) => {
       state.notebooks = action.payload;
@@ -60,7 +53,6 @@ const noteSlice = createSlice({
 
 export const {
   setNotes,
-  setNoteUpdate,
   removeNotes,
   setEditorNote,
   removeEditorNote,

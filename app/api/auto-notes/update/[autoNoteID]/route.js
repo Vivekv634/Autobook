@@ -2,6 +2,7 @@ import { db } from '@/firebase.config';
 import { doc, runTransaction } from 'firebase/firestore';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { autoNote as AutoNote } from '@/app/utils/schema';
 
 export async function PUT(request, { params }) {
   try {
@@ -22,9 +23,9 @@ export async function PUT(request, { params }) {
       updatedAutoNotes = autoNotesData.map((autoNote) => {
         if (autoNote.autoNoteID === autoNoteID) {
           return {
+            ...AutoNote,
             ...autoNote,
             ...body,
-            autoNoteUpdationDate: new Date().toString(),
           };
         } else {
           return autoNote;

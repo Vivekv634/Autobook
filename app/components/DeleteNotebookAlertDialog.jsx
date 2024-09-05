@@ -11,21 +11,28 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setNoteBooks } from '../redux/slices/noteSlice';
+import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
+import { useState } from 'react';
 
 export default function DeleteNotebookAlertDialog({
   children,
   notebook_id,
   notesDocID,
 }) {
-  const dispatch = useDispatch();
+  const { notebooks, autoNotes } = useSelector((state) => state.note);
   const { toast } = useToast();
+  const [anName] = useState(
+    autoNotes?.map((autoNote) => {
+      if (autoNote.autoNoteNotebookID === notebook_id) {
+        return autoNote.autoNoteName;
+      }
+    }),
+  );
 
   async function handleDelete() {
     try {
-      const deleteNotebookResponse = await axios.delete(
+      await axios.delete(
         `${process.env.API}/api/notebooks/delete/${notebook_id}`,
         {
           headers: {
@@ -33,20 +40,12 @@ export default function DeleteNotebookAlertDialog({
           },
         },
       );
-      let notebooks = {};
-      deleteNotebookResponse.data.result.map((notebook) => {
-        notebooks[notebook.notebookID] = {
-          notebookName: notebook.notebookName,
-          usedInTemplate: notebook.usedInTemplate,
-        };
-      });
-      dispatch(setNoteBooks(notebooks));
-      toast({ description: 'Notebook deleted!', className: 'bg-green-400' });
+      toast({ description: 'Notebook deleted!', className: 'bg-green-500' });
     } catch (error) {
       console.error(error);
       toast({
         description: 'Oops! something went wrong. Try again later!',
-        className: 'bg-red-400',
+        variant: 'destructive',
       });
     }
   }
@@ -59,19 +58,48 @@ export default function DeleteNotebookAlertDialog({
       >
         {children}
       </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the
-            notebook, but doesn&apos;t delete your notes.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
+      {notebooks[notebook_id].usedInTemplate ? (
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Can&apos;t delete notebook</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cannot delete this notebook because this notebook is used in the
+              <span className="font-bold px-1 inline-block">{anName}</span> Auto
+              Note. If you want to delete
+              <span className="font-bold px-1 inline-block">
+                {notebooks[notebook_id].notebookName}
+              </span>
+              notebook, then change the
+              <span className="font-bold px-1 inline-block">
+                {anName}&apos;s
+              </span>
+              notebook and then you can delete the delete this notebook.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Close</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      ) : (
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the{' '}
+              <span className="font-bold px-1">
+                {notebooks[notebook_id]?.notebookName}
+              </span>
+              notebook, but doesn&apos;t delete your notes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      )}
     </AlertDialog>
   );
 }

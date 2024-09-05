@@ -28,6 +28,7 @@ import { uid } from 'uid';
 import axios from 'axios';
 import { setAutoNotes, setNoteBooks } from '../redux/slices/noteSlice';
 import { useToast } from '@/components/ui/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const NewAutoNoteDialog = () => {
   const dispatch = useDispatch();
@@ -35,62 +36,133 @@ const NewAutoNoteDialog = () => {
   const [autoNoteName, setAutoNoteName] = useState('');
   const [titleFormat, setTitleFormat] = useState('');
   const [showHelp, setShowHelp] = useState(false);
-  const [notebookName, setNotebookName] = useState('');
   const [error, setError] = useState(null);
   const [period, setPeriod] = useState('1 day');
   const [loading, setLoading] = useState(false);
   const [autoNoteState, setAutoNoteState] = useState('running');
   const { notebooks, user } = useSelector((state) => state.note);
+  const [anNotebook, setANNotebook] = useState(
+    autoNote.autoNoteNotebookID ?? 'none',
+  );
+  const [newNotebookFlag, setNewNotebookFlag] = useState(
+    Object.keys(notebooks).length == 0,
+  );
+  const [newNotebookName, setNewNotebookName] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
-    if (Object.values(notebooks).includes(notebookName.trim())) {
-      setError(`'${notebookName}' already exists!`);
+    if (Object.values(notebooks).includes(newNotebookName.trim())) {
+      setError(`'${newNotebookName}' already exists!`);
     } else {
       setError(null);
     }
-  }, [setError, notebooks, notebookName]);
+  }, [setError, notebooks, newNotebookName]);
 
   const handleCreateAutoNote = async () => {
     try {
+      if (anNotebook === 'none' && !newNotebookFlag) {
+        toast({ description: 'You must select a notebook first!' });
+        setLoading(false);
+        return;
+      }
       setLoading(true);
-      const notebookID = uid();
-      const notebooks = {
-        notebookID: notebookID,
-        notebookName: notebookName,
-        usedInTemplate: true,
-      };
-      const autoNotes = {
+      let newAutoNoteBody = {
         ...autoNote,
         autoNoteName: autoNoteName,
-        autoNoteNotebookID: notebookID,
-        noteGenerationPeriod: period,
-        state: autoNoteState,
         titleFormat: titleFormat,
+        state: autoNoteState,
+        noteGenerationPeriod: period,
       };
-      const dataResponse = await axios.put(
-        `${process.env.API}/api/data/update`,
-        { autoNotes, notebooks },
-        { headers: { notesDocID: user.userData.notesDocID } },
-      );
-      let temp = {};
-      dataResponse.data.result.notebooks.map((notebook) => {
-        temp[notebook.notebookID] = notebook.notebookName;
-      });
-      dispatch(setNoteBooks(temp));
-      dispatch(setAutoNotes(dataResponse.data.result.autoNotes));
-      toast({
-        description: 'New Auto Note created!',
-        className: 'bg-green-400',
-      });
+      if (Object.keys(notebooks).length == 0 || newNotebookFlag) {
+        const notebookID = uid();
+        const newNotebookBody = {
+          notebookID: notebookID,
+          notebookName: newNotebookName,
+          usedInTemplate: true,
+        };
+        newAutoNoteBody['autoNoteNotebookID'] = notebookID;
+        console.log(newNotebookBody, newAutoNoteBody);
+        await axios
+          .post(`${process.env.API}/api/notebooks/create`, newNotebookBody, {
+            headers: { notesDocID: user.userData.notesDocID },
+          })
+          .then((notebookResponse) => {
+            console.log(notebookResponse.data.result);
+            let Notebooks = {};
+            notebookResponse.data.result?.map((notebook) => {
+              Notebooks[notebook.notebookID] = {
+                notebookName: notebook.notebookName,
+                usedInTemplate: notebook.usedInTemplate,
+              };
+            });
+            dispatch(setNoteBooks(Notebooks));
+          });
+      } else {
+        if (notebooks[anNotebook].usedInTemplate) {
+          toast({
+            description: (
+              <span>
+                <span className="font-bold">
+                  {notebooks[anNotebook].notebookName}
+                </span>{' '}
+                notebook is already used in another auto note.
+              </span>
+            ),
+          });
+          setLoading(false);
+          return;
+        }
+        newAutoNoteBody['autoNoteNotebookID'] = anNotebook;
+        let Notebooks = { ...notebooks };
+        console.log(Notebooks, newAutoNoteBody);
+        Object.keys(Notebooks).map((notebook_id) => {
+          if (notebook_id === anNotebook)
+            Notebooks[notebook_id].usedInTemplate = true;
+        });
+        let updatedNotebooks = [];
+        Object.keys(Notebooks).map((notebook_id) => {
+          updatedNotebooks.push({
+            notebookID: notebook_id,
+            ...Notebooks[notebook_id],
+          });
+        });
+        console.log(newAutoNoteBody, updatedNotebooks);
+        // await axios
+        //   .put(`${process.env.API}/api/notebooks/updateall`, updatedNotebooks, {
+        //     headers: { notesDocID: user.userData.notesDocID },
+        //   })
+        //   .then((notebookResponse) => {
+        //     let notebooks = {};
+        //     notebookResponse.data.result.map((notebook) => {
+        //       notebooks[notebook.notebookID] = {
+        //         notebookName: notebook.notebookName,
+        //         usedInTemplate: notebook.usedInTemplate,
+        //       };
+        //     });
+        //     console.log(notebooks);
+        //     dispatch(setNoteBooks(notebooks));
+        //   });
+      }
+      await axios
+        .post(`${process.env.API}/api/auto-notes/create`, newAutoNoteBody, {
+          headers: { notesDocID: user.userData.notesDocID },
+        })
+        .then((autoNoteResponse) => {
+          console.log(autoNoteResponse.data.result);
+          dispatch(setAutoNotes(autoNoteResponse.data.result));
+        });
       setLoading(false);
+      toast({
+        description: 'Auto Note Created Successfully!',
+        className: 'bg-green-500',
+      });
     } catch (error) {
       console.error(error);
-      toast({
-        description: 'Oops! something went wrong. Try again!',
-        className: 'bg-red-400',
-      });
       setLoading(false);
+      toast({
+        description: 'Oops! something went wrong!',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -100,120 +172,161 @@ const NewAutoNoteDialog = () => {
         <DialogTitle>Create auto note</DialogTitle>
         <DialogDescription>Create a new auto note.</DialogDescription>
       </DialogHeader>
-      <div className="">
-        <Label htmlFor="autoNoteName">Auto Note Name</Label>
-        <Input
-          id="autoNoteName"
-          value={autoNoteName}
-          onChange={(e) => setAutoNoteName(e.target.value)}
-          placeholder="Your auto note name"
-          required
-        />
-      </div>
-      <div>
-        <Label htmlFor="titleFormat" className="flex gap-1">
-          Title Format <CircleHelp className="h-4 w-4 cursor-pointer" />
-        </Label>
-        <Input
-          id="titleFormat"
-          className="my-2"
-          value={titleFormat}
-          onChange={(e) => setTitleFormat(e.target.value)}
-          onFocus={() => setShowHelp(true)}
-          onBlur={() => setShowHelp(false)}
-          placeholder="Your title format"
-          required
-        />
-        <Label className="text-muted-foreground">
-          {showHelp && (
-            <>
-              <div className="font-extrabold mb-1">
-                Preview: {titleFormatter(titleFormat, 0)}
-              </div>
-              <div className="leading-4">
-                Available Formatters: <br />
-                #COUNT : Number of notes + 1
-                <br />
-                #TIME : Current time
-                <br />
-                #DATE : Current Date
-                <br />
-                #FULLDATE : Current full date
-                <br />
-                #DATEONLY : Current Date only
-                <br />
-              </div>
-            </>
-          )}
-        </Label>
+      <form
+        onSubmit={handleCreateAutoNote}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
         <div className="">
-          <Label htmlFor="notebookName">New Notebook Name</Label>
+          <Label htmlFor="autoNoteName">Auto Note Name</Label>
           <Input
-            id="notebookName"
-            value={notebookName}
-            onChange={(e) => setNotebookName(e.target.value)}
-            placeholder="Create a new notebook"
+            id="autoNoteName"
+            value={autoNoteName}
+            onChange={(e) => setAutoNoteName(e.target.value)}
+            placeholder="Your auto note name"
             required
           />
-          {error && <Label className="text-red-400">{error}</Label>}
         </div>
-        <div className="flex items-center justify-between my-3">
-          <div className="text-lg font-semibold">generation period</div>
-          <Select value={period} onValueChange={(e) => setPeriod(e)}>
-            <SelectTrigger className="w-fit">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" side="top" align="end">
-              {generationPeriod.map((period, index) => {
-                return (
-                  <SelectItem key={index} value={period.value}>
-                    {period.label}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+        <div>
+          <Label htmlFor="titleFormat" className="flex gap-1">
+            Title Format <CircleHelp className="h-4 w-4 cursor-pointer" />
+          </Label>
+          <Input
+            id="titleFormat"
+            className="my-2"
+            value={titleFormat}
+            onChange={(e) => setTitleFormat(e.target.value)}
+            onFocus={() => setShowHelp(true)}
+            onBlur={() => setShowHelp(false)}
+            placeholder="Your title format"
+            required
+          />
+          <Label className="text-muted-foreground">
+            {showHelp && (
+              <>
+                <div className="font-extrabold mb-1">
+                  Preview: {titleFormatter(titleFormat, 0)}
+                </div>
+                <div className="leading-4">
+                  Available Formatters: <br />
+                  #COUNT : Number of notes + 1
+                  <br />
+                  #TIME : Current time
+                  <br />
+                  #DATE : Current Date
+                  <br />
+                  #FULLDATE : Current full date
+                  <br />
+                  #DATEONLY : Current Date only
+                  <br />
+                </div>
+              </>
+            )}
+          </Label>
+          <div className={cn(newNotebookFlag && 'hidden')}>
+            <Label>Select Notebook</Label>
+            <Select
+              value={anNotebook}
+              onValueChange={(e) => setANNotebook(e)}
+              disabled={newNotebookFlag}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" side="top" align="end">
+                <SelectItem value="none" key="none" className="text-red-400">
+                  Select Notebook
+                </SelectItem>
+                {Object.keys(notebooks).map((notebook_id, index) => {
+                  return (
+                    <SelectItem value={notebook_id} key={index}>
+                      {notebooks[notebook_id].notebookName}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className={cn(!newNotebookFlag && 'hidden')}>
+            <Label>New Notebook Name</Label>
+            <Input
+              placeholder="Enter New Notebook Name..."
+              value={newNotebookName}
+              onChange={(e) => setNewNotebookName(e.target.value)}
+              required
+              disabled={!newNotebookFlag}
+            />
+          </div>
+          <div className="flex items-center gap-1 my-2">
+            <Checkbox
+              checked={newNotebookFlag}
+              onCheckedChange={setNewNotebookFlag}
+              id="newNotebook"
+              disabled={Object.keys(notebooks).length == 0}
+            />
+            <Label htmlFor="newNotebook">Create a new Notebook</Label>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between my-3">
+            <div className="text-lg font-semibold">generation period</div>
+            <Select value={period} onValueChange={(e) => setPeriod(e)}>
+              <SelectTrigger className="w-fit">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" side="top" align="end">
+                {generationPeriod.map((period, index) => {
+                  return (
+                    <SelectItem key={index} value={period.value}>
+                      {period.label}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <Separator />
+          <div className="flex items-center justify-between my-3">
+            <div className="text-lg font-semibold">State</div>
+            <Select
+              value={autoNoteState}
+              onValueChange={(e) => setAutoNoteState(e)}
+            >
+              <SelectTrigger className="w-fit">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" side="top" align="end">
+                {state.map((state, index) => {
+                  return (
+                    <SelectItem key={index} value={state.value}>
+                      {state.label}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <Separator />
-        <div className="flex items-center justify-between my-3">
-          <div className="text-lg font-semibold">State</div>
-          <Select
-            value={autoNoteState}
-            onValueChange={(e) => setAutoNoteState(e)}
+        <DialogFooter>
+          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+            Cancel
+          </DialogClose>
+          <Button
+            className={cn(!isDesktop && 'my-2', 'font-bold')}
+            disabled={error != null || loading}
+            onClick={handleCreateAutoNote}
+            type="submit"
           >
-            <SelectTrigger className="w-fit">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" side="top" align="end">
-              {state.map((state, index) => {
-                return (
-                  <SelectItem key={index} value={state.value}>
-                    {state.label}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <DialogFooter>
-        <DialogClose className={buttonVariants({ variant: 'secondary' })}>
-          Cancel
-        </DialogClose>
-        <Button
-          className={cn(!isDesktop && 'my-2', 'font-bold')}
-          disabled={error != null && loading}
-          onClick={handleCreateAutoNote}
-        >
-          {loading ? (
-            <div className="flex items-center">
-              <Loader2 className="h-[18px] animate-spin" /> Loading...
-            </div>
-          ) : (
-            'Save Changes'
-          )}
-        </Button>
-      </DialogFooter>
+            {loading ? (
+              <div className="flex items-center">
+                <Loader2 className="h-[18px] animate-spin" /> Loading...
+              </div>
+            ) : (
+              'Save Changes'
+            )}
+          </Button>
+        </DialogFooter>
+      </form>
     </DialogContent>
   );
 };
