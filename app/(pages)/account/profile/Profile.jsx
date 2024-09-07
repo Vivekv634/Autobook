@@ -71,7 +71,7 @@ const ProfileComponent = () => {
           description: 'Oops! something went wrong!',
           variant: 'destructive',
         });
-        console.log(error);
+        console.error(error);
       });
   };
 

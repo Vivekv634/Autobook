@@ -8,23 +8,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { PenLine, SquarePlus, Trash2 } from 'lucide-react';
+import {
+  PenLine,
+  SquareArrowOutUpRight,
+  SquarePlus,
+  Trash2,
+} from 'lucide-react';
 import EditAutoNoteDialog from './EditAutoNoteDialog';
 import { useState } from 'react';
 import DeleteAutoNoteDialog from './DeleteAutoNoteDialog';
 import { notes, state } from '../utils/schema';
 import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
-import { setAutoNotes, setNotes } from '../redux/slices/noteSlice';
 import { titleFormatter } from '../utils/titleFormatter';
+import { useRouter } from 'next/navigation';
+import { uid } from 'uid';
 
 const AutoNoteDropDownMenu = ({ autoNote, children }) => {
   const [deleteDialogOpen, setDeteleDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const { user } = useSelector((state) => state.note);
-  const dispatch = useDispatch();
+  const { notebooks, user } = useSelector((state) => state.note);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleAutoNoteStateChange = async (newState) => {
     try {
@@ -36,12 +42,11 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
         const currentTime = new Date().getTime();
         updatedAutoNoteBody['lastNoteGenerationTime'] = currentTime;
       }
-      const autoNoteResponse = await axios.put(
+      await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
         updatedAutoNoteBody,
         { headers: { notesDocID: user.userData.notesDocID } },
       );
-      dispatch(setAutoNotes(autoNoteResponse.data.result));
       toast({
         description: 'Auto Note updated successfully',
         className: 'bg-green-500',
@@ -59,23 +64,20 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
     try {
       const newNoteBody = {
         ...notes,
-        title: titleFormatter(autoNote.titleFormat),
+        noteID: uid(),
+        title: titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
         notebook_ref_id: autoNote.autoNoteNotebookID,
-        body: JSON.stringify(autoNote.template.body.blocks),
+        body: autoNote.template.body.blocks,
       };
-      const notesResponse = await axios.post(
-        `${process.env.API}/api/notes/create`,
-        newNoteBody,
-        { headers: { notesDocID: user.userData.notesDocID } },
-      );
-      dispatch(setNotes(notesResponse.data.result));
+      await axios.post(`${process.env.API}/api/notes/create`, newNoteBody, {
+        headers: { notesDocID: user.userData.notesDocID },
+      });
 
-      const autoNoteResponse = await axios.put(
+      await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
         { noteGenerated: autoNote.noteGenerated + 1 },
         { headers: { notesDocID: user.userData.notesDocID } },
       );
-      dispatch(setAutoNotes(autoNoteResponse.data.result));
       toast({
         description: 'New Note created successfully',
         className: 'bg-green-500',
@@ -99,6 +101,17 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
             className="flex justify-between items-center"
           >
             Edit <PenLine className="h-4 w-5" />
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              router.push(
+                `/dashboard/${user.userData.notesDocID}/auto-note/${autoNote.autoNoteID}/edit-template`,
+              )
+            }
+            className="flex justify-between items-center"
+          >
+            Edit template
+            <SquareArrowOutUpRight className="h-4 w-5" />
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup value={autoNote.state}>
@@ -133,6 +146,7 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
         </DropdownMenuContent>
       </DropdownMenu>
       <EditAutoNoteDialog
+        notebooks={notebooks}
         autoNote={autoNote}
         open={editDialogOpen}
         setOpen={setEditDialogOpen}

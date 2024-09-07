@@ -21,7 +21,10 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
   return (
     <AccordionItem key={notebook_id} value={notebook_id}>
       <AccordionHeader className="flex justify-between px-3 items-center w-full">
-        <AccordionTrigger className="min-w-full mr-2" id={notebook_id}>
+        <AccordionTrigger
+          className="min-w-full mr-2 font-semibold"
+          id={notebook_id}
+        >
           {notebooks[notebook_id].notebookName}
         </AccordionTrigger>
         <DropdownMenu>
@@ -34,6 +37,7 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
                 notebookName={notebooks[notebook_id].notebookName}
                 notebook_id={notebook_id}
                 notesDocID={notesDocID}
+                notebooks={notebooks}
               >
                 Edit Name <Pen className="w-4 h-4" />
               </EditNotebookNameAlertDialog>

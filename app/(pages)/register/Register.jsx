@@ -123,7 +123,7 @@ const RegisterComponent = () => {
             <Label className="text-red-600 text-center">{error}</Label>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full font-semibold"
               disabled={isLoading || error}
             >
               {isLoading ? (

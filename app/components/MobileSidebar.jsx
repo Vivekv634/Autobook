@@ -82,7 +82,7 @@ const MobileSidebar = () => {
                     <SheetClose key={index} asChild>
                       <Link href={page.address}>
                         <Button
-                          className="text-xl w-full"
+                          className="text-xl w-full font-semibold"
                           variant={
                             page.label === 'Trash'
                               ? 'destructive'

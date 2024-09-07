@@ -5,10 +5,16 @@ import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import { ThemeProvider } from '@/app/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { Poppins } from 'next/font/google';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+});
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={poppins.className} suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#90cdf4" />
       </head>

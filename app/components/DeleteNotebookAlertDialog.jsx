@@ -40,7 +40,17 @@ export default function DeleteNotebookAlertDialog({
           },
         },
       );
-      toast({ description: 'Notebook deleted!', className: 'bg-green-500' });
+      toast({
+        description: (
+          <span>
+            <span className="font-semibold">
+              {notebooks[notebook_id].notebookName}
+            </span>{' '}
+            notebook deleted
+          </span>
+        ),
+        className: 'bg-green-500',
+      });
     } catch (error) {
       console.error(error);
       toast({
@@ -94,7 +104,7 @@ export default function DeleteNotebookAlertDialog({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
+            <AlertDialogAction onClick={handleDelete} className="font-bold">
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>

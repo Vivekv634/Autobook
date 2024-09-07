@@ -26,6 +26,7 @@ export async function PUT(request, { params }) {
             ...AutoNote,
             ...autoNote,
             ...body,
+            autoNoteUpdationDate: new Date().toString(),
           };
         } else {
           return autoNote;

@@ -31,27 +31,29 @@ const Note = ({ note, notesDocID, notebook_name }) => {
 
   return (
     <TooltipProvider>
-      <Tooltip>
-        <Card className="my-1">
-          <NoteContextMenu note={note} notesDocID={notesDocID}>
-            <CardContent className="cursor-pointer">
-              <CardHeader className="px-0">
-                <CardTitle className="flex items-center justify-between">
+      <Card className="my-1">
+        <NoteContextMenu note={note} notesDocID={notesDocID}>
+          <CardContent className="cursor-pointer">
+            <CardHeader className="px-0">
+              <CardTitle className="flex items-center justify-between">
+                <Tooltip>
                   <TooltipTrigger asChild>
                     <div className="truncate">{note.title}</div>
                   </TooltipTrigger>
                   <TooltipContent>{note.title}</TooltipContent>
-                  {!isDesktop && (
-                    <NoteDropDownMenu note={note} notesDocID={notesDocID}>
-                      <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" />
-                    </NoteDropDownMenu>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <div className="flex justify-between w-full">
-                <div className="flex items-center">
-                  {notebook_name && (
-                    <>
+                </Tooltip>
+                {!isDesktop && (
+                  <NoteDropDownMenu note={note} notesDocID={notesDocID}>
+                    <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" />
+                  </NoteDropDownMenu>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <div className="flex justify-between w-full">
+              <div className="flex items-center">
+                {notebook_name && (
+                  <>
+                    <Tooltip>
                       <TooltipTrigger>
                         <Link
                           href={`/dashboard/notebooks/#${note.notebook_ref_id}`}
@@ -66,42 +68,42 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent>Go to {notebook_name}</TooltipContent>
-                    </>
-                  )}
-                  {note.isPinned && (
-                    <PinIcon className="h-4 w-5 text-green-500" />
-                  )}
-                  {note.isReadOnly && (
-                    <PenOff className="h-4 w-5 text-orange-500" />
-                  )}
-                  {note.isFavorite && <Star className="h-4 w-5 text-red-500" />}
-                </div>
-                <Label className="flex items-center">{timeAgo}</Label>
+                    </Tooltip>
+                  </>
+                )}
+                {note.isPinned && (
+                  <PinIcon className="h-4 w-5 text-green-500" />
+                )}
+                {note.isReadOnly && (
+                  <PenOff className="h-4 w-5 text-orange-500" />
+                )}
+                {note.isFavorite && <Star className="h-4 w-5 text-red-500" />}
               </div>
-            </CardContent>
-            <CardFooter
-              className={cn(
-                'flex flex-col items-start',
-                note?.tagsList?.length > 0 ? 'block' : 'hidden',
-              )}
-            >
-              <Separator />
-              <div className="w-full flex flex-wrap ">
-                {note.tagsList &&
-                  note.tagsList.map((tag, index) => {
-                    return (
-                      <Link
-                        className="pr-1 transition-all underline text-sm hover:text-green-500"
-                        key={index}
-                        href={`/dashboard/tags#${tag}`}
-                      >{`#${tag}`}</Link>
-                    );
-                  })}
-              </div>
-            </CardFooter>
-          </NoteContextMenu>
-        </Card>
-      </Tooltip>
+              <Label className="flex items-center">{timeAgo}</Label>
+            </div>
+          </CardContent>
+          <CardFooter
+            className={cn(
+              'flex flex-col items-start',
+              note?.tagsList?.length > 0 ? 'block' : 'hidden',
+            )}
+          >
+            <Separator />
+            <div className="w-full flex flex-wrap ">
+              {note.tagsList &&
+                note.tagsList.map((tag, index) => {
+                  return (
+                    <Link
+                      className="pr-1 transition-all underline text-sm hover:text-green-500"
+                      key={index}
+                      href={`/dashboard/tags#${tag}`}
+                    >{`#${tag}`}</Link>
+                  );
+                })}
+            </div>
+          </CardFooter>
+        </NoteContextMenu>
+      </Card>
     </TooltipProvider>
   );
 };

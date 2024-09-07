@@ -132,7 +132,10 @@ export default function NewNoteDialog() {
       <form onSubmit={(e) => handleCreateNote(e)}>
         <div>
           <Label htmlFor="noteTitlte">
-            Note Title <span className="text-muted-foreground">(Required)</span>
+            Note Title{' '}
+            <span className="text-muted-foreground text-[.8rem]">
+              (Required)
+            </span>
           </Label>
           <Input
             value={noteTitle}
@@ -142,7 +145,12 @@ export default function NewNoteDialog() {
           />
         </div>
         <div>
-          <Label htmlFor="tags">Tags</Label>
+          <Label htmlFor="tags">
+            Tags{' '}
+            <span className="text-muted-foreground text-[.8rem]">
+              (Multiple with spaces)
+            </span>
+          </Label>
           <Input
             value={tags}
             onChange={(e) => setTags(e.target.value)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/select';
 import { generationPeriod } from '../utils/schema';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
 import { titleFormatter } from '../utils/titleFormatter';
 import { cn } from '@/lib/utils';
@@ -28,8 +27,10 @@ import { useMediaQuery } from 'usehooks-ts';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { uid } from 'uid';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
+const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const [autoNoteName, setAutoNoteName] = useState(autoNote.autoNoteName);
   const [titleFormat, setTitleFormat] = useState(autoNote.titleFormat);
@@ -40,45 +41,71 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
   const [anNotebook, setANNotebook] = useState(autoNote.autoNoteNotebookID);
   const [newNotebookFlag, setNewNotebookFlag] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
-  const { notebooks } = useSelector((state) => state.note);
+  const [newNotebookPreview, setNewNotebookPreview] = useState('');
+  const [notebookNameError, setNotebookNameError] = useState(null);
   const { toast } = useToast();
+  const { user } = useSelector((state) => state.note);
+
+  useEffect(() => {
+    if (
+      Object.values(notebooks)
+        .map((notebook) => notebook.notebookName)
+        .includes(newNotebookName.trim())
+    ) {
+      setNotebookNameError(
+        <span>
+          <span className="font-bold">{newNotebookName}</span> notebook already
+          exists!
+        </span>,
+      );
+    } else {
+      setNotebookNameError(null);
+    }
+
+    setNewNotebookPreview(
+      newNotebookName
+        .split(' ')
+        .map((word) => word.trim())
+        .join(' '),
+    );
+  }, [setNotebookNameError, newNotebookName, notebooks]);
 
   const handleSaveChanges = async () => {
     try {
-      if (anNotebook === autoNote.autoNoteNotebookID && !newNotebookFlag) {
-        toast({ description: 'Select other notebook or create a new one.' });
-        return;
-      }
       setLoading(true);
-      let body = {
+      let autoNoteBody = {
           autoNoteName: autoNoteName,
           titleFormat: titleFormat,
           noteGenerationPeriod: period,
           state: autoNoteState,
         },
-        notebookBody = {},
-        newNotebooks = [],
+        newNotebookBody = {},
+        updatedNotebooksArray = [],
         updatedNotebooks = { ...notebooks };
+
       if (newNotebookFlag) {
         const notebookID = uid();
-        body['autoNoteNotebookID'] = notebookID;
+        autoNoteBody['autoNoteNotebookID'] = notebookID;
         Object.keys(updatedNotebooks).forEach((notebook_id) => {
-          if (notebook_id === autoNote.autoNoteNotebookID)
-            updatedNotebooks[notebook_id].usedInTemplate = false;
-          newNotebooks.push({
+          if (notebook_id === autoNote.autoNoteNotebookID) {
+            updatedNotebooks[notebook_id] = {
+              ...updatedNotebooks[notebook_id],
+              usedInTemplate: false,
+            };
+          }
+          updatedNotebooksArray.push({
             notebookID: notebook_id,
             ...updatedNotebooks[notebook_id],
           });
         });
-        notebookBody = {
-          notebookName: newNotebookName,
+        newNotebookBody = {
           notebookID: notebookID,
+          notebookName: newNotebookName,
           usedInTemplate: true,
         };
-        updatedNotebooks[notebookID] = notebookBody;
-        console.log(body, notebookBody, newNotebooks);
+        updatedNotebooksArray.push(newNotebookBody);
       } else {
-        body['autoNoteNotebookID'] = anNotebook;
+        autoNoteBody['autoNoteNotebookID'] = anNotebook;
 
         Object.keys(updatedNotebooks).forEach((notebook_id) => {
           if (notebook_id === autoNote.autoNoteNotebookID) {
@@ -93,43 +120,37 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
               usedInTemplate: true,
             };
           }
-          newNotebooks.push({
+          updatedNotebooksArray.push({
             notebookID: notebook_id,
             ...updatedNotebooks[notebook_id],
           });
         });
-
-        console.log(body, updatedNotebooks, newNotebooks);
       }
-      // const autoNoteResponse = await axios.put(
-      //   `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
-      //   body,
-      //   { headers: { notesDocID: user.userData.notesDocID } },
-      // );
-      // console.log(autoNoteResponse.data.result);
-      // setAutoNotes(autoNoteResponse.data.result);
-      // if (newNotebookFlag) {
-      //   await axios
-      //     .post(`${process.env.API}/api/notebooks/create`, notebookBody, {
-      //       headers: { notesDocID: user.userData.notesDocID },
-      //     })
-      //     .then((noteBookResponse) => {
-      //       console.log(noteBookResponse.data.result);
-      //       setNoteBooks(noteBookResponse.data.result);
-      //     });
-      // } else {
-      //   await axios
-      //     .put(`${process.env.API}/api/notebooks/updateall`, updatedNotebooks, {
-      //       headers: { notesDocID: user.userData.notesDocID },
-      //     })
-      //     .then((notebookResponse) => {
-      //       console.log(notebookResponse.data.result);
-      //       setNoteBooks(notebookResponse.data.result);
-      //     });
-      // }
-      setLoading(false);
-      toast({ description: 'Auto Note updated!', className: 'bg-green-500' });
+      await axios.put(
+        `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
+        autoNoteBody,
+        { headers: { notesDocID: user.userData.notesDocID } },
+      );
+      await axios.put(
+        `${process.env.API}/api/notebooks/updateall`,
+        updatedNotebooksArray,
+        {
+          headers: { notesDocID: user.userData.notesDocID },
+        },
+      );
+      setNewNotebookName('');
+      setNewNotebookFlag(false);
       setOpen(false);
+      toast({
+        description: (
+          <span>
+            <span className="font-semibold">{autoNote.autoNoteName}</span>{' '}
+            updated!
+          </span>
+        ),
+        className: 'bg-green-500',
+      });
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -219,6 +240,15 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
             required
             disabled={!newNotebookFlag}
           />
+          <Label className={cn('text-red-400')}>{notebookNameError}</Label>
+          <Label
+            className={cn(
+              (notebookNameError || newNotebookName.trim() == '') && 'hidden',
+              'my-1 font-semibold',
+            )}
+          >
+            Preview: {newNotebookPreview}
+          </Label>
         </div>
         <div className="flex items-center gap-1">
           <Checkbox
@@ -251,9 +281,9 @@ const EditAutoNoteDialog = ({ autoNote, open, setOpen }) => {
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2')}
+            className={cn(!isDesktop && 'my-2', 'font-bold')}
             onClick={handleSaveChanges}
-            disabled={loading}
+            disabled={loading || notebookNameError}
           >
             {loading ? (
               <div className="flex items-center">

@@ -37,10 +37,7 @@ const LoginComponent = () => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log('logged in');
         router.push('/dashboard');
-      } else {
-        console.log('logged out');
       }
     });
   }, [router]);
@@ -104,7 +101,7 @@ const LoginComponent = () => {
             <Label className="text-red-600 text-center">{error}</Label>
             <Button
               type="submit"
-              className="w-full"
+              className="w-full font-semibold"
               disabled={isLoading || error}
             >
               {isLoading ? (

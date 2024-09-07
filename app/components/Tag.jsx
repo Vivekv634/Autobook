@@ -11,7 +11,9 @@ export default function Tag({ tagName, tagNotes, notesDocID, notebooks }) {
   return (
     <AccordionItem key={tagName} value={tagName}>
       <AccordionHeader>
-        <AccordionTrigger id={tagName}>{tagName}</AccordionTrigger>
+        <AccordionTrigger id={tagName} className="px-3">
+          {tagName}
+        </AccordionTrigger>
       </AccordionHeader>
       <AccordionContent>
         {tagNotes.map((note, index) => {

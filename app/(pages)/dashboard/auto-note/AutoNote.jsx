@@ -54,8 +54,8 @@ const AutoNoteComponent = () => {
                 />
               </div>
             </CommandDialog>
-            {autoNotes &&
-              autoNotes?.map((autoNote, index) => {
+            {autoNotes.length > 0 &&
+              autoNotes.map((autoNote, index) => {
                 return <AutoNote key={index} autoNote={autoNote} />;
               })}
             {!autoNotes && <div>No Auto notes created yet.</div>}

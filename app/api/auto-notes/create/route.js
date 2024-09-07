@@ -39,7 +39,7 @@ export async function POST(request) {
         transaction.update(docRef, { autoNotes: autoNotes });
       } else {
         autoNotes = data.autoNotes;
-        autoNotes.push({ autoNoteData });
+        autoNotes.push(autoNoteData);
         console.log(autoNotes);
         transaction.update(docRef, { autoNotes: autoNotes });
       }

@@ -4,6 +4,7 @@ import { titleFormatter } from '@/app/utils/titleFormatter';
 import { db } from '@/firebase.config';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
+import { uid } from 'uid';
 
 //eslint-disable-next-line
 export async function PATCH(request) {
@@ -29,7 +30,11 @@ export async function PATCH(request) {
           if (lastNoteGenerationTime <= currentTime) {
             const newNoteBody = {
               ...Notes,
-              title: titleFormatter(autoNote.titleFormat),
+              noteID: uid(),
+              title: titleFormatter(
+                autoNote.titleFormat,
+                autoNote.noteGenerated,
+              ),
               notebook_ref_id: autoNote.autoNoteNotebookID,
               body: JSON.stringify(autoNote.template.body.blocks),
             };

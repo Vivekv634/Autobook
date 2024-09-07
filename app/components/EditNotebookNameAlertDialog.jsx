@@ -12,23 +12,67 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Loader2 } from 'lucide-react';
 
 export default function EditNotebookNameAlertDialog({
   children,
   notebookName,
   notebook_id,
   notesDocID,
+  notebooks,
 }) {
   const [newNotebookName, setNewNotebookName] = useState(notebookName);
+  const [newNotebookPreview, setNewNotebookPreview] = useState('');
+  const [notebookNameError, setNotebookNameError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  async function handleSave() {
+  useEffect(() => {
+    if (newNotebookName.trim() === notebookName) {
+      setNotebookNameError(' ');
+      return;
+    }
+    if (
+      Object.values(notebooks)
+        .map((notebook) => notebook.notebookName)
+        .includes(newNotebookName.trim())
+    ) {
+      setNotebookNameError(
+        <span>
+          <span className="font-bold">{newNotebookName}</span> notebook already
+          exists!
+        </span>,
+      );
+    } else {
+      setNotebookNameError(null);
+    }
+
+    setNewNotebookPreview(
+      newNotebookName
+        .split(' ')
+        .map((word) => word.trim())
+        .join(' '),
+    );
+  }, [setNotebookNameError, newNotebookName, notebooks, notebookName]);
+
+  async function handleSave(e) {
     try {
+      e.preventDefault();
+      setLoading(true);
+      let notebookBody = {
+        notebookName: newNotebookName
+          .split(' ')
+          .filter((word) => word !== '')
+          .join(' '),
+      };
       await axios.put(
         `${process.env.API}/api/notebooks/update/${notebook_id}`,
-        { notebookName: newNotebookName },
+        notebookBody,
         {
           headers: {
             notesDocID: notesDocID,
@@ -36,11 +80,17 @@ export default function EditNotebookNameAlertDialog({
         },
       );
       toast({
-        description: 'Notebook name updated!',
+        description: (
+          <span>
+            <span className="font-bold">{notebookName}</span> notebook updated!
+          </span>
+        ),
         className: 'bg-green-500',
       });
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      setLoading(false);
       toast({
         description: 'Oops! something went wrong. Try again later!',
         variant: 'destructive',
@@ -64,26 +114,51 @@ export default function EditNotebookNameAlertDialog({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Edit your title</AlertDialogTitle>
+          <AlertDialogTitle>Edit your notebook</AlertDialogTitle>
           <AlertDialogDescription>
-            Edit your notebook title here. Save changes when you are done.
+            Edit your notebook name here. Save changes when you are done.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <Input
-          value={newNotebookName}
-          onChange={(e) => setNewNotebookName(e.target.value)}
-          required
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={handleKeyDown}
-        />
-        <AlertDialogFooter>
-          <div className="flex justify-end items-center gap-2 *:h-full *:mt-0">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSave}>
-              Save Changes
+        <form onSubmit={(e) => handleSave(e)}>
+          <Input
+            value={newNotebookName}
+            onChange={(e) => setNewNotebookName(e.target.value)}
+            required
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={handleKeyDown}
+          />
+          <Label className={cn('text-red-400', !notebookNameError && 'hidden')}>
+            {notebookNameError}
+          </Label>
+          <Label
+            className={cn(
+              (notebookNameError || newNotebookName.trim() == '') && 'hidden',
+              'my-1 font-semibold',
+            )}
+          >
+            Preview: {newNotebookPreview}
+          </Label>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className={cn(buttonVariants({ variant: 'secondary' }))}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="font-bold"
+              disabled={loading || notebookNameError}
+              type="submit"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                </div>
+              ) : (
+                'Save Changes'
+              )}
             </AlertDialogAction>
-          </div>
-        </AlertDialogFooter>
+          </AlertDialogFooter>
+        </form>
       </AlertDialogContent>
     </AlertDialog>
   );

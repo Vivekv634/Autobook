@@ -1,4 +1,3 @@
-// import NoteEditor from '@/app/components/NoteEditor';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import React from 'react';
