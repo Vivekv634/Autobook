@@ -95,7 +95,7 @@ export default function DeleteNotebookAlertDialog({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the{' '}
+              This operation cannot be reverse. This will permanently delete the{' '}
               <span className="font-bold px-1">
                 {notebooks[notebook_id]?.notebookName}
               </span>

@@ -152,7 +152,7 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
         setOpen={setEditDialogOpen}
       />
       <DeleteAutoNoteDialog
-        autoNote={autoNote}
+        AutoNote={autoNote}
         open={deleteDialogOpen}
         setOpen={setDeteleDialogOpen}
       />
