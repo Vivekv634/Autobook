@@ -1,5 +1,6 @@
 'use client';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             <SpeedInsights />
+            <Analytics />
             {children}
           </ThemeProvider>
         </Provider>
