@@ -14,6 +14,8 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
 
 export default function DeleteNotebookAlertDialog({
   children,
@@ -74,13 +76,15 @@ export default function DeleteNotebookAlertDialog({
             <AlertDialogTitle>Can&apos;t delete notebook</AlertDialogTitle>
             <AlertDialogDescription>
               Cannot delete this notebook because this notebook is used in the
-              <span className="font-bold px-1 inline-block">{anName}</span> Auto
-              Note. If you want to delete
-              <span className="font-bold px-1 inline-block">
+              <span className="font-bold px-1 inline-block underline">
+                {anName}
+              </span>
+              Auto Note. If you want to delete
+              <span className="font-bold px-1 inline-block underline">
                 {notebooks[notebook_id].notebookName}
               </span>
               notebook, then change the
-              <span className="font-bold px-1 inline-block">
+              <span className="font-bold px-1 inline-block underline">
                 {anName}&apos;s
               </span>
               notebook and then you can delete the delete this notebook.
@@ -95,7 +99,7 @@ export default function DeleteNotebookAlertDialog({
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This operation cannot be reverse. This will permanently delete the{' '}
+              This operation cannot be reverse. This will permanently delete the
               <span className="font-bold px-1">
                 {notebooks[notebook_id]?.notebookName}
               </span>
@@ -104,8 +108,11 @@ export default function DeleteNotebookAlertDialog({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="font-bold">
-              Continue
+            <AlertDialogAction
+              onClick={handleDelete}
+              className={cn(buttonVariants({ variant: 'destructive' }))}
+            >
+              Delete Notebook
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

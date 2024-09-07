@@ -12,7 +12,7 @@ import { editorConfig } from '@/app/utils/editor';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 
-const NoteEditor = ({ params }) => {
+const EditAutoNoteTemplate = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const { autoNotes, user } = useSelector((state) => state.note);
   const [blocks, setBlocks] = useState();
@@ -109,7 +109,11 @@ const NoteEditor = ({ params }) => {
         <Separator className="my-2" />
         <div
           id="editorjs"
-          className={cn(isDesktop && 'px-20 py-4 ', 'px-2 border rounded-md')}
+          className={cn(
+            !isDesktop && 'px-1 mx-1',
+            isDesktop && 'px-20 py-4 ',
+            'border rounded-md',
+          )}
         ></div>
         <ScrollBar />
       </ScrollArea>
@@ -117,4 +121,4 @@ const NoteEditor = ({ params }) => {
   );
 };
 
-export default NoteEditor;
+export default EditAutoNoteTemplate;

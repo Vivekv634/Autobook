@@ -187,7 +187,7 @@ const NewAutoNoteDialog = () => {
         <DialogDescription>Create a new auto note.</DialogDescription>
       </DialogHeader>
       <form onSubmit={(e) => handleCreateAutoNote(e)}>
-        <div className="">
+        <div className="my-2">
           <Label htmlFor="autoNoteName">Auto Note Name</Label>
           <Input
             id="autoNoteName"
@@ -287,7 +287,7 @@ const NewAutoNoteDialog = () => {
           </div>
           <Separator />
           <div className="flex items-center justify-between my-3">
-            <div className="text-lg font-semibold">generation period</div>
+            <div className="text-lg font-semibold">Generation period</div>
             <Select value={period} onValueChange={(e) => setPeriod(e)}>
               <SelectTrigger className="w-fit">
                 <SelectValue />
@@ -330,7 +330,7 @@ const NewAutoNoteDialog = () => {
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2', 'font-bold')}
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
             disabled={error != null || loading || notebookNameError}
             type="submit"
           >

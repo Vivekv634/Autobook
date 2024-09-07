@@ -7,8 +7,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
-import { setEditorNote } from '../redux/slices/noteSlice';
+import { useSelector } from 'react-redux';
 
 export default function NoteSearchDialog({
   searchData,
@@ -17,9 +16,7 @@ export default function NoteSearchDialog({
 }) {
   const { user } = useSelector((state) => state.note);
   const router = useRouter();
-  const dispatch = useDispatch();
   const handleOnClickCommandItem = (noteData) => {
-    dispatch(setEditorNote(noteData));
     router.push(`/dashboard/${user?.userData?.notesDocID}/${noteData.noteID}`);
     setOpen(false);
   };

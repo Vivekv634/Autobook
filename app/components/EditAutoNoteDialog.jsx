@@ -281,7 +281,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2', 'font-bold')}
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
             onClick={handleSaveChanges}
             disabled={loading || notebookNameError}
           >

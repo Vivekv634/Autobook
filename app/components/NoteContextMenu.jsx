@@ -11,11 +11,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
-import {
-  setDeletedNotes,
-  setEditorNote,
-  setNotes,
-} from '../redux/slices/noteSlice';
+import { setDeletedNotes, setNotes } from '../redux/slices/noteSlice';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { uid } from 'uid';
@@ -40,7 +36,6 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
   const pathName = usePathname();
 
   const setEditorNoteState = () => {
-    dispatch(setEditorNote(note));
     router.push(`/dashboard/${notesDocID}/${note.noteID}`);
   };
 

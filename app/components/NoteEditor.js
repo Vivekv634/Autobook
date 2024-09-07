@@ -16,7 +16,6 @@ import axios from 'axios';
 import { Loader2, Pen, PenLine } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEditorNote } from '../redux/slices/noteSlice';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -24,28 +23,45 @@ import { editorConfig } from '../utils/editor';
 
 const NoteEditor = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
-  const { editorNote, notebooks } = useSelector((state) => state.note);
+  const { notebooks, notes } = useSelector((state) => state.note);
+  const [editorNote, setEditorNote] = useState();
   const { noteID, notesDocID } = params;
   const { toast } = useToast();
   const dispatch = useDispatch();
   const editorInstance = useRef(null);
-  const [noteTitle, setNoteTitle] = useState(editorNote?.title);
+  const [noteTitle, setNoteTitle] = useState();
   const [tagsEditable, setTagsEditable] = useState(false);
-  const [noteTagsInput, setNoteTagsInput] = useState(
-    editorNote?.tagsList?.join(' ') || '',
-  );
+  const [noteTagsInput, setNoteTagsInput] = useState();
   const [loading, setLoading] = useState(false);
-  const [notebookValue, setNotebookValue] = useState(
-    notebooks[editorNote?.notebook_ref_id]
-      ? editorNote?.notebook_ref_id
-      : 'none',
-  );
+  const [notebookValue, setNotebookValue] = useState();
+
+  useEffect(() => {
+    notes.map((note) => {
+      if (note.noteID === noteID) {
+        setEditorNote(note);
+        setNoteTitle(editorNote?.title);
+        setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
+        setNotebookValue(
+          notebooks[editorNote?.notebook_ref_id]
+            ? editorNote?.notebook_ref_id
+            : 'none',
+        );
+      }
+    });
+  }, [
+    notes,
+    noteID,
+    editorNote?.title,
+    editorNote?.tagsList,
+    editorNote?.notebook_ref_id,
+    notebooks,
+  ]);
 
   useEffect(() => {
     const editor = new EditorJS({
       ...editorConfig,
       readOnly: editorNote?.isReadOnly,
-      data: { blocks: editorNote.body },
+      data: JSON.parse(editorNote?.body || '{}'),
     });
 
     editorInstance.current = editor;
@@ -54,7 +70,7 @@ const NoteEditor = ({ params }) => {
       editorInstance.current?.destroy();
       editorInstance.current = null;
     };
-  }, [editorNote.body, editorNote?.isReadOnly]);
+  }, [editorNote?.body, editorNote?.isReadOnly]);
 
   const save = useCallback(async () => {
     setLoading(true);
@@ -142,7 +158,12 @@ const NoteEditor = ({ params }) => {
           </Button>
         </div>
         <Separator className="my-2" />
-        <div className="flex px-1 border rounded-md pr-4 items-center mb-3 print:hidden">
+        <div
+          className={cn(
+            'flex px-1 border rounded-md pr-4 items-center mb-3 print:hidden',
+            !isDesktop && 'mx-1',
+          )}
+        >
           <Input
             value={noteTitle}
             onChange={(e) => setNoteTitle(e.target.value)}
@@ -189,7 +210,11 @@ const NoteEditor = ({ params }) => {
         </div>
         <div
           id="editorjs"
-          className={cn(isDesktop && 'px-20 py-4 ', 'border rounded-md')}
+          className={cn(
+            !isDesktop && 'mx-1 px-1',
+            isDesktop && 'px-20 py-4 ',
+            'border rounded-md',
+          )}
         />
         <ScrollBar />
       </ScrollArea>

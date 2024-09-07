@@ -81,10 +81,10 @@ const NewNotebookDialog = () => {
         <Label className="text-red-400">{error}</Label>
         <DialogFooter>
           <DialogClose className={buttonVariants({ variant: 'secondary' })}>
-            Close
+            Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2', 'font-bold')}
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
             disabled={error || loading}
             type="submit"
           >

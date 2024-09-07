@@ -155,6 +155,7 @@ export default function NewNoteDialog() {
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             id="tags"
+            placeholder="tag1 tag2 ..."
           />
           <Label
             className={cn(
@@ -222,7 +223,7 @@ export default function NewNoteDialog() {
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2', 'font-bold')}
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
             disabled={loading || error}
             type="submit"
           >

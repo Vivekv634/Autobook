@@ -126,6 +126,7 @@ export default function EditNotebookNameAlertDialog({
             required
             onClick={(e) => e.stopPropagation()}
             onKeyDown={handleKeyDown}
+            className="my-2"
           />
           <Label className={cn('text-red-400', !notebookNameError && 'hidden')}>
             {notebookNameError}
@@ -145,7 +146,7 @@ export default function EditNotebookNameAlertDialog({
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
-              className="font-bold"
+              className="font-semibold"
               disabled={loading || notebookNameError}
               type="submit"
             >
