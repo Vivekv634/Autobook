@@ -58,6 +58,8 @@ const NoteEditor = ({ params }) => {
   ]);
 
   useEffect(() => {
+    if (!editorNote?.body) return;
+
     const editor = new EditorJS({
       ...editorConfig,
       readOnly: editorNote?.isReadOnly,
@@ -67,8 +69,16 @@ const NoteEditor = ({ params }) => {
     editorInstance.current = editor;
 
     return () => {
-      editorInstance.current?.destroy();
-      editorInstance.current = null;
+      if (editorInstance.current) {
+        editorInstance.current.isReady
+          .then(() => {
+            editorInstance.current.destroy();
+            editorInstance.current = null;
+          })
+          .catch((err) => {
+            console.error('EditorJS cleanup error:', err);
+          });
+      }
     };
   }, [editorNote?.body, editorNote?.isReadOnly]);
 
