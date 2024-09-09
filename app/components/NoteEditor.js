@@ -14,7 +14,7 @@ import { useToast } from '@/components/ui/use-toast';
 import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
 import { Loader2, Pen, PenLine } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
@@ -27,12 +27,12 @@ const NoteEditor = ({ params }) => {
   const [editorNote, setEditorNote] = useState();
   const { noteID, notesDocID } = params;
   const { toast } = useToast();
-  const editorInstance = useRef(null);
   const [noteTitle, setNoteTitle] = useState();
   const [tagsEditable, setTagsEditable] = useState(false);
   const [noteTagsInput, setNoteTagsInput] = useState();
   const [loading, setLoading] = useState(false);
   const [notebookValue, setNotebookValue] = useState();
+  const [editorInstance, setEditorInstance] = useState(null);
 
   useEffect(() => {
     notes.map((note) => {
@@ -61,28 +61,41 @@ const NoteEditor = ({ params }) => {
 
     const editor = new EditorJS({
       ...editorConfig,
-      readOnly: editorNote?.isReadOnly || loading,
+      readOnly: editorNote?.isReadOnly,
       data: JSON.parse(editorNote?.body || '{}'),
     });
 
-    editorInstance.current = editor;
+    // Set the editor instance in state
+    setEditorInstance(editor);
 
+    // Cleanup: Destroy the editor when the component unmounts or when dependencies change
     return () => {
-      editorInstance.current?.destroy();
-      editorInstance.current = null;
+      if (editor) {
+        if (typeof editor.destroy === 'function') {
+          // If destroy exists, use it
+          editor.destroy();
+        } else {
+          // If no destroy method exists, manually clean up
+          setEditorInstance(null);
+        }
+      }
     };
-  }, [editorNote?.body, editorNote?.isReadOnly, loading]);
+  }, [editorNote?.body, editorNote?.isReadOnly]);
 
+  // Save the note
   const save = useCallback(async () => {
+    if (!editorInstance) return; // Ensure editor is initialized
+
     setLoading(true);
     try {
-      const outputData = await editorInstance.current.save();
+      const outputData = await editorInstance.save(); // Get the editor data
       const body = {
         body: JSON.stringify(outputData),
         title: noteTitle,
         tagsList: noteTagsInput.split(' ').filter((tag) => tag.trim() !== ''),
         notebook_ref_id: notebookValue,
       };
+      // Save the note using an API call
       await axios.put(`${process.env.API}/api/notes/update/${noteID}`, body, {
         headers: { notesDocID },
       });
@@ -96,8 +109,15 @@ const NoteEditor = ({ params }) => {
     } finally {
       setLoading(false);
     }
-  }, [noteID, noteTagsInput, noteTitle, notebookValue, notesDocID, toast]);
-
+  }, [
+    toast,
+    editorInstance,
+    noteID,
+    noteTagsInput,
+    noteTitle,
+    notebookValue,
+    notesDocID,
+  ]);
   return (
     <section className="h-full box-border">
       <ScrollArea>

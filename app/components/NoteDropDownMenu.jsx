@@ -221,6 +221,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             Print
             <Printer className="h-4 w-5" />
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Export as</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
