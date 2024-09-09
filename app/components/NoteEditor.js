@@ -61,7 +61,7 @@ const NoteEditor = ({ params }) => {
 
     const editor = new EditorJS({
       ...editorConfig,
-      readOnly: editorNote?.isReadOnly,
+      readOnly: editorNote?.isReadOnly || loading,
       data: JSON.parse(editorNote?.body || '{}'),
     });
 
@@ -71,7 +71,7 @@ const NoteEditor = ({ params }) => {
       editorInstance.current?.destroy();
       editorInstance.current = null;
     };
-  }, [editorNote?.body, editorNote?.isReadOnly]);
+  }, [editorNote?.body, editorNote?.isReadOnly, loading]);
 
   const save = useCallback(async () => {
     setLoading(true);
@@ -154,6 +154,7 @@ const NoteEditor = ({ params }) => {
             value={noteTitle}
             onChange={(e) => setNoteTitle(e.target.value)}
             required
+            disabled={loading}
             id="noteTitle"
             className="bg-transparent px-1 outline-none border-none text-2xl font-semibold w-full truncate"
           />
@@ -181,6 +182,7 @@ const NoteEditor = ({ params }) => {
                 onBlur={() => setTagsEditable(false)}
                 value={noteTagsInput}
                 onChange={(e) => setNoteTagsInput(e.target.value)}
+                disabled={loading}
               />
             )
           ) : (

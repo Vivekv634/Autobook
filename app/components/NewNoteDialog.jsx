@@ -131,7 +131,7 @@ export default function NewNoteDialog() {
       </DialogHeader>
       <form onSubmit={(e) => handleCreateNote(e)}>
         <div>
-          <Label htmlFor="noteTitlte">
+          <Label htmlFor="noteTitle">
             Note Title{' '}
             <span className="text-muted-foreground text-[.8rem]">
               (Required)
@@ -140,7 +140,7 @@ export default function NewNoteDialog() {
           <Input
             value={noteTitle}
             onChange={(e) => setNoteTitle(e.target.value)}
-            id="noteTitlte"
+            id="noteTitle"
             required
           />
         </div>

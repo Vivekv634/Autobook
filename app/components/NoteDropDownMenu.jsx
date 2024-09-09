@@ -14,6 +14,7 @@ import {
   Code,
   Copy,
   Heading,
+  PenLine,
   Printer,
   RotateCcw,
   SquareArrowOutUpRight,
@@ -35,6 +36,8 @@ import CopyAsTextDialog from './CopyAsTextDialog';
 import ExportAsTextDialog from './ExportAsTextDialog';
 import ExportAsMarkdownDialog from './ExportAsMarkdownDialog';
 import ExportAsHTMLDialog from './ExportAsHTMLDialog';
+import NotePrintDialog from './NotePrintDialog';
+import NoteConfigDialog from './NoteConfigDialog';
 
 const NoteDropDownMenu = ({ note, notesDocID, children }) => {
   const { toast } = useToast();
@@ -47,6 +50,8 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
   const [exportAsHTML, setExportAsHTML] = useState(false);
   const [exportAsText, setExportAsText] = useState(false);
   const [exportAsMarkdown, setExportAsMarkdown] = useState(false);
+  const [printNote, setPrintNote] = useState(false);
+  const [noteConfigDialog, setNoteConfigDialog] = useState(false);
 
   const setEditorNoteState = () => {
     router.push(`/dashboard/${notesDocID}/${note.noteID}`);
@@ -169,30 +174,6 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
     toast({ description: 'Note duplicated!', className: 'bg-green-500' });
   };
 
-  const handleCopyAsMarkdown = () => {
-    setCopyAsMarkdown(true);
-  };
-
-  const handleCopyAsHTML = () => {
-    setCopyAsHTML(true);
-  };
-
-  const handleCopyAsText = () => {
-    setCopyAsText(true);
-  };
-
-  const handleExportAsMarkdown = () => {
-    setExportAsMarkdown(true);
-  };
-
-  const handleExportAsHTML = () => {
-    setExportAsHTML(true);
-  };
-
-  const handleExportAsText = () => {
-    setExportAsText(true);
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
@@ -202,7 +183,13 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             className="flex justify-between items-center"
             onClick={setEditorNoteState}
           >
-            Edit <SquareArrowOutUpRight className="h-4 w-5" />
+            Open Note <SquareArrowOutUpRight className="h-4 w-5" />
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex justify-between items-center"
+            onClick={() => setNoteConfigDialog(true)}
+          >
+            Edit <PenLine className="h-4 w-5" />
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
@@ -227,7 +214,10 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             {note.isFavorite && <Check className="h-4 w-5" />}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex justify-between items-center">
+          <DropdownMenuItem
+            className="flex justify-between items-center"
+            onClick={() => setPrintNote(true)}
+          >
             Print
             <Printer className="h-4 w-5" />
           </DropdownMenuItem>
@@ -236,21 +226,27 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             <DropdownMenuSubContent>
               <DropdownMenuItem
                 className="flex justify-between items-center"
-                onClick={handleExportAsMarkdown}
+                onClick={() => {
+                  setExportAsMarkdown(true);
+                }}
               >
                 Markdown
                 <Heading className="h-4 w-5" />
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex justify-between items-center"
-                onClick={handleExportAsHTML}
+                onClick={() => {
+                  setExportAsHTML(true);
+                }}
               >
                 HTML
                 <Code className="h-4 w-5" />
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex justify-between items-center"
-                onClick={handleExportAsText}
+                onClick={() => {
+                  setExportAsText(true);
+                }}
               >
                 Text
                 <Type className="h-4 w-5" />
@@ -262,21 +258,27 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             <DropdownMenuSubContent>
               <DropdownMenuItem
                 className="flex justify-between items-center"
-                onClick={handleCopyAsMarkdown}
+                onClick={() => {
+                  setCopyAsMarkdown(true);
+                }}
               >
                 Markdown
                 <Heading className="h-4 w-5" />
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex justify-between items-center"
-                onClick={handleCopyAsHTML}
+                onClick={() => {
+                  setCopyAsHTML(true);
+                }}
               >
                 HTML
                 <Code className="h-4 w-5" />
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="flex justify-between items-center"
-                onClick={handleCopyAsText}
+                onClick={() => {
+                  setCopyAsText(true);
+                }}
               >
                 Text
                 <Type className="h-4 w-5" />
@@ -350,6 +352,16 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
         html={editorJsToHtml(JSON.parse(note.body).blocks)}
         open={exportAsHTML}
         setOpen={setExportAsHTML}
+      />
+      <NotePrintDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={printNote}
+        setOpen={setPrintNote}
+      />
+      <NoteConfigDialog
+        note={note}
+        open={noteConfigDialog}
+        setOpen={setNoteConfigDialog}
       />
     </DropdownMenu>
   );

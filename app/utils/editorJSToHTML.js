@@ -120,18 +120,6 @@ export default function editorJsToHtml(data) {
 
         case 'table':
           return createTable(block);
-        // return `
-        //   <table>
-        //     ${block.data.content
-        //       .map(
-        //         (row) =>
-        //           `<tr>${row
-        //             .map((cell) => `<td>${cell}</td>`)
-        //             .join('')}</tr>`,
-        //       )
-        //       .join('')}
-        //   </table>
-        // `;
 
         case 'warning':
           return `<div class="warning"><strong>${block.data.title}</strong><blockquote>${block.data.message}</blockquote></div>`;
