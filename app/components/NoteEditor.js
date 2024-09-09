@@ -15,11 +15,11 @@ import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
 import { Loader2, Pen, PenLine } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { editorConfig } from '../utils/editor';
+import { editorConfig } from '../utils/editorConfig';
 
 const NoteEditor = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -27,7 +27,6 @@ const NoteEditor = ({ params }) => {
   const [editorNote, setEditorNote] = useState();
   const { noteID, notesDocID } = params;
   const { toast } = useToast();
-  const dispatch = useDispatch();
   const editorInstance = useRef(null);
   const [noteTitle, setNoteTitle] = useState();
   const [tagsEditable, setTagsEditable] = useState(false);
@@ -69,16 +68,8 @@ const NoteEditor = ({ params }) => {
     editorInstance.current = editor;
 
     return () => {
-      if (editorInstance.current) {
-        editorInstance.current.isReady
-          .then(() => {
-            editorInstance.current.destroy();
-            editorInstance.current = null;
-          })
-          .catch((err) => {
-            console.error('EditorJS cleanup error:', err);
-          });
-      }
+      editorInstance.current?.destroy();
+      editorInstance.current = null;
     };
   }, [editorNote?.body, editorNote?.isReadOnly]);
 
@@ -92,35 +83,20 @@ const NoteEditor = ({ params }) => {
         tagsList: noteTagsInput.split(' ').filter((tag) => tag.trim() !== ''),
         notebook_ref_id: notebookValue,
       };
-      const response = await axios.put(
-        `${process.env.API}/api/notes/update/${noteID}`,
-        body,
-        { headers: { notesDocID } },
-      );
-      response?.data?.result?.forEach((note) => {
-        if (note.noteID == noteID) {
-          dispatch(setEditorNote(note));
-        }
+      await axios.put(`${process.env.API}/api/notes/update/${noteID}`, body, {
+        headers: { notesDocID },
       });
       toast({ description: 'Changes Saved!', className: 'bg-green-400' });
     } catch (error) {
       console.error('Saving failed: ', error);
       toast({
         description: 'Saving failed. Please try again.',
-        className: 'bg-red-400',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
-  }, [
-    dispatch,
-    noteID,
-    noteTagsInput,
-    noteTitle,
-    notebookValue,
-    notesDocID,
-    toast,
-  ]);
+  }, [noteID, noteTagsInput, noteTitle, notebookValue, notesDocID, toast]);
 
   return (
     <section className="h-full box-border">
@@ -155,7 +131,7 @@ const NoteEditor = ({ params }) => {
           </div>
           <Button
             disabled={loading}
-            className="disabled:cursor-not-allowed"
+            className="disabled:cursor-not-allowed font-semibold"
             onClick={save}
           >
             {loading ? (

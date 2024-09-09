@@ -12,7 +12,7 @@ export const notes = {
   isTrash: false,
   deletionTimeStamp: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
   title: '',
-  body: null,
+  body: '',
 };
 
 export const notebooks = {

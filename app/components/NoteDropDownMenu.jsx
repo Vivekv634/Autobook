@@ -27,13 +27,26 @@ import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { uid } from 'uid';
 import { usePathname } from 'next/navigation';
-import parser from 'editorjs-html';
+import editorJsToHtml from '../utils/editorJSToHTML';
+import { useState } from 'react';
+import CopyAsHTMLDialog from './CopyAsHTMLDialog';
+import CopyAsMarkdownDialog from './CopyAsMarkdownDialog';
+import CopyAsTextDialog from './CopyAsTextDialog';
+import ExportAsTextDialog from './ExportAsTextDialog';
+import ExportAsMarkdownDialog from './ExportAsMarkdownDialog';
+import ExportAsHTMLDialog from './ExportAsHTMLDialog';
 
 const NoteDropDownMenu = ({ note, notesDocID, children }) => {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const router = useRouter();
   const pathName = usePathname();
+  const [copyAsHTML, setCopyAsHTML] = useState(false);
+  const [copyAsText, setCopyAsText] = useState(false);
+  const [copyAsMarkdown, setCopyAsMarkdown] = useState(false);
+  const [exportAsHTML, setExportAsHTML] = useState(false);
+  const [exportAsText, setExportAsText] = useState(false);
+  const [exportAsMarkdown, setExportAsMarkdown] = useState(false);
 
   const setEditorNoteState = () => {
     router.push(`/dashboard/${notesDocID}/${note.noteID}`);
@@ -156,9 +169,28 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
     toast({ description: 'Note duplicated!', className: 'bg-green-500' });
   };
 
+  const handleCopyAsMarkdown = () => {
+    setCopyAsMarkdown(true);
+  };
+
   const handleCopyAsHTML = () => {
-    const edjsParser = parser.parse(note.body);
-    console.log(edjsParser);
+    setCopyAsHTML(true);
+  };
+
+  const handleCopyAsText = () => {
+    setCopyAsText(true);
+  };
+
+  const handleExportAsMarkdown = () => {
+    setExportAsMarkdown(true);
+  };
+
+  const handleExportAsHTML = () => {
+    setExportAsHTML(true);
+  };
+
+  const handleExportAsText = () => {
+    setExportAsText(true);
   };
 
   return (
@@ -202,15 +234,24 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Export as</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem className="flex justify-between items-center">
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={handleExportAsMarkdown}
+              >
                 Markdown
                 <Heading className="h-4 w-5" />
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={handleExportAsHTML}
+              >
                 HTML
                 <Code className="h-4 w-5" />
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={handleExportAsText}
+              >
                 Text
                 <Type className="h-4 w-5" />
               </DropdownMenuItem>
@@ -219,7 +260,10 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Copy as</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
-              <DropdownMenuItem className="flex justify-between items-center">
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={handleCopyAsMarkdown}
+              >
                 Markdown
                 <Heading className="h-4 w-5" />
               </DropdownMenuItem>
@@ -230,7 +274,10 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
                 HTML
                 <Code className="h-4 w-5" />
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between items-center">
+              <DropdownMenuItem
+                className="flex justify-between items-center"
+                onClick={handleCopyAsText}
+              >
                 Text
                 <Type className="h-4 w-5" />
               </DropdownMenuItem>
@@ -271,6 +318,39 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       )}
+      <CopyAsHTMLDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={copyAsHTML}
+        setOpen={setCopyAsHTML}
+      />
+      <CopyAsMarkdownDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={copyAsMarkdown}
+        setOpen={setCopyAsMarkdown}
+      />
+      <CopyAsTextDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={copyAsText}
+        setOpen={setCopyAsText}
+      />
+      <ExportAsTextDialog
+        noteTitle={note.title}
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={exportAsText}
+        setOpen={setExportAsText}
+      />
+      <ExportAsMarkdownDialog
+        noteTitle={note.title}
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={exportAsMarkdown}
+        setOpen={setExportAsMarkdown}
+      />
+      <ExportAsHTMLDialog
+        noteTitle={note.title}
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={exportAsHTML}
+        setOpen={setExportAsHTML}
+      />
     </DropdownMenu>
   );
 };

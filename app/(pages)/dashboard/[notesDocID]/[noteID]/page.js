@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
   });
 
   return {
-    title: response.data.result.title ?? 'Title - Notesnook',
+    title: response.data.result.title ?? 'Title - AutoBook',
   };
 }
 

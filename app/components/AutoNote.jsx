@@ -39,7 +39,9 @@ const AutoNote = ({ autoNote }) => {
               <CardTitle className="flex items-center justify-between">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div className="truncate">{autoNote.autoNoteName}</div>
+                    <div className="truncate h-fit z-10">
+                      {autoNote.autoNoteName}
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>{autoNote.autoNoteName}</TooltipContent>
                 </Tooltip>

@@ -1,9 +1,8 @@
 import Checklist from '@editorjs/checklist';
 import Delimiter from '@editorjs/delimiter';
 import Embed from '@editorjs/embed';
-import Header from '@editorjs/header';
+import Title from 'title-editorjs';
 import InlineCode from '@editorjs/inline-code';
-import LinkTool from '@editorjs/link';
 import Marker from '@editorjs/marker';
 import NestedList from '@editorjs/nested-list';
 import Quote from '@editorjs/quote';
@@ -16,41 +15,18 @@ import Strikethrough from '@sotaproject/strikethrough';
 import Alert from 'editorjs-alert';
 import ChangeCase from 'editorjs-change-case';
 import Paragraph from 'editorjs-paragraph-with-alignment';
-import ToggleBlock from 'editorjs-toggle-block';
-import Tooltip from 'editorjs-tooltip';
 
 export let editorConfig = {
   holder: 'editorjs',
   tools: {
-    header: {
-      class: Header,
-      config: {
-        placeholder: 'Heading 1',
-        levels: [1, 2, 3, 4, 5, 6],
-        defaultLevel: 1,
-      },
-    },
+    title: Title,
     paragraph: {
       class: Paragraph,
       inlineToolbar: true,
     },
-    tooltip: {
-      class: Tooltip,
-      config: {
-        inlineToolbar: true,
-        location: 'left',
-        underline: true,
-        placeholder: 'Enter a tooltip',
-        highlightColor: '#FFEFD5',
-        backgroundColor: '#154360',
-        textColor: '#FDFEFE',
-        holder: 'editorjs',
-      },
-    },
     quote: {
       class: Quote,
       inlineToolbar: true,
-      shortcut: 'CMD+SHIFT+O',
       config: {
         quotePlaceholder: 'Enter a quote',
         captionPlaceholder: "Quote's author",
@@ -76,7 +52,6 @@ export let editorConfig = {
       class: Checklist,
       inlineToolbar: true,
     },
-    linkTool: LinkTool,
     table: {
       class: Table,
       inlineToolbar: true,
@@ -86,26 +61,32 @@ export let editorConfig = {
       },
     },
     delimiter: Delimiter,
-    warning: Warning,
-    raw: RawTool,
+    warning: {
+      class: Warning,
+      inlineToolbar: true,
+      config: {
+        titlePlaceholder: 'Warning Title',
+        messagePlaceholder: 'Warning Message',
+      },
+    },
+    raw: {
+      class: RawTool,
+      placeholder: 'Enter your code',
+    },
     underline: {
       class: Underline,
       inlineToolbar: true,
-      shortcut: 'CTRL+SHIFT+U',
     },
     textVariant: TextVariantTune,
     Marker: {
       class: Marker,
-      shortcut: 'CMD+SHIFT+M',
     },
     inlineCode: {
       class: InlineCode,
-      shortcut: 'CMD+SHIFT+M',
     },
     alert: {
       class: Alert,
       inlineToolbar: true,
-      shortcut: 'CMD+SHIFT+A',
       config: {
         alertTypes: [
           'primary',
@@ -120,10 +101,6 @@ export let editorConfig = {
         defaultType: 'primary',
         messagePlaceholder: 'Enter something',
       },
-    },
-    toggle: {
-      class: ToggleBlock,
-      inlineToolbar: true,
     },
     embed: {
       class: Embed,

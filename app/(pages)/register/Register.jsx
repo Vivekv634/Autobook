@@ -83,7 +83,7 @@ const RegisterComponent = () => {
     <main className="grid place-items-center h-screen">
       <Card className="w-11/12 md:w-3/12">
         <CardHeader className="text-center">
-          <CardTitle>Welcome to Notesnook</CardTitle>
+          <CardTitle>Welcome to AutoBook</CardTitle>
           <CardDescription>Take your notes more concisely.</CardDescription>
         </CardHeader>
         <CardContent>

@@ -28,12 +28,25 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import editorJsToHtml from '../utils/editorJSToHTML';
+import CopyAsHTMLDialog from './CopyAsHTMLDialog';
+import { useState } from 'react';
+import CopyAsMarkdownDialog from './CopyAsMarkdownDialog';
+import CopyAsTextDialog from './CopyAsTextDialog';
+import ExportAsTextDialog from './ExportAsTextDialog';
+import ExportAsHTMLDialog from './ExportAsHTMLDialog';
+import ExportAsMarkdownDialog from './ExportAsMarkdownDialog';
 
 export default function NoteContextMenu({ children, notesDocID, note }) {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const router = useRouter();
   const pathName = usePathname();
+  const [copyAsHTML, setCopyAsHTML] = useState(false);
+  const [copyAsText, setCopyAsText] = useState(false);
+  const [copyAsMarkdown, setCopyAsMarkdown] = useState(false);
+  const [exportAsHTML, setExportAsHTML] = useState(false);
+  const [exportAsText, setExportAsText] = useState(false);
+  const [exportAsMarkdown, setExportAsMarkdown] = useState(false);
 
   const setEditorNoteState = () => {
     router.push(`/dashboard/${notesDocID}/${note.noteID}`);
@@ -155,11 +168,31 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
     dispatch(setNotes(duplicateResponse.data.result));
     toast({ description: 'Note duplicated!', className: 'bg-green-500' });
   };
-  const handleCopyAsHTML = () => {
-    const body = JSON.parse(note.body);
-    const result = editorJsToHtml(body.blocks);
-    console.log(result);
+
+  const handleCopyAsMarkdown = () => {
+    setCopyAsMarkdown(true);
   };
+
+  const handleCopyAsHTML = () => {
+    setCopyAsHTML(true);
+  };
+
+  const handleCopyAsText = () => {
+    setCopyAsText(true);
+  };
+
+  const handleExportAsMarkdown = () => {
+    setExportAsMarkdown(true);
+  };
+
+  const handleExportAsHTML = () => {
+    setExportAsHTML(true);
+  };
+
+  const handleExportAsText = () => {
+    setExportAsText(true);
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -200,13 +233,22 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
           <ContextMenuSub>
             <ContextMenuSubTrigger>Export as</ContextMenuSubTrigger>
             <ContextMenuSubContent>
-              <ContextMenuItem className="flex justify-between items-center">
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={handleExportAsMarkdown}
+              >
                 Markdown <Heading className="h-4 w-5" />
               </ContextMenuItem>
-              <ContextMenuItem className="flex justify-between items-center">
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={handleExportAsHTML}
+              >
                 HTML <Code className="h-4 w-5" />
               </ContextMenuItem>
-              <ContextMenuItem className="flex justify-between items-center">
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={handleExportAsText}
+              >
                 Text <Type className="h-4 w-5" />
               </ContextMenuItem>
             </ContextMenuSubContent>
@@ -214,7 +256,10 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
           <ContextMenuSub>
             <ContextMenuSubTrigger>Copy as</ContextMenuSubTrigger>
             <ContextMenuSubContent>
-              <ContextMenuItem className="flex justify-between items-center">
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={handleCopyAsMarkdown}
+              >
                 Markdown <Heading className="h-4 w-5" />
               </ContextMenuItem>
               <ContextMenuItem
@@ -223,7 +268,10 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
               >
                 HTML <Code className="h-4 w-5" />
               </ContextMenuItem>
-              <ContextMenuItem className="flex justify-between items-center">
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={handleCopyAsText}
+              >
                 Text <Type className="h-4 w-5" />
               </ContextMenuItem>
             </ContextMenuSubContent>
@@ -263,6 +311,39 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
           </ContextMenuItem>
         </ContextMenuContent>
       )}
+      <CopyAsHTMLDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={copyAsHTML}
+        setOpen={setCopyAsHTML}
+      />
+      <CopyAsMarkdownDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={copyAsMarkdown}
+        setOpen={setCopyAsMarkdown}
+      />
+      <CopyAsTextDialog
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={copyAsText}
+        setOpen={setCopyAsText}
+      />
+      <ExportAsTextDialog
+        noteTitle={note.title}
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={exportAsText}
+        setOpen={setExportAsText}
+      />
+      <ExportAsMarkdownDialog
+        noteTitle={note.title}
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={exportAsMarkdown}
+        setOpen={setExportAsMarkdown}
+      />
+      <ExportAsHTMLDialog
+        noteTitle={note.title}
+        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        open={exportAsHTML}
+        setOpen={setExportAsHTML}
+      />
     </ContextMenu>
   );
 }

@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { editorConfig } from '@/app/utils/editor';
+import { editorConfig } from '@/app/utils/editorConfig';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 

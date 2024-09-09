@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "manifest_version": 2,
-  "name": "Notesnook",
-  "short_name": "Notesnook",
+  "name": "AutoBook",
+  "short_name": "AutoBook",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#222831",
