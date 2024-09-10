@@ -98,7 +98,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
         },
       );
       dispatch(setNotes(response.data.result));
-      toast({ ...toastMessage, className: 'bg-green-500 text-white' });
+      toast({ ...toastMessage, className: 'bg-green-600' });
     } catch (error) {
       console.error(error);
       toast({
@@ -171,7 +171,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
       },
     );
     dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', className: 'bg-green-500' });
+    toast({ description: 'Note duplicated!', className: 'bg-green-600' });
   };
 
   return (
@@ -196,7 +196,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
             className="flex justify-between items-center"
             onClick={() => updateNote('isPinned')}
           >
-            Pin
+            {note.isPinned ? 'Pinned' : 'Pin'}
             {note.isPinned && <Check className="h-4 w-5" />}
           </DropdownMenuItem>
           <DropdownMenuItem

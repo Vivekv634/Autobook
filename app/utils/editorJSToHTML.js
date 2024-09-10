@@ -88,10 +88,10 @@ export default function editorJsToHtml(data) {
     ?.map((block) => {
       switch (block.type) {
         case 'title':
-          return `<${block.data.titleType.toLowerCase()} style="text-align:${block.data.alignText.split('-')[2].toLowerCase()};color:${block.data.color.toLowerCase()};">${block.data.text}</${block.data.titleType.toLowerCase()}>`;
+          return `<${block.data.titleType.toLowerCase()} style="text-align:${block.data.alignText.split('-')[2].toLowerCase()};${block.data.color ? `color:${block.data.color.toLowerCase()}` : ''}">${block.data.text}</${block.data.titleType.toLowerCase()}>`;
 
         case 'paragraph':
-          return `<p sytle="text-align:${block.data.alignment.toLowerCase()}">${block.data.text}</p>`;
+          return `<p style="text-align:${block.data.alignment.toLowerCase()};">${block.data.text}</p>`;
 
         case 'list':
           return renderList(block.data.items, block.data.style);

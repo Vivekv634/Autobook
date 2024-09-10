@@ -148,7 +148,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
             updated!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
       setLoading(false);
     } catch (error) {

@@ -63,7 +63,7 @@ const RegisterComponent = () => {
       RegisterResponse.data.result &&
         toast({
           desciption: 'Registration successful! Now login.',
-          className: 'bg-green-500',
+          className: 'bg-green-600',
         });
       router.push('/login');
     } catch (error) {

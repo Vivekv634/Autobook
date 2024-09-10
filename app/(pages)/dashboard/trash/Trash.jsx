@@ -19,7 +19,7 @@ const TrashComponent = () => {
           notesDocID: user.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes restored!', className: 'bg-green-500' });
+      toast({ description: 'All notes restored!', className: 'bg-green-600' });
     } catch (error) {
       console.log(error);
       toast({
@@ -36,7 +36,7 @@ const TrashComponent = () => {
           notesDocID: user.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes deleted!', className: 'bg-green-500' });
+      toast({ description: 'All notes deleted!', className: 'bg-green-600' });
     } catch (error) {
       console.log(error);
       toast({

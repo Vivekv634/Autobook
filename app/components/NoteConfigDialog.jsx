@@ -122,7 +122,7 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Note updated successfully!',
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
     } catch (error) {
       console.error(error);

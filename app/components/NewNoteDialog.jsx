@@ -112,7 +112,7 @@ export default function NewNoteDialog() {
       setLoading(false);
       toast({
         description: 'Note Created successfully!',
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
     } catch (error) {
       console.error(error);
@@ -144,7 +144,7 @@ export default function NewNoteDialog() {
             required
           />
         </div>
-        <div>
+        <div className="my-2">
           <Label htmlFor="tags">
             Tags{' '}
             <span className="text-muted-foreground text-[.8rem]">

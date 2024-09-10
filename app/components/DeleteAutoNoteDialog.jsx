@@ -74,7 +74,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
             <span className="font-bold">{autoNoteName}</span> AutoNote deleted!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
     } catch (error) {
       setLoading(false);

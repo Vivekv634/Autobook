@@ -38,7 +38,7 @@ const SettingsComponent = () => {
       { theme: theme },
     );
     dispatch(setUser({ ...user, ...response.data.result }));
-    toast({ description: 'Theme updated!', className: 'bg-green-500' });
+    toast({ description: 'Theme updated!', className: 'bg-green-600' });
     setTheme(theme);
   };
 
@@ -50,7 +50,7 @@ const SettingsComponent = () => {
     dispatch(setUser({ ...user, ...response.data.result }));
     toast({
       description: 'Default home page updated!',
-      className: 'bg-green-500',
+      className: 'bg-green-600',
     });
   };
 
@@ -62,7 +62,7 @@ const SettingsComponent = () => {
     dispatch(setUser({ ...user, ...response.data.result }));
     toast({
       description: 'Trash interval updated!',
-      className: 'bg-green-500',
+      className: 'bg-green-600',
     });
   };
   return (
@@ -83,7 +83,7 @@ const SettingsComponent = () => {
               handleThemeChange(e);
             }}
           >
-            <SelectTrigger className="w-fit">
+            <SelectTrigger className="w-fit gap-1">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -100,7 +100,7 @@ const SettingsComponent = () => {
           <div>
             <Label className="block font-bold">Home Page</Label>
             <Label className="text-muted-foreground">
-              Default home page on login
+              Default home page on app open
             </Label>
           </div>
           <Select
@@ -109,7 +109,7 @@ const SettingsComponent = () => {
               handleDefaultHomePageChange(e);
             }}
           >
-            <SelectTrigger className="w-fit">
+            <SelectTrigger className="w-fit gap-1">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -142,7 +142,7 @@ const SettingsComponent = () => {
               handleDeletionIntervalChange(e);
             }}
           >
-            <SelectTrigger className="w-fit">
+            <SelectTrigger className="w-fit gap-1">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -160,9 +160,7 @@ const SettingsComponent = () => {
         <div className="flex justify-between items-center">
           <div>
             <Label className="block font-bold">Export Notes</Label>
-            <Label className="text-muted-foreground">
-              Export notes as PDF or Markdown
-            </Label>
+            <Label className="text-muted-foreground">Export all notes</Label>
           </div>
           <Button variant="secondary">Export</Button>
         </div>
@@ -171,7 +169,7 @@ const SettingsComponent = () => {
           <div>
             <Label className="block font-bold">Export Notebooks</Label>
             <Label className="text-muted-foreground">
-              Export notebooks as PDF or Markdown
+              Export all notebooks and notes
             </Label>
           </div>
           <Button variant="secondary">Export</Button>
@@ -182,4 +180,3 @@ const SettingsComponent = () => {
 };
 
 export default SettingsComponent;
-

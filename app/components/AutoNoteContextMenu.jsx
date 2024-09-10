@@ -53,7 +53,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
     } catch (error) {
       console.error(error);
@@ -84,7 +84,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       );
       toast({
         description: 'New Note created successfully',
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
     } catch (error) {
       console.error(error);

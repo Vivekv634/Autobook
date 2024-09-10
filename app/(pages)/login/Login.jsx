@@ -56,7 +56,7 @@ const LoginComponent = () => {
     try {
       signInWithEmailAndPassword(auth, email, password).then((data) => {
         dispatch(loginSuccess(data.user));
-        toast({ description: 'Login Successful', className: 'bg-green-500' });
+        toast({ description: 'Login Successful', className: 'bg-green-600' });
       });
     } catch (error) {
       console.error(error);

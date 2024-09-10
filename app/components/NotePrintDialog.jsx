@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
-import { print } from 'html-to-printer';
 import { Printer } from 'lucide-react';
 import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
@@ -22,7 +21,14 @@ export default function NotePrintDialog({ html, open, setOpen }) {
 
   function printHTML() {
     try {
-      print(formattedHTML);
+      const printableContent = formattedHTML;
+      const printWindow = window.open('', '_blank');
+      printWindow.document.open();
+      printWindow.document.write(printableContent);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
     } catch (error) {
       console.error(error);
       toast({

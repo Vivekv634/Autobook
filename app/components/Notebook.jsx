@@ -13,11 +13,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AccordionHeader } from '@radix-ui/react-accordion';
-import { Ellipsis, Pen, Trash2 } from 'lucide-react';
+import { ArrowDownToLine, Ellipsis, Pen, Trash2 } from 'lucide-react';
 import DeleteNotebookAlertDialog from './DeleteNotebookAlertDialog';
 import EditNotebookNameAlertDialog from './EditNotebookNameAlertDialog';
+import ExportNotebookDialog from './ExportNotebookDialog';
+import { useState } from 'react';
 
 export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
+  const [open, setOpen] = useState(false);
   return (
     <AccordionItem key={notebook_id} value={notebook_id}>
       <AccordionHeader className="flex justify-between px-3 items-center w-full">
@@ -31,7 +34,7 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
           <DropdownMenuTrigger>
             <Ellipsis className="min-h-7 min-w-9 border rounded-md" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-2">
+          <DropdownMenuContent className="mr-7">
             <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
               <EditNotebookNameAlertDialog
                 notebookName={notebooks[notebook_id].notebookName}
@@ -41,6 +44,12 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
               >
                 Edit Name <Pen className="w-4 h-4" />
               </EditNotebookNameAlertDialog>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex justify-between pr-6"
+              onClick={() => setOpen(true)}
+            >
+              Export Notebook <ArrowDownToLine className="w-4 h-4" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
@@ -52,6 +61,12 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
               </DeleteNotebookAlertDialog>
             </DropdownMenuItem>
           </DropdownMenuContent>
+          <ExportNotebookDialog
+            open={open}
+            setOpen={setOpen}
+            notes={notes}
+            notebook_id={notebook_id}
+          />
         </DropdownMenu>
       </AccordionHeader>
       <AccordionContent>

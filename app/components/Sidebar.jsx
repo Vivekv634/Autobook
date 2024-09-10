@@ -51,7 +51,7 @@ const Menubar = () => {
             let tagsData = {};
             let deletedNotes = [];
 
-            notes?.map((note) => {
+            notes?.forEach((note) => {
               if (!note.isTrash && !note.isLocked) {
                 if (note.isPinned) {
                   updatedNotes.unshift(note);
@@ -77,7 +77,7 @@ const Menubar = () => {
             dispatch(setDeletedNotes(deletedNotes));
 
             let Notebooks = {};
-            notebooks?.map((notebook) => {
+            notebooks?.forEach((notebook) => {
               Notebooks[notebook.notebookID] = {
                 notebookName: notebook.notebookName,
                 usedInTemplate: notebook.usedInTemplate,

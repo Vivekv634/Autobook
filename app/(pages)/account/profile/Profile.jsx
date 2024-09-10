@@ -63,7 +63,7 @@ const ProfileComponent = () => {
       .then(() => {
         toast({
           description: 'Verification email sent!',
-          className: 'bg-green-500',
+          className: 'bg-green-600',
         });
       })
       .catch((error) => {
@@ -83,7 +83,7 @@ const ProfileComponent = () => {
         { name: newName },
       );
       dispatch(setUser({ ...user, ...response.data.result }));
-      toast({ description: 'Name updated!', className: 'bg-green-500' });
+      toast({ description: 'Name updated!', className: 'bg-green-600' });
       router.refresh();
     } catch (error) {
       console.error(error);

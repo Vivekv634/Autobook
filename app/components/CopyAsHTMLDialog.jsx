@@ -25,7 +25,7 @@ export default function CopyAsHTMLDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'HTML copied to clipboard!',
-        className: 'bg-green-500',
+        className: 'bg-green-600',
       });
     } catch (error) {
       setOpen(false);
