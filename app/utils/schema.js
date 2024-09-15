@@ -48,3 +48,9 @@ export const state = [
   { value: 'running', label: 'Running' },
   { value: 'paused', label: 'Paused' },
 ];
+
+export const exportType = [
+  { label: 'Text File', val: 'txt' },
+  { label: 'Markdown File', val: 'md' },
+  { label: 'HTML File', val: 'html' },
+];

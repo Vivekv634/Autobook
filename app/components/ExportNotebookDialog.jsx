@@ -28,12 +28,7 @@ import { gfm } from 'turndown-plugin-gfm';
 import { convert } from 'html-to-text';
 import { useToast } from '@/components/ui/use-toast';
 import { saveAs } from 'file-saver';
-
-const exportType = [
-  { label: 'Text File', val: 'txt' },
-  { label: 'Markdown File', val: 'md' },
-  { label: 'HTML File', val: 'html' },
-];
+import { exportType } from '../utils/schema';
 
 export default function ExportNotebookDialog({
   notes,

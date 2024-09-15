@@ -10,44 +10,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTheme } from 'next-themes';
 import axios from 'axios';
-import { setUser } from '@/app/redux/slices/noteSlice';
 import { useToast } from '@/components/ui/use-toast';
 import { pages } from '@/app/utils/pageData';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import ExportAllNotes from '@/app/components/ExportAllNotes';
+import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 
 const SettingsComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const { user } = useSelector((state) => state.note);
   const [theme, SetTheme] = useState(user.userData?.theme);
-  // eslint-disable-next-line
-  const [homePage, setHomePage] = useState(user.userData?.defaultHomePage);
-  // eslint-disable-next-line
-  const [interval, setInterval] = useState(user.userData?.trashInterval);
+  const [homePage] = useState(user.userData?.defaultHomePage);
+  const [interval] = useState(user.userData?.trashInterval);
+  const [exportallnotes, setExportAllNotes] = useState(false);
+  const [exportallnotebooks, setExportAllNotebooks] = useState(false);
   const { setTheme } = useTheme();
-  const dispatch = useDispatch();
   const { toast } = useToast();
 
   const handleThemeChange = async (theme) => {
     SetTheme(theme);
-    const response = await axios.put(
-      `${process.env.API}/api/account/update/${user.userID}`,
-      { theme: theme },
-    );
-    dispatch(setUser({ ...user, ...response.data.result }));
+    await axios.put(`${process.env.API}/api/account/update/${user.userID}`, {
+      theme: theme,
+    });
     toast({ description: 'Theme updated!', className: 'bg-green-600' });
     setTheme(theme);
   };
 
   const handleDefaultHomePageChange = async (page) => {
-    const response = await axios.put(
-      `${process.env.API}/api/account/update/${user.userID}`,
-      { defaultHomePage: page },
-    );
-    dispatch(setUser({ ...user, ...response.data.result }));
+    await axios.put(`${process.env.API}/api/account/update/${user.userID}`, {
+      defaultHomePage: page,
+    });
     toast({
       description: 'Default home page updated!',
       className: 'bg-green-600',
@@ -55,16 +51,15 @@ const SettingsComponent = () => {
   };
 
   const handleDeletionIntervalChange = async (days) => {
-    const response = await axios.put(
-      `${process.env.API}/api/account/update/${user.userID}`,
-      { trashInterval: days },
-    );
-    dispatch(setUser({ ...user, ...response.data.result }));
+    await axios.put(`${process.env.API}/api/account/update/${user.userID}`, {
+      trashInterval: days,
+    });
     toast({
       description: 'Trash interval updated!',
       className: 'bg-green-600',
     });
   };
+
   return (
     <section className={cn(isDesktop && 'container')}>
       <div className="p-2 border rounded-md mt-2 mx-1">
@@ -127,7 +122,7 @@ const SettingsComponent = () => {
             </SelectContent>
           </Select>
         </div>
-        <Separator className="my-2" />
+        <Separator className="my-3" />
         <div className="flex justify-between items-center">
           <div>
             <Label className="block font-bold">Cleanup interval</Label>
@@ -156,15 +151,17 @@ const SettingsComponent = () => {
       </div>
       <div className="p-2 border rounded-md mt-2 mx-1">
         <Label className="text-2xl font-extrabold block">Export</Label>
-        <Separator className="my-2" />
+        <Separator className="my-3" />
         <div className="flex justify-between items-center">
           <div>
             <Label className="block font-bold">Export Notes</Label>
             <Label className="text-muted-foreground">Export all notes</Label>
           </div>
-          <Button variant="secondary">Export</Button>
+          <Button variant="secondary" onClick={() => setExportAllNotes(true)}>
+            Export
+          </Button>
         </div>
-        <Separator className="my-2" />
+        <Separator className="my-3" />
         <div className="flex justify-between items-center">
           <div>
             <Label className="block font-bold">Export Notebooks</Label>
@@ -172,9 +169,19 @@ const SettingsComponent = () => {
               Export all notebooks and notes
             </Label>
           </div>
-          <Button variant="secondary">Export</Button>
+          <Button
+            variant="secondary"
+            onClick={() => setExportAllNotebooks(true)}
+          >
+            Export
+          </Button>
         </div>
       </div>
+      <ExportAllNotes open={exportallnotes} setOpen={setExportAllNotes} />
+      <ExportAllNotebooks
+        open={exportallnotebooks}
+        setOpen={setExportAllNotebooks}
+      />
     </section>
   );
 };
