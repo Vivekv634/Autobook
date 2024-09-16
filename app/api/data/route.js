@@ -19,7 +19,7 @@ export async function GET(request) {
     data = notesSnap.data();
     return NextResponse.json({ result: data }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json({ error: error.message }, { status: 200 });
   }
 }

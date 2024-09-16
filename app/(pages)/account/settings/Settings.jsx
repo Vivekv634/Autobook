@@ -17,6 +17,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { pages } from '@/app/utils/pageData';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import ImportNotesDialog from '@/app/components/ImportNotesDialog';
 import ExportAllNotes from '@/app/components/ExportAllNotes';
 import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 
@@ -26,6 +27,7 @@ const SettingsComponent = () => {
   const [theme, SetTheme] = useState(user.userData?.theme);
   const [homePage] = useState(user.userData?.defaultHomePage);
   const [interval] = useState(user.userData?.trashInterval);
+  const [importFiles, setImportFiles] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
   const { setTheme } = useTheme();
@@ -177,6 +179,20 @@ const SettingsComponent = () => {
           </Button>
         </div>
       </div>
+      <div className="p-2 border rounded-md mt-2 mx-1">
+        <Label className="text-2xl font-extrabold block">Import</Label>
+        <Separator className="my-3" />
+        <div className="flex justify-between items-center">
+          <div>
+            <Label className="block font-bold">Import Notes</Label>
+            <Label className="text-muted-foreground">Import your note(s)</Label>
+          </div>
+          <Button variant="secondary" onClick={() => setImportFiles(true)}>
+            Import
+          </Button>
+        </div>
+      </div>
+      <ImportNotesDialog open={importFiles} setOpen={setImportFiles} />
       <ExportAllNotes open={exportallnotes} setOpen={setExportAllNotes} />
       <ExportAllNotebooks
         open={exportallnotebooks}

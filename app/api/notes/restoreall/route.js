@@ -29,7 +29,7 @@ export async function GET(request) {
     });
     return NextResponse.json({ result: updatedNotes }, { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

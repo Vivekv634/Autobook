@@ -9,7 +9,6 @@ export async function POST(request) {
     let autoNotes;
     const notesDocID = headers().get('notesDocID');
     const body = await request.json();
-    console.log(body);
     const autoNoteData = {
       ...autoNote,
       ...body,
@@ -35,12 +34,10 @@ export async function POST(request) {
       const data = docSnap.data();
       if (!data?.autoNotes) {
         autoNotes = [autoNoteData];
-        console.log(autoNotes);
         transaction.update(docRef, { autoNotes: autoNotes });
       } else {
         autoNotes = data.autoNotes;
         autoNotes.push(autoNoteData);
-        console.log(autoNotes);
         transaction.update(docRef, { autoNotes: autoNotes });
       }
     });

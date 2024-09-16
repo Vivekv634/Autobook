@@ -21,7 +21,7 @@ const TrashComponent = () => {
       });
       toast({ description: 'All notes restored!', className: 'bg-green-600' });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast({
         description: 'Something went wrong! Try again later.',
         variant: 'destructive',
@@ -38,7 +38,7 @@ const TrashComponent = () => {
       });
       toast({ description: 'All notes deleted!', className: 'bg-green-600' });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast({
         description: 'Something went wrong! Try again later.',
         variant: 'destructive',

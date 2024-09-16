@@ -3,6 +3,7 @@ import { doc, runTransaction } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { notes } from '@/app/utils/schema';
+import { uid } from 'uid';
 
 export async function POST(request) {
   const notesDocID = headers().get('notesDocID');
@@ -16,18 +17,18 @@ export async function POST(request) {
       if (docSnap.exists()) {
         const data = docSnap.data();
         if (!data.notes) {
-          notes = [{ ...notesData, ...body }];
+          notes = [{ ...notesData, ...body, noteID: uid() }];
           transaction.set(docRef, { ...data, notes: notes });
         } else {
           notes = data.notes;
-          notes.push({ ...notesData, ...body });
+          notes.push({ ...notesData, ...body, noteID: uid() });
           transaction.update(docRef, { notes: notes });
         }
       }
     });
     return NextResponse.json({ result: notes }, { status: 201 });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
