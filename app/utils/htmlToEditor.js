@@ -19,6 +19,20 @@ function processList(node) {
   return listItems;
 }
 
+function processLinks(node) {
+  let text = '';
+
+  node.childNodes.forEach((child) => {
+    if (child.nodeType === Node.TEXT_NODE) {
+      text += child.nodeValue;
+    } else if (child.tagName === 'A') {
+      text += ` <a href="${child.href}">${child.innerText}</a> `;
+    }
+  });
+
+  return text.trim();
+}
+
 export default function convertHtmlToEditorJs(html) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
@@ -29,7 +43,7 @@ export default function convertHtmlToEditorJs(html) {
     if (node.tagName === 'P') {
       blocks.push({
         type: 'paragraph',
-        data: { text: node.innerText, alignment: node.style.textAlign },
+        data: { text: processLinks(node), alignment: node.style.textAlign },
       });
     } else if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(node.tagName)) {
       blocks.push({
@@ -45,7 +59,7 @@ export default function convertHtmlToEditorJs(html) {
       node.querySelector('input[type="checkbox"]')
     ) {
       const checkbox = node.querySelector('input[type="checkbox"]');
-      const text = node.innerText.replace(/\n/g, '').trim();
+      const text = processLinks(node);
       const checked = checkbox.checked;
 
       blocks.push({

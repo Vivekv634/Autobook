@@ -71,31 +71,33 @@
 .ce-block__content,
 .ce-toolbar__content {
   max-width: 100%;
-  /* padding: 1rem; */
   min-height: 100%;
 }
 
 .codex-editor__redactor {
   min-height: 100%;
 }
+@media (prefers-color-scheme: dark) {
+  .ce-toolbar__actions,
+  .ce-toolbar__actions--opened {
+    color: white;
+  }
+}
 
 ::-webkit-scrollbar {
   width: 5px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;
   border-radius: 10px;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: #9f9c9c;
   border-radius: 10px;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #615f5f;
 }
