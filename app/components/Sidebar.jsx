@@ -27,74 +27,113 @@ const Menubar = () => {
 
   useEffect(() => {
     setMount(true);
-  }, [mount]);
+  }, []);
 
   useEffect(() => {
-    const fetchData = async (authID) => {
-      const response = await axios.get(
-        `${process.env.API}/api/account/user/${authID}`,
-      );
-      if (response?.data?.result) {
-        dispatch(setUser(response?.data?.result));
-        return response?.data?.result?.userData?.notesDocID;
+    const fetchUserData = async (userID) => {
+      try {
+        const response = await axios.get(
+          `${process.env.API}/api/account/user/${userID}`,
+        );
+        if (response?.data?.result) {
+          dispatch(setUser(response?.data?.result));
+          return response?.data?.result;
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
       }
     };
+
+    const listenToNotes = (notesDocID) => {
+      const docRef = doc(db, 'notes', notesDocID);
+      const unsubscribe = onSnapshot(docRef, (doc) => {
+        if (doc.exists()) {
+          const { notes, notebooks, autoNotes } = doc.data();
+
+          // Processing notes
+          let updatedNotes = [];
+          let tagsData = {};
+          let deletedNotes = [];
+
+          notes?.forEach((note) => {
+            if (!note.isTrash && !note.isLocked) {
+              if (note.isPinned) {
+                updatedNotes.unshift(note);
+              } else {
+                updatedNotes.push(note);
+              }
+
+              // Process tags data
+              note.tagsList?.forEach((tag) => {
+                if (tagsData[tag]) {
+                  tagsData[tag].push(note);
+                } else {
+                  tagsData[tag] = [note];
+                }
+              });
+            }
+            if (note.isTrash) {
+              deletedNotes.push(note);
+            }
+          });
+
+          // Dispatch Redux actions
+          dispatch(setNotes(updatedNotes));
+          dispatch(setTagsData(tagsData));
+          dispatch(setDeletedNotes(deletedNotes));
+
+          // Process notebooks
+          let Notebooks = {};
+          notebooks?.forEach((notebook) => {
+            Notebooks[notebook.notebookID] = {
+              notebookName: notebook.notebookName,
+              usedInTemplate: notebook.usedInTemplate,
+            };
+          });
+          dispatch(setNoteBooks(Notebooks));
+          dispatch(setAutoNotes(autoNotes));
+
+          console.log('Fetched data from notes snapshot...');
+        }
+      });
+
+      return unsubscribe;
+    };
+
+    const listenToUser = (userID) => {
+      const docRef = doc(db, 'users', userID);
+      const unSubscribe = onSnapshot(docRef, (doc) => {
+        if (doc.exists()) {
+          const userData = doc.data();
+          dispatch(setUser({ userData, userID }));
+          console.log('Fetched data from user snapshot...');
+        }
+      });
+      return unSubscribe;
+    };
+
     onAuthStateChanged(auth, (User) => {
       if (!User) {
         router.push('/login');
-      } else if (mount && Object.keys(user).length === 0) {
-        fetchData(User.uid).then((notesDocID) => {
-          const docRef = doc(db, 'notes', notesDocID);
-          const unsubscribe = onSnapshot(docRef, (doc) => {
-            const { notes, notebooks, autoNotes } = doc.data();
-            let updatedNotes = [];
-            let tagsData = {};
-            let deletedNotes = [];
+      } else if (mount && user && Object.keys(user).length === 0) {
+        // Fetch user data and set up listeners
+        fetchUserData(User.uid).then((response) => {
+          const notesDocID = response.userData.notesDocID;
 
-            notes?.forEach((note) => {
-              if (!note.isTrash && !note.isLocked) {
-                if (note.isPinned) {
-                  updatedNotes.unshift(note);
-                } else {
-                  updatedNotes.push(note);
-                }
-                note.tagsList &&
-                  note.tagsList.map((tag) => {
-                    if (tagsData[tag]) {
-                      tagsData[tag].push(note);
-                    } else {
-                      tagsData[tag] = [note];
-                    }
-                  });
-              }
-              if (note.isTrash) {
-                deletedNotes.push(note);
-              }
-            });
+          // Set up listeners for both notes and user data
+          const unsubscribeNotes = listenToNotes(notesDocID);
+          const unsubscribeUser = listenToUser(response.userID);
 
-            dispatch(setNotes(updatedNotes));
-            dispatch(setTagsData(tagsData));
-            dispatch(setDeletedNotes(deletedNotes));
-
-            let Notebooks = {};
-            notebooks?.forEach((notebook) => {
-              Notebooks[notebook.notebookID] = {
-                notebookName: notebook.notebookName,
-                usedInTemplate: notebook.usedInTemplate,
-              };
-            });
-
-            dispatch(setNoteBooks(Notebooks));
-            dispatch(setAutoNotes(autoNotes));
-
-            console.log('fetching data from snapshot...');
-          });
-          return () => unsubscribe();
+          return () => {
+            unsubscribeNotes();
+            unsubscribeUser();
+          };
         });
       }
     });
   }, [dispatch, mount, router, user]);
 
+  // Render DesktopSidebar or MobileSidebar based on screen size
   if (isDesktop) {
     return <DesktopSidebar />;
   }

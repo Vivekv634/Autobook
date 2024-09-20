@@ -1,12 +1,7 @@
 'use client';
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  loginFailure,
-  loginStart,
-  loginSuccess,
-} from '@/app/redux/slices/userLoginSlice';
+import { useDispatch } from 'react-redux';
 import { isEmail } from 'validator';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -29,10 +24,11 @@ import { auth } from '@/firebase.config';
 const LoginComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const router = useRouter();
   const { toast } = useToast();
-  const { isLoading, error } = useSelector((state) => state.userLogin);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -46,26 +42,28 @@ const LoginComponent = () => {
     let validationError = null;
     if (email && !isEmail(email)) {
       validationError = 'Invalid Email';
+    } else {
+      validationError = null;
     }
-    dispatch(loginFailure(validationError));
+    setError(validationError);
   }, [email, dispatch]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginStart());
-    try {
-      signInWithEmailAndPassword(auth, email, password).then((data) => {
-        dispatch(loginSuccess(data.user));
+    setLoading(true);
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
         toast({ description: 'Login Successful', className: 'bg-green-600' });
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          description: 'Oops! something went wrong!',
+          variant: 'destructive',
+        });
+        setLoading(false);
       });
-    } catch (error) {
-      console.error(error);
-      toast({
-        description: 'Oops! something went wrong!',
-        variant: 'destructive',
-      });
-      dispatch(loginFailure(null));
-    }
   };
 
   return (
@@ -102,9 +100,9 @@ const LoginComponent = () => {
             <Button
               type="submit"
               className="w-full font-semibold"
-              disabled={isLoading || error}
+              disabled={loading || error}
             >
-              {isLoading ? (
+              {loading ? (
                 <div className="flex">
                   <Loader2 className="h-[18px] animate-spin" /> Loading...
                 </div>

@@ -12,9 +12,7 @@ const LayoutComponent = ({ children }) => {
     setMount(true);
   }, []);
 
-  if (!mount) {
-    return null;
-  }
+  if (!mount) return null;
 
   return (
     <main className={cn(!isDesktop && 'h-screen', isDesktop && 'flex gap-1')}>
