@@ -1,6 +1,7 @@
 import { sendEmail } from '@/app/utils/sendEmail';
 import { NextResponse } from 'next/server';
 
+// eslint-disable-next-line
 export async function GET(request) {
   try {
     await sendEmail();
