@@ -9,12 +9,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { auth } from '@/firebase.config';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
+import VerifyEmailTemplate from './VerifyEmailTemplate';
 
 const NewNotebookDialog = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -64,6 +66,8 @@ const NewNotebookDialog = () => {
       });
     }
   };
+
+  if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
     <DialogContent>

@@ -28,8 +28,8 @@ const AutoNote = ({ autoNote }) => {
   const timeAgo = formatDistanceToNowStrict(autoNote?.lastNoteGenerationTime, {
     addSuffix: true,
   });
-
   const { notebooks } = useSelector((state) => state.note);
+
   return (
     <TooltipProvider>
       <Card id={autoNote.autoNoteID} className="my-1 cursor-pointer">

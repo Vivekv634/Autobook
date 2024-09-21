@@ -14,15 +14,27 @@ import {
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import hotkeys from 'hotkeys-js';
 
 const NotesComponent = () => {
   const { notes, user, notebooks } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [newNoteDialog, setNewNoteDialog] = useState(false);
+
+  hotkeys('ctrl+m, command+m', (e) => {
+    e.preventDefault();
+    setNewNoteDialog(true);
+  });
+
+  hotkeys('ctrl+k, command+k', (e) => {
+    e.preventDefault();
+    setCommandOpen(true);
+  });
 
   return (
     <TooltipProvider>
       <Tooltip>
-        <Dialog>
+        <Dialog open={newNoteDialog} onOpenChange={setNewNoteDialog}>
           <section className="p-2 flex flex-col">
             <div className="flex justify-between gap-1 mb-2">
               <div

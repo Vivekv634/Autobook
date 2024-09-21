@@ -5,10 +5,16 @@ import { Accordion } from '@/components/ui/accordion';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import hotkeys from 'hotkeys-js';
 
 const TagsComponent = () => {
   const { tagsData, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
+
+  hotkeys('ctrl+k, command+k', (e) => {
+    e.preventDefault();
+    setCommandOpen(true);
+  });
 
   return (
     <section className="p-2 flex flex-col">

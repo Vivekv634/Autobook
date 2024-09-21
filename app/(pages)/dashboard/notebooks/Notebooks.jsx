@@ -16,10 +16,22 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import hotkeys from 'hotkeys-js';
 const NotebookComponent = () => {
   const { notes, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [newNotebookDialog, setNewNotebookDialog] = useState(false);
   const [mount, setMount] = useState(false);
+
+  hotkeys('ctrl+m, command+m', (e) => {
+    e.preventDefault();
+    setNewNotebookDialog(true);
+  });
+
+  hotkeys('ctrl+k, command+k', (e) => {
+    e.preventDefault();
+    setCommandOpen(true);
+  });
 
   useEffect(() => {
     setMount(true);
@@ -28,7 +40,7 @@ const NotebookComponent = () => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <Dialog>
+        <Dialog open={newNotebookDialog} onOpenChange={setNewNotebookDialog}>
           <section className="p-2 flex flex-col">
             <div className="flex justify-between gap-1 mb-2">
               <div

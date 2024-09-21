@@ -24,6 +24,8 @@ import { uid } from 'uid';
 import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { auth } from '@/firebase.config';
+import VerifyEmailTemplate from './VerifyEmailTemplate';
 
 export default function NewNoteDialog() {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -123,6 +125,8 @@ export default function NewNoteDialog() {
       });
     }
   };
+
+  if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
     <DialogContent>

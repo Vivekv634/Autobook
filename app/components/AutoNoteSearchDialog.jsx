@@ -21,7 +21,7 @@ export default function AutoNoteSearchDialog({
   return (
     <CommandList>
       <CommandEmpty>{noFoundPrompt}</CommandEmpty>
-      {searchData.map((data, index) => {
+      {searchData?.map((data, index) => {
         return (
           <CommandItem key={index}>
             <div

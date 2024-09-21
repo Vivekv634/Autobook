@@ -70,6 +70,7 @@
     "file-saver": "^2.0.5",
     "firebase": "^10.12.4",
     "framer-motion": "^11.3.19",
+    "hotkeys-js": "^3.13.7",
     "html-entities": "^2.5.2",
     "html-pdf": "^3.0.1",
     "html-to-editorjs": "^1.0.0",

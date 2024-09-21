@@ -64,10 +64,15 @@ const ProfileComponent = () => {
                     <TooltipContent>Your email is verified.</TooltipContent>
                   </Tooltip>
                 ) : (
-                  <ShieldAlert
-                    className="text-yellow-600 h-5 w-5"
-                    onClick={() => setVerifyEmail(true)}
-                  />
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <ShieldAlert
+                        className="text-yellow-600 h-5 w-5"
+                        onClick={() => setVerifyEmail(true)}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>Your email is not verified.</TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             </div>

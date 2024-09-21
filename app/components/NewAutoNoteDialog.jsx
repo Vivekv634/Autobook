@@ -28,6 +28,8 @@ import { uid } from 'uid';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
+import { auth } from '@/firebase.config';
+import VerifyEmailTemplate from './VerifyEmailTemplate';
 
 const NewAutoNoteDialog = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -179,6 +181,8 @@ const NewAutoNoteDialog = () => {
       });
     }
   };
+
+  if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
     <DialogContent>

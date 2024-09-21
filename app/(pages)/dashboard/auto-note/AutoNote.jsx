@@ -11,6 +11,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import hotkeys from 'hotkeys-js';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,11 +19,22 @@ import { useSelector } from 'react-redux';
 const AutoNoteComponent = () => {
   const [commandOpen, setCommandOpen] = useState(false);
   const { autoNotes } = useSelector((state) => state.note);
+  const [newAutoNoteDialog, setNewAutoNoteDialog] = useState(false);
+
+  hotkeys('ctrl+m, command+m', (e) => {
+    e.preventDefault();
+    setNewAutoNoteDialog(true);
+  });
+
+  hotkeys('ctrl+k, command+k', (e) => {
+    e.preventDefault();
+    setCommandOpen(true);
+  });
 
   return (
     <TooltipProvider>
       <Tooltip>
-        <Dialog>
+        <Dialog open={newAutoNoteDialog} onOpenChange={setNewAutoNoteDialog}>
           <section className="p-2 flex flex-col">
             <div className="flex justify-between gap-1 mb-2">
               <div
@@ -54,7 +66,7 @@ const AutoNoteComponent = () => {
                 />
               </div>
             </CommandDialog>
-            {autoNotes.length > 0 &&
+            {autoNotes?.length > 0 &&
               autoNotes.map((autoNote, index) => {
                 return <AutoNote key={index} autoNote={autoNote} />;
               })}
