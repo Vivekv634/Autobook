@@ -52,9 +52,13 @@ const SettingsComponent = () => {
   };
 
   const handleDeletionIntervalChange = async (days) => {
-    await axios.put(`${process.env.API}/api/update-trash-interval-time`, {
-      trashInterval: days,
-    }, {headers:{notesDocID: user?.userData?.notesDocID});
+    await axios.put(
+      `${process.env.API}/api/update-trash-interval-time`,
+      {
+        trashInterval: days,
+      },
+      { headers: { notesDocID: user?.userData?.notesDocID } },
+    );
     toast({
       description: 'Trash interval updated!',
       className: 'bg-green-600',
