@@ -25,10 +25,18 @@ export default function DeleteNotebookAlertDialog({
   const { notebooks, autoNotes } = useSelector((state) => state.note);
   const { toast } = useToast();
   const [anName] = useState(
-    autoNotes?.map((autoNote) => {
+    autoNotes?.forEach((autoNote) => {
       if (autoNote.autoNoteNotebookID === notebook_id) {
         return autoNote.autoNoteName;
       }
+    }),
+  );
+  const [isAutoNoteExists] = useState(
+    autoNotes?.forEach((autoNote) => {
+      if (autoNote.autoNoteNotebookID === notebook_id) {
+        return true;
+      }
+      return false;
     }),
   );
 
@@ -70,7 +78,7 @@ export default function DeleteNotebookAlertDialog({
       >
         {children}
       </AlertDialogTrigger>
-      {notebooks[notebook_id].usedInTemplate ? (
+      {notebooks[notebook_id].usedInTemplate && isAutoNoteExists ? (
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Can&apos;t delete notebook</AlertDialogTitle>

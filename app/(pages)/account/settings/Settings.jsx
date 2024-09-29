@@ -24,22 +24,21 @@ import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 const SettingsComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const { user } = useSelector((state) => state.note);
-  const [theme, SetTheme] = useState(user.userData?.theme);
+  const [dark_theme] = useState(user.userData?.dark_theme);
   const [homePage] = useState(user.userData?.defaultHomePage);
   const [interval] = useState(user.userData?.trashInterval);
-  const [importFiles, setImportFiles] = useState(false);
+  const [importNotes, setImportNotes] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
   const { setTheme } = useTheme();
   const { toast } = useToast();
 
   const handleThemeChange = async (theme) => {
-    SetTheme(theme);
     await axios.put(`${process.env.API}/api/account/update/${user.userID}`, {
-      theme: theme,
+      dark_theme: theme,
     });
     toast({ description: 'Theme updated!', className: 'bg-green-600' });
-    setTheme(theme);
+    setTheme(dark_theme ? 'dark' : 'light');
   };
 
   const handleDefaultHomePageChange = async (page) => {
@@ -53,9 +52,9 @@ const SettingsComponent = () => {
   };
 
   const handleDeletionIntervalChange = async (days) => {
-    await axios.put(`${process.env.API}/api/account/update/${user.userID}`, {
+    await axios.put(`${process.env.API}/api/update-trash-interval-time`, {
       trashInterval: days,
-    });
+    }, {headers:{notesDocID: user?.userData?.notesDocID});
     toast({
       description: 'Trash interval updated!',
       className: 'bg-green-600',
@@ -75,7 +74,7 @@ const SettingsComponent = () => {
             </Label>
           </div>
           <Select
-            value={theme}
+            value={`${dark_theme}`}
             onValueChange={(e) => {
               handleThemeChange(e);
             }}
@@ -84,8 +83,8 @@ const SettingsComponent = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="true">Dark</SelectItem>
+              <SelectItem value="false">Light</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -134,7 +133,7 @@ const SettingsComponent = () => {
             </Label>
           </div>
           <Select
-            value={interval}
+            value={interval || 'never'}
             onValueChange={(e) => {
               handleDeletionIntervalChange(e);
             }}
@@ -143,6 +142,7 @@ const SettingsComponent = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="never">Never</SelectItem>
               <SelectItem value="7">7 days</SelectItem>
               <SelectItem value="15">15 days</SelectItem>
               <SelectItem value="30">30 days</SelectItem>
@@ -187,12 +187,12 @@ const SettingsComponent = () => {
             <Label className="block font-bold">Import Notes</Label>
             <Label className="text-muted-foreground">Import your note(s)</Label>
           </div>
-          <Button variant="secondary" onClick={() => setImportFiles(true)}>
+          <Button variant="secondary" onClick={() => setImportNotes(true)}>
             Import
           </Button>
         </div>
       </div>
-      <ImportNotesDialog open={importFiles} setOpen={setImportFiles} />
+      <ImportNotesDialog open={importNotes} setOpen={setImportNotes} />
       <ExportAllNotes open={exportallnotes} setOpen={setExportAllNotes} />
       <ExportAllNotebooks
         open={exportallnotebooks}

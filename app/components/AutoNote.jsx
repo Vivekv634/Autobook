@@ -25,9 +25,16 @@ import AutoNoteContextMenu from './AutoNoteContextMenu';
 
 const AutoNote = ({ autoNote }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
-  const timeAgo = formatDistanceToNowStrict(autoNote?.lastNoteGenerationTime, {
-    addSuffix: true,
-  });
+  const noteGeneratedTimeAgo = formatDistanceToNowStrict(
+    autoNote?.autoNoteUpdationDate,
+    { addSuffix: true },
+  );
+  const autoNoteUpdationTimeAgo = formatDistanceToNowStrict(
+    autoNote?.lastNoteGenerationTime,
+    {
+      addSuffix: true,
+    },
+  );
   const { notebooks } = useSelector((state) => state.note);
 
   return (
@@ -81,13 +88,13 @@ const AutoNote = ({ autoNote }) => {
                   </>
                 )}
               </div>
-              <div>{timeAgo}</div>
+              <div>{autoNoteUpdationTimeAgo}</div>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col text-[.94rem]">
             <Separator />
             <div className="flex justify-between w-full">
-              <div>Note Generated {timeAgo} </div>
+              <div>Note Generated {noteGeneratedTimeAgo} </div>
               <div>Period : {autoNote.noteGenerationPeriod}</div>
             </div>
           </CardFooter>

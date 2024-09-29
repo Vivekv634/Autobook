@@ -1,3 +1,4 @@
+import { userSchema } from '@/app/utils/schema';
 import { auth, notesDB, userDB } from '@/firebase.config';
 import {
   createUserWithEmailAndPassword,
@@ -25,20 +26,14 @@ const registerUser = async (name, email, password) => {
     authID: response.user.uid,
   };
   const notesResponse = await addDoc(notesDB, notesSchema);
-  const userSchema = {
-    name: name,
-    email: email,
+  const userData = {
+    ...userSchema,
+    name,
+    email,
     authID: response.user.uid,
     notesDocID: notesResponse.id,
-    vault: false,
-    vaultPassword: null,
-    isAppLocked: false,
-    appLockPassword: null,
-    defaultFontFamily: 'sans-serif',
-    defaultFontSize: 18,
-    defaultHomePage: 'notes',
-    dark_theme: true,
   };
-  await addDoc(userDB, userSchema);
+  console.log(userData);
+  await addDoc(userDB, userData);
   return response;
 };

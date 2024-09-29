@@ -17,7 +17,11 @@ import {
 } from '@/components/ui/tooltip';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import hotkeys from 'hotkeys-js';
+import { useMediaQuery } from 'usehooks-ts';
+import { cn } from '@/lib/utils';
+
 const NotebookComponent = () => {
+  const isDesktop = useMediaQuery('(min-width: 640px)');
   const { notes, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
   const [newNotebookDialog, setNewNotebookDialog] = useState(false);
@@ -49,7 +53,17 @@ const NotebookComponent = () => {
                 }}
                 className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto cursor-pointer"
               >
-                <span className="ml-2">Search notebooks...</span>
+                <span className="mx-2 cursor-pointer flex justify-between">
+                  Search notebooks...
+                  <code
+                    className={cn(
+                      !isDesktop && 'hidden',
+                      'px-1 border rounded-md text-center',
+                    )}
+                  >
+                    CTRL+K
+                  </code>
+                </span>
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
@@ -58,7 +72,7 @@ const NotebookComponent = () => {
                   </Button>
                 </DialogTrigger>
               </TooltipTrigger>
-              <TooltipContent>Add new notebook.</TooltipContent>
+              <TooltipContent>Add new notebook.(CTRL+M)</TooltipContent>
             </div>
             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
               <CommandInput placeholder="Search your notebooks..." />

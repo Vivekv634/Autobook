@@ -38,13 +38,16 @@ export default function ExportAllNotebooks({ open, setOpen }) {
   turndownServices.use(gfm);
 
   function fileData(data, fileType) {
-    const html = editorJsToHtml(JSON.parse(data.body).blocks);
+    const jsonData = JSON.parse(data.body).blocks;
+    const html = editorJsToHtml(jsonData);
     const formattedHTML = pretty(html, { ocd: true });
     switch (fileType) {
       case 'md':
         return turndownServices.turndown(formattedHTML);
       case 'txt':
         return convert(formattedHTML);
+      case 'json':
+        return JSON.stringify(jsonData);
       default:
         return formattedHTML;
     }

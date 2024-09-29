@@ -15,8 +15,11 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import hotkeys from 'hotkeys-js';
+import { useMediaQuery } from 'usehooks-ts';
+import { cn } from '@/lib/utils';
 
 const NotesComponent = () => {
+  const isDesktop = useMediaQuery('(min-width: 640px)');
   const { notes, user, notebooks } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
   const [newNoteDialog, setNewNoteDialog] = useState(false);
@@ -43,7 +46,17 @@ const NotesComponent = () => {
                 }}
                 className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
               >
-                <span className="ml-2 cursor-pointer">Search notes...</span>
+                <span className="mx-2 cursor-pointer flex justify-between">
+                  Search notes...
+                  <code
+                    className={cn(
+                      !isDesktop && 'hidden',
+                      'px-1 border rounded-md text-center',
+                    )}
+                  >
+                    CTRL+K
+                  </code>
+                </span>
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
@@ -52,7 +65,7 @@ const NotesComponent = () => {
                   </Button>
                 </DialogTrigger>
               </TooltipTrigger>
-              <TooltipContent>Add new note.</TooltipContent>
+              <TooltipContent>Add new note.(CTRL+M)</TooltipContent>
             </div>
             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
               <CommandInput placeholder="Search your notes..." />

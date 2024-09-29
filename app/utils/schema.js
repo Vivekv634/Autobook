@@ -12,7 +12,7 @@ export const notes = {
   isTrash: false,
   deletionTimeStamp: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
   title: '',
-  body: '',
+  body: JSON.stringify([]),
 };
 
 export const notebooks = {
@@ -53,4 +53,27 @@ export const exportType = [
   { label: 'Text File', val: 'txt' },
   { label: 'Markdown File', val: 'md' },
   { label: 'HTML File', val: 'html' },
+  { label: 'JSON Object', val: 'json' },
 ];
+
+export const acceptedFileType = [
+  'text/markdown',
+  'text/plain',
+  'text/html',
+  'application/json',
+];
+export const userSchema = {
+  name: '',
+  email: '',
+  authID: null,
+  notesDocID: null,
+  vault: false,
+  vaultPassword: null,
+  isAppLocked: false,
+  appLockPassword: null,
+  defaultFontFamily: 'sans-serif',
+  defaultFontSize: 18,
+  defaultHomePage: 'notes',
+  dark_theme: true,
+  trashInterval: '30',
+};

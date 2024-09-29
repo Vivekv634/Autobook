@@ -11,12 +11,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 import hotkeys from 'hotkeys-js';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useMediaQuery } from 'usehooks-ts';
 
 const AutoNoteComponent = () => {
+  const isDesktop = useMediaQuery('(min-width: 640px)');
   const [commandOpen, setCommandOpen] = useState(false);
   const { autoNotes } = useSelector((state) => state.note);
   const [newAutoNoteDialog, setNewAutoNoteDialog] = useState(false);
@@ -43,18 +46,26 @@ const AutoNoteComponent = () => {
                 }}
                 className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
               >
-                <span className="ml-2 cursor-pointer">
-                  Search auto notes...
+                <span className="mx-2 cursor-pointer flex justify-between">
+                  Search autonotes...
+                  <code
+                    className={cn(
+                      !isDesktop && 'hidden',
+                      'px-1 border rounded-md text-center',
+                    )}
+                  >
+                    CTRL+K
+                  </code>
                 </span>
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" className="p-2">
+                  <Button variant="secondary">
                     <Plus />
                   </Button>
                 </DialogTrigger>
               </TooltipTrigger>
-              <TooltipContent>Add new note.</TooltipContent>
+              <TooltipContent>Add new note. (CTRL+M)</TooltipContent>
             </div>
             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
               <CommandInput placeholder="Search your auto notes..." />

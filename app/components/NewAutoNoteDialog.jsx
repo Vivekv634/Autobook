@@ -2,7 +2,6 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import {
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -168,6 +167,11 @@ const NewAutoNoteDialog = () => {
         { headers: { notesDocID: user.userData.notesDocID } },
       );
       setLoading(false);
+      setNewNotebookName('');
+      setAutoNoteName('');
+      setTitleFormat('');
+      setPeriod('1 day');
+      setAutoNoteState('running');
       toast({
         description: 'Auto Note Created Successfully!',
         className: 'bg-green-600',
@@ -188,11 +192,15 @@ const NewAutoNoteDialog = () => {
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Create auto note</DialogTitle>
-        <DialogDescription>Create a new auto note.</DialogDescription>
       </DialogHeader>
       <form onSubmit={(e) => handleCreateAutoNote(e)}>
         <div className="my-2">
-          <Label htmlFor="autoNoteName">Auto Note Name</Label>
+          <Label htmlFor="autoNoteName">
+            Auto Note Name
+            <span className="text-muted-foreground text-[.8rem]">
+              (Required)
+            </span>
+          </Label>
           <Input
             id="autoNoteName"
             value={autoNoteName}
@@ -204,6 +212,9 @@ const NewAutoNoteDialog = () => {
         <div>
           <Label htmlFor="titleFormat" className="flex gap-1">
             Title Format <CircleHelp className="h-4 w-4 cursor-pointer" />
+            <span className="text-muted-foreground text-[.8rem]">
+              (Required)
+            </span>
           </Label>
           <Input
             id="titleFormat"
@@ -238,7 +249,12 @@ const NewAutoNoteDialog = () => {
             )}
           </Label>
           <div className={cn(newNotebookFlag && 'hidden')}>
-            <Label>Select Notebook</Label>
+            <Label>
+              Select Notebook
+              <span className="text-muted-foreground text-[.8rem]">
+                (Required)
+              </span>
+            </Label>
             <Select
               value={anNotebook}
               onValueChange={(e) => setANNotebook(e)}
@@ -262,7 +278,12 @@ const NewAutoNoteDialog = () => {
             </Select>
           </div>
           <div className={cn(!newNotebookFlag && 'hidden')}>
-            <Label>New Notebook Name</Label>
+            <Label>
+              New Notebook Name
+              <span className="text-muted-foreground text-[.8rem]">
+                (Required)
+              </span>
+            </Label>
             <Input
               placeholder="Enter New Notebook Name..."
               value={newNotebookName}

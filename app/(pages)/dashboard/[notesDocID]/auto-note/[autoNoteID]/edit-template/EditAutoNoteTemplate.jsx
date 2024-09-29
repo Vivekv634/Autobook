@@ -55,7 +55,7 @@ const EditAutoNoteTemplate = ({ params }) => {
     try {
       setLoading(true);
       editorInstance.current.save().then(async (outputData) => {
-        const templateBody = outputData.blocks;
+        const templateBody = JSON.stringify(outputData.blocks);
         await axios.put(
           `${process.env.API}/api/auto-notes/update/${params.autoNoteID}`,
           { template: { body: { blocks: templateBody } } },

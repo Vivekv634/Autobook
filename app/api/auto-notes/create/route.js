@@ -12,7 +12,7 @@ export async function POST(request) {
     const autoNoteData = {
       ...autoNote,
       ...body,
-      autoNoteUpdationDate: new Date().toString(),
+      autoNoteUpdationDate: new Date().getTime(),
       template: {
         body: {
           blocks: [

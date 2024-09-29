@@ -137,6 +137,11 @@ export default function convertHtmlToEditorJs(html) {
           message: node.innerText,
         },
       });
+    } else if (node.tagName === 'LABEL') {
+      blocks.push({
+        type: 'paragraph',
+        data: { text: processLinks(node) },
+      });
     }
   });
 

@@ -71,7 +71,7 @@ const RegisterComponent = () => {
       console.error(error);
       let message = 'Oops! something went wrong! Try again.';
       if (error.response.data.error.includes('email-already-in-use')) {
-        message = 'Email already in use! Use different email account!';
+        message = 'Email already in use!';
       }
       toast({
         description: message,

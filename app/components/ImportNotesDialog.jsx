@@ -15,8 +15,7 @@ import htmlToEditorJs from '../utils/htmlToEditor';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
-
-const acceptedFileType = ['md', 'txt', 'html'];
+import { acceptedFileType } from '../utils/schema';
 
 export default function ImportNotesDialog({ open, setOpen }) {
   const showdown = require('showdown');
@@ -31,22 +30,28 @@ export default function ImportNotesDialog({ open, setOpen }) {
       let blocks;
       const files = Object.values(e.target[0].files);
       files.forEach((file) => {
-        const fileType = file.name.split('.').slice(-1)[0];
+        const fileType = file.type;
         if (acceptedFileType.includes(fileType)) {
           const reader = new FileReader();
           reader.addEventListener('load', async (e) => {
-            const result = e.target.result;
+            const fileData = e.target.result;
             switch (fileType) {
-              case 'md': {
-                let html = converter.makeHtml(result);
+              case 'text/markdown': {
+                let html = converter.makeHtml(fileData);
                 blocks = htmlToEditorJs(html);
                 break;
               }
-              case 'html':
-                blocks = htmlToEditorJs(result);
+              case 'text/html':
+                blocks = htmlToEditorJs(fileData);
+                break;
+              case 'application/json':
+                blocks = JSON.parse(fileData);
+                break;
+              case 'text/plain':
+                blocks = textToEditorJs(fileData).blocks;
                 break;
               default:
-                blocks = textToEditorJs(result).blocks;
+                throw new Error('Invalid file type!');
             }
             const noteBody = {
               title: file.name.split('.')[0],
@@ -84,7 +89,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
             type="file"
             multiple
             required
-            accept=".md, .txt, .html"
+            accept=".md, .txt, .html, .json"
             className="my-2"
           />
           <DialogFooter>

@@ -36,27 +36,31 @@ export default function ExportAllNotes({ open, setOpen }) {
   turndownServices.use(gfm);
 
   function fileData(data, fileType) {
-    const html = editorJsToHtml(JSON.parse(data.body).blocks);
+    const jsonData = JSON.parse(data.body).blocks;
+    const html = editorJsToHtml(jsonData);
     const formattedHTML = pretty(html, { ocd: true });
     switch (fileType) {
       case 'md':
         return turndownServices.turndown(formattedHTML);
       case 'txt':
         return convert(formattedHTML);
+      case 'json':
+        return JSON.stringify(jsonData);
       default:
         return formattedHTML;
     }
   }
 
   const exportAllNotes = () => {
-    const userNotes = zip.folder(user.userData.name);
+    const folderName = user.userData?.name ?? 'Notes';
+    const userNotes = zip.folder(folderName);
     notes?.forEach((note) => {
       let fileName = `${note.title}.${exporttype}`;
       userNotes.file(fileName, fileData(note, exporttype));
     });
     zip
       .generateAsync({ type: 'blob' })
-      .then((blob) => saveAs(blob, `${user.userData.name}.zip`));
+      .then((blob) => saveAs(blob, `${folderName}.zip`));
   };
 
   return (
