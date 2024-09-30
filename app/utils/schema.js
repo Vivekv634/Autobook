@@ -10,7 +10,6 @@ export const notes = {
   isFavorite: false,
   isLocked: false,
   isTrash: false,
-  deletionTimeStamp: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
   title: '',
   body: JSON.stringify([]),
 };
@@ -31,9 +30,7 @@ export const autoNote = {
   autoNoteNotebookID: null,
   lastNoteGenerationTime: new Date().getTime(),
   autoNoteUpdationDate: new Date().toString(),
-  template: {
-    body: { blocks: [] },
-  },
+  template: null,
 };
 
 export const generationPeriod = [

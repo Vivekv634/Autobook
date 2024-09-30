@@ -13,14 +13,7 @@ export async function POST(request) {
       ...autoNote,
       ...body,
       autoNoteUpdationDate: new Date().getTime(),
-      template: {
-        body: {
-          blocks: [
-            ...autoNote.template.body.blocks,
-            ...body.template.body.blocks,
-          ],
-        },
-      },
+      template: body.template,
     };
     const docRef = doc(db, 'notes', notesDocID);
     await runTransaction(db, async (transaction) => {

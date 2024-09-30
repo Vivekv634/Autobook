@@ -5,6 +5,7 @@ import {
   setNoteBooks,
   setNotes,
   setTagsData,
+  setTrashInterval,
   setUser,
 } from '@/app/redux/slices/noteSlice';
 import React, { useEffect, useState } from 'react';
@@ -48,7 +49,7 @@ const Menubar = () => {
       const docRef = doc(db, 'notes', notesDocID);
       const unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
-          const { notes, notebooks, autoNotes } = doc.data();
+          const { notes, notebooks, autoNotes, trashInterval } = doc.data();
 
           // Processing notes
           let updatedNotes = [];
@@ -78,6 +79,7 @@ const Menubar = () => {
           });
 
           // Dispatch Redux actions
+          dispatch(setTrashInterval(trashInterval));
           dispatch(setNotes(updatedNotes));
           dispatch(setTagsData(tagsData));
           dispatch(setDeletedNotes(deletedNotes));

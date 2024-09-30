@@ -1,4 +1,8 @@
 import { Button, buttonVariants } from '@/components/ui/button';
+import htmlToEditorJs from '../utils/htmlToEditor';
+import { useSelector } from 'react-redux';
+import { useToast } from '@/components/ui/use-toast';
+import { acceptedFileType } from '../utils/schema';
 import {
   DialogClose,
   DialogContent,
@@ -13,7 +17,6 @@ import { CircleHelp, Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import { titleFormatter } from '../utils/titleFormatter';
-import { useSelector } from 'react-redux';
 import {
   Select,
   SelectContent,
@@ -24,11 +27,12 @@ import {
 import { autoNote, generationPeriod, state } from '../utils/schema';
 import { Separator } from '@/components/ui/separator';
 import { uid } from 'uid';
-import axios from 'axios';
-import { useToast } from '@/components/ui/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { auth } from '@/firebase.config';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
+import Showdown from 'showdown';
+import axios from 'axios';
+import textToEditorJs from '../utils/textToEditorJs';
 
 const NewAutoNoteDialog = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -39,17 +43,21 @@ const NewAutoNoteDialog = () => {
   const [period, setPeriod] = useState('1 day');
   const [loading, setLoading] = useState(false);
   const [autoNoteState, setAutoNoteState] = useState('running');
-  const { notebooks, user } = useSelector((state) => state.note);
+  const { notes, notebooks, user } = useSelector((state) => state.note);
+  const [selectedtemplateNote, setSelectedTemplateNote] = useState('none');
+  const [templateNotes] = useState(notes ?? []);
   const [anNotebook, setANNotebook] = useState(
     autoNote.autoNoteNotebookID ?? 'none',
   );
   const [newNotebookFlag, setNewNotebookFlag] = useState(
     Object.keys(notebooks).length == 0,
   );
+  const [templateFromDevice, setTemplateFromDevice] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
   const [notebookNameError, setNotebookNameError] = useState(null);
   const [notebookNamePreview, setNotebookNamePreview] = useState(null);
   const { toast } = useToast();
+  const converter = new Showdown.Converter();
 
   useEffect(() => {
     if (
@@ -99,6 +107,7 @@ const NewAutoNoteDialog = () => {
       setLoading(true);
       let newAutoNoteBody = {
           ...autoNote,
+          autoNoteID: uid(),
           autoNoteName: autoNoteName,
           titleFormat: titleFormat,
           state: autoNoteState,
@@ -154,6 +163,42 @@ const NewAutoNoteDialog = () => {
           });
         });
       }
+      if (templateFromDevice && e.target[9].files[0]) {
+        let blocks;
+        const file = e.target[9].files[0];
+        const fileType = file.type;
+        if (acceptedFileType.includes(fileType)) {
+          const reader = new FileReader();
+          reader.addEventListener('load', async (e) => {
+            const fileData = e.target.result;
+            switch (fileType) {
+              case 'text/markdown': {
+                let html = converter.makeHtml(fileData);
+                blocks = htmlToEditorJs(html);
+                break;
+              }
+              case 'text/html':
+                blocks = htmlToEditorJs(fileData);
+                break;
+              case 'application/json':
+                blocks = JSON.parse(fileData);
+                break;
+              case 'text/plain':
+                blocks = textToEditorJs(fileData).blocks;
+                break;
+              default:
+                throw new Error('Invalid file type!');
+            }
+            newAutoNoteBody['template'] = JSON.stringify(blocks);
+          });
+          reader.readAsText(file);
+        }
+      } else {
+        const selectedNote = notes?.filter(
+          (note) => note.noteID === selectedtemplateNote,
+        );
+        newAutoNoteBody['template'] = selectedNote[0].body;
+      }
       await axios.post(
         `${process.env.API}/api/auto-notes/create`,
         newAutoNoteBody,
@@ -195,7 +240,7 @@ const NewAutoNoteDialog = () => {
       </DialogHeader>
       <form onSubmit={(e) => handleCreateAutoNote(e)}>
         <div className="my-2">
-          <Label htmlFor="autoNoteName">
+          <Label htmlFor="autoNoteName" className="font-semibold">
             Auto Note Name
             <span className="text-muted-foreground text-[.8rem]">
               (Required)
@@ -210,7 +255,10 @@ const NewAutoNoteDialog = () => {
           />
         </div>
         <div>
-          <Label htmlFor="titleFormat" className="flex gap-1">
+          <Label
+            htmlFor="titleFormat"
+            className="flex items-center gap-1 font-semibold text-center"
+          >
             Title Format <CircleHelp className="h-4 w-4 cursor-pointer" />
             <span className="text-muted-foreground text-[.8rem]">
               (Required)
@@ -249,7 +297,7 @@ const NewAutoNoteDialog = () => {
             )}
           </Label>
           <div className={cn(newNotebookFlag && 'hidden')}>
-            <Label>
+            <Label className="font-semibold">
               Select Notebook
               <span className="text-muted-foreground text-[.8rem]">
                 (Required)
@@ -278,7 +326,7 @@ const NewAutoNoteDialog = () => {
             </Select>
           </div>
           <div className={cn(!newNotebookFlag && 'hidden')}>
-            <Label>
+            <Label className="font-semibold">
               New Notebook Name
               <span className="text-muted-foreground text-[.8rem]">
                 (Required)
@@ -306,9 +354,49 @@ const NewAutoNoteDialog = () => {
               checked={newNotebookFlag}
               onCheckedChange={setNewNotebookFlag}
               id="newNotebook"
-              disabled={Object.keys(notebooks).length == 0}
             />
             <Label htmlFor="newNotebook">Create a new Notebook</Label>
+          </div>
+          <div className={cn(templateFromDevice && 'hidden')}>
+            <Label className="font-semibold">Select Template from notes</Label>
+            <Select
+              value={selectedtemplateNote}
+              onValueChange={(e) => setSelectedTemplateNote(e)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" side="top" align="end">
+                <SelectItem value="none" key="none" className="text-red-400">
+                  None
+                </SelectItem>
+                {templateNotes?.map((note, index) => {
+                  return (
+                    <SelectItem value={note.noteID} key={index}>
+                      {note.title}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className={cn(!templateFromDevice && 'hidden')}>
+            <Label className="font-semibold">Select Template from Device</Label>
+            <Input
+              type="file"
+              required
+              accept=".md, .txt, .html, .json"
+              className="my-2"
+              disabled={!templateFromDevice}
+            />
+          </div>
+          <div className="flex items-center gap-1 my-2">
+            <Checkbox
+              checked={templateFromDevice}
+              onCheckedChange={setTemplateFromDevice}
+              id="templateFromDevice"
+            />
+            <Label htmlFor="templateFromDevice">Select from device</Label>
           </div>
           <Separator />
           <div className="flex items-center justify-between my-3">

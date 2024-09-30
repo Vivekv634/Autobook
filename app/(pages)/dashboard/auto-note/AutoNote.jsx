@@ -60,7 +60,7 @@ const AutoNoteComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button variant="secondary">
+                  <Button variant="secondary" className="p-2">
                     <Plus />
                   </Button>
                 </DialogTrigger>

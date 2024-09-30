@@ -68,6 +68,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
         headers: { notesDocID: user.userData.notesDocID },
       });
       setLoading(false);
+      setOpen(false);
       toast({
         description: (
           <span>

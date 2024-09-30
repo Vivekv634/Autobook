@@ -71,12 +71,11 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
         noteID: uid(),
         title: titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
         notebook_ref_id: autoNote.autoNoteNotebookID,
-        body: JSON.stringify(autoNote.template.body.blocks),
+        body: autoNote.template,
       };
       await axios.post(`${process.env.API}/api/notes/create`, newNoteBody, {
         headers: { notesDocID: user.userData.notesDocID },
       });
-
       await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
         { noteGenerated: autoNote.noteGenerated + 1 },

@@ -67,7 +67,7 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
         noteID: uid(),
         title: titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
         notebook_ref_id: autoNote.autoNoteNotebookID,
-        body: JSON.stringify(autoNote.template.body.blocks),
+        body: autoNote.template,
       };
       await axios.post(`${process.env.API}/api/notes/create`, newNoteBody, {
         headers: { notesDocID: user.userData.notesDocID },

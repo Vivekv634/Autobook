@@ -131,7 +131,7 @@ const RegisterComponent = () => {
                   <Loader2 className="h-[18px] animate-spin" /> Loading...
                 </div>
               ) : (
-                'Sign in'
+                'Sign Up'
               )}
             </Button>
           </form>

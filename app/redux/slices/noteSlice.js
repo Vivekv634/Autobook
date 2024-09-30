@@ -7,6 +7,7 @@ const initialState = {
   tagsData: {},
   user: {},
   autoNotes: [],
+  trashInterval: null,
 };
 
 const noteSlice = createSlice({
@@ -37,6 +38,9 @@ const noteSlice = createSlice({
     setAutoNotes: (state, action) => {
       state.autoNotes = action.payload;
     },
+    setTrashInterval: (state, action) => {
+      state.trashInterval = action.payload;
+    },
   },
 });
 
@@ -49,5 +53,6 @@ export const {
   setTagsData,
   setUser,
   setAutoNotes,
+  setTrashInterval,
 } = noteSlice.actions;
 export default noteSlice.reducer;

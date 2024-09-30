@@ -15,7 +15,7 @@ import { useToast } from '@/components/ui/use-toast';
 const EditAutoNoteTemplate = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const { autoNotes, user } = useSelector((state) => state.note);
-  const [blocks, setBlocks] = useState();
+  const [data, setData] = useState();
   const editorInstance = useRef(null);
   const [loading, setLoading] = useState(false);
   const [autoNote, setAutoNote] = useState();
@@ -25,17 +25,17 @@ const EditAutoNoteTemplate = ({ params }) => {
     autoNotes.map((autoNote) => {
       if (autoNote.autoNoteID === params.autoNoteID) {
         setAutoNote(autoNote);
-        setBlocks(autoNote.template.body);
+        setData(autoNote?.template ?? '{}');
       }
     });
   }, [autoNotes, params.autoNoteID]);
 
   useEffect(() => {
-    if (!blocks) return;
+    if (!data) return;
 
     const editor = new EditorJS({
       ...editorConfig,
-      data: blocks,
+      data: data ? JSON.parse(data) : '{}',
     });
 
     editorInstance.current = editor;
@@ -49,16 +49,16 @@ const EditAutoNoteTemplate = ({ params }) => {
       }
       editorInstance.current = null;
     };
-  }, [blocks]);
+  }, [data]);
 
   const handleSave = () => {
     try {
       setLoading(true);
       editorInstance.current.save().then(async (outputData) => {
-        const templateBody = JSON.stringify(outputData.blocks);
+        const templateBody = JSON.stringify(outputData);
         await axios.put(
           `${process.env.API}/api/auto-notes/update/${params.autoNoteID}`,
-          { template: { body: { blocks: templateBody } } },
+          { template: templateBody },
           { headers: { notesDocID: user.userData.notesDocID } },
         );
       });
@@ -86,12 +86,13 @@ const EditAutoNoteTemplate = ({ params }) => {
       <ScrollArea>
         <div
           className={cn(
-            !isDesktop &&
-              'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
-            isDesktop && 'flex justify-end gap-2 print:hidden',
+            'flex justify-between items-center print:hidden',
+            !isDesktop && 'mt-4 mb-1 mx-1',
           )}
         >
-          <span className="text-2xl font-semibold">Edit template</span>
+          <span className="text-2xl font-semibold">
+            {autoNote?.autoNoteName}
+          </span>
           <Button
             disabled={loading}
             className="disabled:cursor-not-allowed font-semibold"

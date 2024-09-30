@@ -151,6 +151,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
         className: 'bg-green-600',
       });
       setLoading(false);
+      setOpen(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
