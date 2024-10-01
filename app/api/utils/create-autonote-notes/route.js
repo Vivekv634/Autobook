@@ -36,10 +36,9 @@ export async function PATCH(request) {
                 autoNote.noteGenerated,
               ),
               notebook_ref_id: autoNote.autoNoteNotebookID,
-              body: JSON.stringify(autoNote.template.body.blocks),
+              body: autoNote.template ?? '{}',
             };
             notesData.notes.push(newNoteBody);
-
             const updatedAutoNoteBody = {
               ...AutoNote,
               ...autoNote,
