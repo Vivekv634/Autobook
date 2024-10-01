@@ -193,7 +193,7 @@ const NewAutoNoteDialog = () => {
           });
           reader.readAsText(file);
         }
-      } else {
+      } else if (!templateFromDevice && selectedtemplateNote != 'none') {
         const selectedNote = notes?.filter(
           (note) => note.noteID === selectedtemplateNote,
         );
