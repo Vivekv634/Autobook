@@ -25,11 +25,11 @@ import AutoNoteContextMenu from './AutoNoteContextMenu';
 
 const AutoNote = ({ autoNote }) => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
-  const noteGeneratedTimeAgo = formatDistanceToNowStrict(
+  const autoNoteUpdationTimeAgo = formatDistanceToNowStrict(
     autoNote?.autoNoteUpdationDate,
     { addSuffix: true },
   );
-  const autoNoteUpdationTimeAgo = formatDistanceToNowStrict(
+  const noteGeneratedTimeAgo = formatDistanceToNowStrict(
     autoNote?.lastNoteGenerationTime,
     {
       addSuffix: true,
