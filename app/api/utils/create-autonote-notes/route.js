@@ -11,7 +11,7 @@ export async function PATCH(request) {
   try {
     const notesCollection = collection(db, 'notes');
     const notesSnap = await getDocs(notesCollection);
-
+    let updatedAutoNoteBody;
     const batch = writeBatch(db);
 
     notesSnap.forEach((notesDoc) => {
@@ -39,16 +39,17 @@ export async function PATCH(request) {
               body: autoNote.template ?? '{}',
             };
             notesData.notes.push(newNoteBody);
-            const updatedAutoNoteBody = {
+            updatedAutoNoteBody = {
               ...AutoNote,
               ...autoNote,
               lastNoteGenerationTime: currentTime,
             };
-
+            if (autoNote.titleFormat.includes('#COUNT')) {
+              updatedAutoNoteBody['noteGenerated'] = autoNote.noteGenerated + 1;
+            }
             notesData.autoNotes = notesData.autoNotes.map((an) =>
               an.autoNoteID === autoNote.autoNoteID ? updatedAutoNoteBody : an,
             );
-
             batch.update(notesDoc.ref, notesData);
           }
         }
