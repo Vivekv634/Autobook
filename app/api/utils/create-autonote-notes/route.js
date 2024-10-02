@@ -25,7 +25,7 @@ export async function PATCH(request) {
           );
           const lastNoteGenerationTime =
             noteGenerationPeriod + autoNote.lastNoteGenerationTime;
-          const currentTime = Date.now();
+          const currentTime = new Date().getTime();
 
           if (lastNoteGenerationTime <= currentTime) {
             const newNoteBody = {
@@ -42,6 +42,7 @@ export async function PATCH(request) {
             updatedAutoNoteBody = {
               ...AutoNote,
               ...autoNote,
+              autoNoteUpdationDate: new Date().toString(),
               lastNoteGenerationTime: currentTime,
             };
             if (autoNote.titleFormat.includes('#COUNT')) {

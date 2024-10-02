@@ -1,7 +1,7 @@
 'use client';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import {
   Select,
@@ -24,8 +24,8 @@ import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 const SettingsComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const { user } = useSelector((state) => state.note);
-  const [dark_theme] = useState(user.userData?.dark_theme);
-  const [homePage] = useState(user.userData?.defaultHomePage);
+  const [dark_theme, setDarkTheme] = useState();
+  const [homePage, setHomePage] = useState();
   const [interval] = useState(user.userData?.trashInterval);
   const [importNotes, setImportNotes] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
@@ -33,10 +33,22 @@ const SettingsComponent = () => {
   const { setTheme } = useTheme();
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (user && user.userData) {
+      setDarkTheme(user.userData.dark_theme);
+      setHomePage(user.userData.defaultHomePage);
+      setTheme(dark_theme ? 'dark' : 'light');
+    }
+  }, [dark_theme, setTheme, user]);
+
   const handleThemeChange = async (theme) => {
-    await axios.put(`${process.env.API}/api/account/update/${user.userID}`, {
-      dark_theme: theme,
-    });
+    setDarkTheme(theme);
+    const body = { dark_theme };
+    console.log(body);
+    await axios.put(
+      `${process.env.API}/api/account/update/${user.userID}`,
+      body,
+    );
     toast({ description: 'Theme updated!', className: 'bg-green-600' });
     setTheme(dark_theme ? 'dark' : 'light');
   };
@@ -78,7 +90,7 @@ const SettingsComponent = () => {
             </Label>
           </div>
           <Select
-            value={`${dark_theme}`}
+            value={dark_theme}
             onValueChange={(e) => {
               handleThemeChange(e);
             }}
@@ -87,8 +99,8 @@ const SettingsComponent = () => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="true">Dark</SelectItem>
-              <SelectItem value="false">Light</SelectItem>
+              <SelectItem value={true}>Dark</SelectItem>
+              <SelectItem value={false}>Light</SelectItem>
             </SelectContent>
           </Select>
         </div>

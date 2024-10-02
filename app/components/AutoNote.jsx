@@ -31,9 +31,7 @@ const AutoNote = ({ autoNote }) => {
   );
   const noteGeneratedTimeAgo = formatDistanceToNowStrict(
     autoNote?.lastNoteGenerationTime,
-    {
-      addSuffix: true,
-    },
+    { addSuffix: true },
   );
   const { notebooks } = useSelector((state) => state.note);
 
@@ -95,7 +93,9 @@ const AutoNote = ({ autoNote }) => {
             <Separator />
             <div className="flex justify-between w-full">
               <div>Note Generated {noteGeneratedTimeAgo} </div>
-              <div>Period : {autoNote.noteGenerationPeriod}</div>
+              <div className="text-nowrap">
+                Period : {autoNote.noteGenerationPeriod}
+              </div>
             </div>
           </CardFooter>
         </AutoNoteContextMenu>
