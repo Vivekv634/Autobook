@@ -1,3 +1,4 @@
+import sendEmail from '@/app/utils/emailTransporter';
 import noteGenerationPeriodTime from '@/app/utils/noteGenerationPeriodTime';
 import { notes as Notes, autoNote as AutoNote } from '@/app/utils/schema';
 import { titleFormatter } from '@/app/utils/titleFormatter';
@@ -5,18 +6,29 @@ import { db } from '@/firebase.config';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { uid } from 'uid';
+const { emailTemplate } = require('../../../utils/emailTemplate');
 
 //eslint-disable-next-line
 export async function PATCH(request) {
   try {
     const notesCollection = collection(db, 'notes');
+    const userCollection = collection(db, 'users');
     const notesSnap = await getDocs(notesCollection);
-    let updatedAutoNoteBody;
+    const userSnap = await getDocs(userCollection);
+
+    let updatedAutoNoteBody,
+      newNoteBody,
+      noteCreated = 0;
     const batch = writeBatch(db);
 
     notesSnap.forEach((notesDoc) => {
       const notesData = notesDoc.data();
       const autoNotes = notesData?.autoNotes || [];
+
+      const user = userSnap.docs.find(
+        (userDoc) => userDoc.data().authID === notesData.authID,
+      );
+      const userDetails = user ? user.data() : null;
 
       autoNotes.forEach((autoNote) => {
         if (autoNote.state === 'running') {
@@ -28,7 +40,7 @@ export async function PATCH(request) {
           const currentTime = new Date().getTime();
 
           if (lastNoteGenerationTime <= currentTime) {
-            const newNoteBody = {
+            newNoteBody = {
               ...Notes,
               noteID: uid(),
               title: titleFormatter(
@@ -52,6 +64,18 @@ export async function PATCH(request) {
               an.autoNoteID === autoNote.autoNoteID ? updatedAutoNoteBody : an,
             );
             batch.update(notesDoc.ref, notesData);
+            noteCreated++;
+            const visitLink = `https://notesnook-sand.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
+            sendEmail(
+              userDetails.email,
+              'Note Created by AutoNote',
+              emailTemplate(
+                userDetails.name,
+                autoNote.autoNoteName,
+                titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
+                visitLink,
+              ),
+            );
           }
         }
       });
@@ -60,7 +84,7 @@ export async function PATCH(request) {
     await batch.commit();
 
     return NextResponse.json(
-      { result: 'AutoNotes notes updated successfully!' },
+      { result: `${noteCreated} AutoNotes notes updated successfully!` },
       { status: 201 },
     );
   } catch (error) {

@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { collection, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 const firebaseConfig = {
-  apiKey: 'AIzaSyA5_c62BX-wMQtR9jLRutQI201SuYTVS1w',
-  authDomain: 'notesnook1.firebaseapp.com',
-  projectId: 'notesnook1',
-  storageBucket: 'notesnook1.appspot.com',
-  messagingSenderId: '775637486166',
-  appId: '1:775637486166:web:18e8bddd532986b626c9f7',
-  measurementId: 'G-F53BJD4NGH',
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
