@@ -3,8 +3,6 @@ const nextConfig = {
   env: {
     // API: 'http://localhost:3000',
     API: 'https://notesnook-sand.vercel.app',
-    APP_EMAIL: process.env.APP_EMAIL,
-    APP_EMAIL_PASSWORD: process.env.APP_EMAIL_PASSWORD,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     AUTH_DOMAIN: process.env.AUTH_DOMAIN,
     PROJECT_ID: process.env.PROJECT_ID,

@@ -5,8 +5,8 @@ const transporter = createTransport({
   port: 465,
   host: 'smtp.gmail.com',
   auth: {
-    user: process.env.APP_EMAIL,
-    pass: process.env.APP_EMAIL_PASSWORD,
+    user: 'vaish5617@gmail.com',
+    pass: 'cfcl xavc ntnn rlat',
   },
 });
 

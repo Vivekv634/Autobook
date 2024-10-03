@@ -57,6 +57,7 @@
     "cmdk": "^1.0.0",
     "cookies-next": "^4.2.1",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
     "downloadjs": "^1.4.7",
     "editorjs-alert": "^1.1.4",
     "editorjs-change-case": "^0.0.3",
