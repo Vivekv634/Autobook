@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    API: 'http://localhost:3000',
-    // API: 'https://notesnook-sand.vercel.app',
+    // API: 'http://localhost:3000',
+    API: 'https://notesnook-sand.vercel.app',
     APP_EMAIL: process.env.APP_EMAIL,
     APP_EMAIL_PASSWORD: process.env.APP_EMAIL_PASSWORD,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
