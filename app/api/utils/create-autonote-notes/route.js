@@ -55,15 +55,15 @@ export async function PATCH(request) {
               ...AutoNote,
               ...autoNote,
               autoNoteUpdationDate: new Date().toString(),
+              noteGenerated: autoNote.noteGenerated + 1,
               lastNoteGenerationTime: currentTime,
             };
-            if (autoNote.titleFormat.includes('#COUNT')) {
-              updatedAutoNoteBody['noteGenerated'] = autoNote.noteGenerated + 1;
-            }
+            // if (autoNote.titleFormat.includes('#COUNT')) {
+            //   updatedAutoNoteBody['noteGenerated'] = autoNote.noteGenerated + 1;
+            // }
             notesData.autoNotes = notesData.autoNotes.map((an) =>
               an.autoNoteID === autoNote.autoNoteID ? updatedAutoNoteBody : an,
             );
-            batch.update(notesDoc.ref, notesData);
             noteCreated++;
             const visitLink = `https://notesnook-sand.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
             sendEmail(
@@ -76,6 +76,7 @@ export async function PATCH(request) {
                 visitLink,
               ),
             );
+            batch.update(notesDoc.ref, notesData);
           }
         }
       });
