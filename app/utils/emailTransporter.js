@@ -16,4 +16,5 @@ export default function sendEmail(to, subject, msg) {
     subject,
     html: msg,
   });
+  console.log(`email sent to the ${to}`);
 }
