@@ -66,10 +66,14 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
 
   const handleCreateNote = async () => {
     try {
+      const noteTitle = titleFormatter(
+        autoNote.titleFormat,
+        autoNote.noteGenerated,
+      );
       const newNoteBody = {
         ...notes,
         noteID: uid(),
-        title: titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
+        title: noteTitle,
         notebook_ref_id: autoNote.autoNoteNotebookID,
         body: autoNote.template || '{}',
       };

@@ -58,9 +58,6 @@ export async function PATCH(request) {
               noteGenerated: autoNote.noteGenerated + 1,
               lastNoteGenerationTime: currentTime,
             };
-            // if (autoNote.titleFormat.includes('#COUNT')) {
-            //   updatedAutoNoteBody['noteGenerated'] = autoNote.noteGenerated + 1;
-            // }
             notesData.autoNotes = notesData.autoNotes.map((an) =>
               an.autoNoteID === autoNote.autoNoteID ? updatedAutoNoteBody : an,
             );

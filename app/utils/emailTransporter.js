@@ -10,22 +10,18 @@ const transporter = createTransport({
   },
   logger: true,
   debug: true,
-  headers: {
-    'X-Priority': '1',
-    'X-MSMail-Priority': 'High',
-    Importance: 'High',
-  },
 });
 
-export default function sendEmail(to, subject, msg) {
+export default async function sendEmail(to, subject, msg) {
   try {
-    transporter.sendMail({
+    const info = await transporter.sendMail({
+      from: 'vaishvivek634@gmail.com', // Specify the "from" field
       to,
       subject,
       html: msg,
     });
-    console.log(`email sent to the ${to}`);
+    console.log(`Email sent to ${to}: ${info.response}`);
   } catch (error) {
-    console.error(error);
+    console.error('Error sending email:', error);
   }
 }
