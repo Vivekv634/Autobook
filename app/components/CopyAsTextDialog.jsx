@@ -27,7 +27,7 @@ export default function CopyAsTextDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Text copied to clipboard!',
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
     } catch (error) {
       setOpen(false);

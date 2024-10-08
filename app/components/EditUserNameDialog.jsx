@@ -35,7 +35,7 @@ export default function EditUserNameDialog({ open, setOpen }) {
         body,
         { headers: { notesDocID: user.userData.notesDocID } },
       );
-      toast({ description: 'Name updated!', className: 'bg-green-600' });
+      toast({ description: 'Name updated!', className: 'bg-green-500' });
       setLoading(false);
       setOpen(false);
     } catch (error) {

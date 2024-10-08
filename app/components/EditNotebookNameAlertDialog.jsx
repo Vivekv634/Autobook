@@ -85,7 +85,7 @@ export default function EditNotebookNameAlertDialog({
             <span className="font-bold">{notebookName}</span> notebook updated!
           </span>
         ),
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
       setLoading(false);
     } catch (error) {

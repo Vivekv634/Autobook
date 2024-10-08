@@ -29,7 +29,7 @@ export default function VerifyEmailDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Verification Email sent!',
-          className: 'bg-green-600',
+          className: 'bg-green-500',
         });
       })
       .catch((error) => {

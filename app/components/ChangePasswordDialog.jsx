@@ -31,7 +31,7 @@ export default function ChangePasswordDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Password reset email sent!',
-          className: 'bg-green-600',
+          className: 'bg-green-500',
         });
       })
       .catch((error) => {

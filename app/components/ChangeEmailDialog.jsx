@@ -45,7 +45,7 @@ export default function ChangeEmailDialog({ open, setOpen }) {
       toast({
         description:
           'A verification email has been sent to your new email address. Please verify it to complete the change.',
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
 
       setLoading(false);

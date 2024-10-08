@@ -114,7 +114,7 @@ export default function NewNoteDialog() {
       setLoading(false);
       toast({
         description: 'Note Created successfully!',
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);

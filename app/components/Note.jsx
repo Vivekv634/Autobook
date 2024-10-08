@@ -8,10 +8,8 @@ import {
 import React from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { Book, EllipsisVertical, PenOff, PinIcon, Star } from 'lucide-react';
+import { Book, PenOff, PinIcon, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useMediaQuery } from 'usehooks-ts';
-import NoteDropDownMenu from './NoteDropDownMenu';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -24,7 +22,7 @@ import {
 } from '@/components/ui/tooltip';
 
 const Note = ({ note, notesDocID, notebook_name }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  // const isDesktop = useMediaQuery('(min-width: 640px)');
   const timeAgo = formatDistanceToNowStrict(note.updation_date, {
     addSuffix: true,
   });
@@ -42,11 +40,11 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                   </TooltipTrigger>
                   <TooltipContent>{note.title}</TooltipContent>
                 </Tooltip>
-                {!isDesktop && (
-                  <NoteDropDownMenu note={note} notesDocID={notesDocID}>
-                    <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" />
-                  </NoteDropDownMenu>
-                )}
+                {/* {!isDesktop && ( */}
+                {/*   <NoteDropDownMenu note={note} notesDocID={notesDocID}> */}
+                {/*     <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" /> */}
+                {/*   </NoteDropDownMenu> */}
+                {/* )} */}
               </CardTitle>
             </CardHeader>
             <div className="flex justify-between w-full">

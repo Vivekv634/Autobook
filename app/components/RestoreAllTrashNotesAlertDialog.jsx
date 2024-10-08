@@ -23,7 +23,7 @@ export default function RestoreAllTrashNotesAlertDialog({ children }) {
           notesDocID: user.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes restored!', className: 'bg-green-600' });
+      toast({ description: 'All notes restored!', className: 'bg-green-500' });
     } catch (error) {
       console.error(error);
       toast({

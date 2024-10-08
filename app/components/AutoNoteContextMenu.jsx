@@ -53,7 +53,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);
@@ -71,7 +71,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
         noteID: uid(),
         title: titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
         notebook_ref_id: autoNote.autoNoteNotebookID,
-        body: autoNote.template,
+        body: autoNote.template || '{}',
       };
       await axios.post(`${process.env.API}/api/notes/create`, newNoteBody, {
         headers: { notesDocID: user.userData.notesDocID },
@@ -83,7 +83,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       );
       toast({
         description: 'New Note created successfully',
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);

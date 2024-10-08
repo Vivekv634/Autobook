@@ -15,16 +15,14 @@ import {
 } from '@/components/ui/card';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { Book, EllipsisVertical } from 'lucide-react';
+import { Book } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { Separator } from '@/components/ui/separator';
-import AutoNoteDropDownMenu from './AutoNoteDropDownMenu';
-import { useMediaQuery } from 'usehooks-ts';
 import AutoNoteContextMenu from './AutoNoteContextMenu';
 
 const AutoNote = ({ autoNote }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  // const isDesktop = useMediaQuery('(min-width: 640px)');
   const autoNoteUpdationTimeAgo = formatDistanceToNowStrict(
     autoNote?.autoNoteUpdationDate,
     { addSuffix: true },
@@ -50,11 +48,11 @@ const AutoNote = ({ autoNote }) => {
                   </TooltipTrigger>
                   <TooltipContent>{autoNote.autoNoteName}</TooltipContent>
                 </Tooltip>
-                {!isDesktop && (
-                  <AutoNoteDropDownMenu autoNote={autoNote}>
-                    <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" />
-                  </AutoNoteDropDownMenu>
-                )}
+                {/* {!isDesktop && ( */}
+                {/*   <AutoNoteDropDownMenu autoNote={autoNote}> */}
+                {/*     <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" /> */}
+                {/*   </AutoNoteDropDownMenu> */}
+                {/* )} */}
               </CardTitle>
             </CardHeader>
             <div className="flex justify-between w-full">

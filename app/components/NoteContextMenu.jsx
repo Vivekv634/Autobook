@@ -98,7 +98,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         },
       );
       dispatch(setNotes(response.data.result));
-      toast({ ...toastMessage, className: 'bg-green-600' });
+      toast({ ...toastMessage, className: 'bg-green-500' });
     } catch (error) {
       console.error(error);
       toast({
@@ -171,7 +171,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
       },
     );
     dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', className: 'bg-green-600' });
+    toast({ description: 'Note duplicated!', className: 'bg-green-500' });
   };
 
   return (
@@ -315,40 +315,40 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         </ContextMenuContent>
       )}
       <CopyAsHTMLDialog
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={copyAsHTML}
         setOpen={setCopyAsHTML}
       />
       <CopyAsMarkdownDialog
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={copyAsMarkdown}
         setOpen={setCopyAsMarkdown}
       />
       <CopyAsTextDialog
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={copyAsText}
         setOpen={setCopyAsText}
       />
       <ExportAsTextDialog
         noteTitle={note.title}
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={exportAsText}
         setOpen={setExportAsText}
       />
       <ExportAsMarkdownDialog
         noteTitle={note.title}
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={exportAsMarkdown}
         setOpen={setExportAsMarkdown}
       />
       <ExportAsHTMLDialog
         noteTitle={note.title}
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={exportAsHTML}
         setOpen={setExportAsHTML}
       />
       <NotePrintDialog
-        html={editorJsToHtml(JSON.parse(note.body).blocks)}
+        html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={printNote}
         setOpen={setPrintNote}
       />

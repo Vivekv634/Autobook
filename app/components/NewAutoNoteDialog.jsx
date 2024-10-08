@@ -219,7 +219,7 @@ const NewAutoNoteDialog = () => {
       setAutoNoteState('running');
       toast({
         description: 'Auto Note Created Successfully!',
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);

@@ -72,7 +72,7 @@ export default function ExportNotebookDialog({
         .then((blob) =>
           saveAs(blob, `${notebooks[notebook_id].notebookName}.zip`),
         );
-      toast({ description: 'Notebook Exported!', className: 'bg-green-600' });
+      toast({ description: 'Notebook Exported!', className: 'bg-green-500' });
     } catch (error) {
       console.error(error);
       toast({

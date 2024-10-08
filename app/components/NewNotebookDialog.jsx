@@ -55,7 +55,7 @@ const NewNotebookDialog = () => {
             created successfully!
           </span>
         ),
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
     } catch (error) {
       console.error(error);

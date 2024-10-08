@@ -66,7 +66,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
       });
       toast({
         description: 'Note(s) imported successfully!',
-        className: 'bg-green-600',
+        className: 'bg-green-500',
       });
       setOpen(false);
     } catch (error) {

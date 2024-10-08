@@ -49,7 +49,7 @@ const SettingsComponent = () => {
       `${process.env.API}/api/account/update/${user.userID}`,
       body,
     );
-    toast({ description: 'Theme updated!', className: 'bg-green-600' });
+    toast({ description: 'Theme updated!', className: 'bg-green-500' });
     setTheme(dark_theme ? 'dark' : 'light');
   };
 
@@ -59,7 +59,7 @@ const SettingsComponent = () => {
     });
     toast({
       description: 'Default home page updated!',
-      className: 'bg-green-600',
+      className: 'bg-green-500',
     });
   };
 
@@ -73,7 +73,7 @@ const SettingsComponent = () => {
     );
     toast({
       description: 'Trash interval updated!',
-      className: 'bg-green-600',
+      className: 'bg-green-500',
     });
   };
 
