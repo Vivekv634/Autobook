@@ -1,21 +1,20 @@
 const { createTransport } = require('nodemailer');
 
-const transporter = createTransport({
-  secure: true,
-  port: 465,
-  host: 'smtp.gmail.com',
-  auth: {
-    user: 'vaishvivek634@gmail.com',
-    pass: 'eesvsnbpddtlzthk',
-  },
-  logger: true,
-  debug: true,
-});
-
-export default async function sendEmail(to, subject, msg) {
+async function sendEmail(to, subject, msg) {
   try {
+    const transporter = createTransport({
+      secure: false,
+      port: 587,
+      host: 'smtp.gmail.com',
+      auth: {
+        user: 'vaishvivek634@gmail.com',
+        pass: 'eesvsnbpddtlzthk',
+      },
+      logger: true,
+      debug: true,
+    });
     const info = await transporter.sendMail({
-      from: 'vaishvivek634@gmail.com', // Specify the "from" field
+      from: 'vaishvivek634@gmail.com',
       to,
       subject,
       html: msg,
@@ -25,3 +24,4 @@ export default async function sendEmail(to, subject, msg) {
     console.error('Error sending email:', error);
   }
 }
+sendEmail('vaish5617@gmail.com', 'test subject', 'text message');
