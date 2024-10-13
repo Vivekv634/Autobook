@@ -1,20 +1,22 @@
+require('dotenv').config();
 const { createTransport } = require('nodemailer');
 
-async function sendEmail(to, subject, msg) {
+export default async function sendEmail(to, subject, msg) {
   try {
     const transporter = createTransport({
       secure: false,
       port: 587,
       host: 'smtp.gmail.com',
       auth: {
-        user: 'vaishvivek634@gmail.com',
-        pass: 'eesvsnbpddtlzthk',
+        user: process.env.EMAIL || 'vaishvivek634@gmail.com',
+        pass: process.env.PASSWORD || 'eesvsnbpddtlzthk',
       },
       logger: true,
       debug: true,
     });
+
     const info = await transporter.sendMail({
-      from: 'vaishvivek634@gmail.com',
+      from: process.env.EMAIL || 'vaishvivek634@gmail.com',
       to,
       subject,
       html: msg,
@@ -24,4 +26,3 @@ async function sendEmail(to, subject, msg) {
     console.error('Error sending email:', error);
   }
 }
-sendEmail('vaish5617@gmail.com', 'test subject', 'text message');

@@ -1,4 +1,5 @@
 export function titleFormatter(titleFormat, count = 0) {
+  let timezone = 6.5;
   let title = titleFormat
     ?.split(' ')
     .map((word) => {
@@ -10,11 +11,11 @@ export function titleFormatter(titleFormat, count = 0) {
           case 'FULLDATE':
             return new Date().toString();
           case 'DATE': {
-            let date = getCityDateTime(5.5).split(' ')[0];
+            let date = getCityDateTime(timezone).split(' ')[0];
             return date.slice(0, date.length - 1);
           }
           case 'TIME':
-            return getCityDateTime(5.5).split(' ')[1];
+            return getCityDateTime(timezone).split(' ')[1];
           case 'DATEONLY':
             return new Date().getDate();
           default:
