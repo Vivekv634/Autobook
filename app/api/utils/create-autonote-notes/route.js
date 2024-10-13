@@ -62,7 +62,7 @@ export async function PATCH(request) {
               an.autoNoteID === autoNote.autoNoteID ? updatedAutoNoteBody : an,
             );
             noteCreated++;
-            const visitLink = `https://notesnook-sand.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
+            const visitLink = `https://autobook1.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
             sendEmail(
               userDetails.email,
               'Note Created by AutoNote',

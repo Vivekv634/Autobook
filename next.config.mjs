@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {
     // API: 'http://localhost:3000',
-    API: 'https://notesnook-sand.vercel.app',
+    API: 'https://autobook1.vercel.app',
     EMAIL: process.env.EMAIL,
     PASSWORD: process.env.PASSWORD,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
