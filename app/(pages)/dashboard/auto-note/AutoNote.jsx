@@ -5,6 +5,7 @@ import NewAutoNoteDialog from '@/app/components/NewAutoNoteDialog';
 import { Button } from '@/components/ui/button';
 import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Tooltip,
   TooltipContent,
@@ -14,9 +15,11 @@ import {
 import { cn } from '@/lib/utils';
 import hotkeys from 'hotkeys-js';
 import { Plus } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
+import AutoNoteNotFoundSVG from '@/public/autonote-not-found.svg';
 
 const AutoNoteComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -60,7 +63,11 @@ const AutoNoteComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" className="p-2">
+                  <Button
+                    variant="secondary"
+                    className="p-2"
+                    aria-label="add autonote"
+                  >
                     <Plus />
                   </Button>
                 </DialogTrigger>
@@ -81,7 +88,18 @@ const AutoNoteComponent = () => {
               autoNotes.map((autoNote, index) => {
                 return <AutoNote key={index} autoNote={autoNote} />;
               })}
-            {!autoNotes && <div>No Auto notes created yet.</div>}
+            {autoNotes?.length == 0 && (
+              <div className="flex text-center h-inherit justify-center align-center">
+                <div>
+                  <Image
+                    src={AutoNoteNotFoundSVG}
+                    alt="AutoNote not created yet!"
+                    loading="lazy"
+                  />
+                  <Label className="text-lg">AutoNote not created yet!</Label>
+                </div>
+              </div>
+            )}
           </section>
           <NewAutoNoteDialog />
         </Dialog>

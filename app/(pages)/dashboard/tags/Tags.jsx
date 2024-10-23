@@ -6,6 +6,9 @@ import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import hotkeys from 'hotkeys-js';
+import Image from 'next/image';
+import { Label } from '@/components/ui/label';
+import TagNotFoundSVG from '@/public/tag-not-found.svg';
 
 const TagsComponent = () => {
   const { tagsData, notebooks, user } = useSelector((state) => state.note);
@@ -36,7 +39,7 @@ const TagsComponent = () => {
           />
         </div>
       </CommandDialog>
-      {tagsData && (
+      {Object.keys(tagsData).length > 0 && (
         <Accordion
           collapsible="true"
           type="multiple"
@@ -55,7 +58,18 @@ const TagsComponent = () => {
             ))}
         </Accordion>
       )}
-      {!tagsData && <div>No tags here.</div>}
+      {Object.keys(tagsData).length == 0 && (
+        <div className="flex text-center h-inherit justify-center align-center">
+          <div>
+            <Image
+              src={TagNotFoundSVG}
+              alt="No notes created yet!"
+              loading="lazy"
+            />
+            <Label className="text-lg">Note not created yet!</Label>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

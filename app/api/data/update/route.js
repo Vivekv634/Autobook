@@ -13,18 +13,9 @@ export async function PUT(request) {
     await runTransaction(db, async (transaction) => {
       const docSnap = await transaction.get(docRef);
       if (!docSnap.exists()) {
-        return NextResponse(
-          { error: 'getting error while getting data' },
-          { status: 404 },
-        );
+        return NextResponse({ error: 'doc not found' }, { status: 404 });
       }
-      const docBody = docSnap.data();
-      newBody = {
-        notes: docBody?.notes?.concat(body?.notes ?? []),
-        autoNotes: docBody?.autoNotes?.concat(body?.autoNotes ?? []),
-        notebooks: docBody?.notebooks?.concat(body?.notebooks ?? []),
-      };
-      transaction.update(docRef, newBody);
+      transaction.update(docRef, body);
     });
     return NextResponse.json({ result: newBody });
   } catch (error) {

@@ -63,7 +63,7 @@ const MobileSidebar = () => {
     <nav className="border-b flex justify-between p-2 px-4">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" className="p-3">
+          <Button variant="outline" className="p-3" aria-label="sidemenu">
             <Menu />
           </Button>
         </SheetTrigger>
@@ -82,7 +82,7 @@ const MobileSidebar = () => {
                     <SheetClose key={index} asChild>
                       <Link href={page.address}>
                         <Button
-                          className="text-xl w-full font-semibold"
+                          className="text-xl w-full"
                           variant={
                             page.label === 'Trash'
                               ? 'destructive'

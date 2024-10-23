@@ -1,52 +1,88 @@
 'use client';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useToast } from '@/components/ui/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
+import Link from 'next/link';
+import { useMediaQuery } from 'usehooks-ts';
+import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 
-export default function DeleteNotebookAlertDialog({
-  children,
+export default function DeleteNotebookDialog({
+  open,
+  setOpen,
   notebook_id,
-  notesDocID,
+  notebookName,
 }) {
-  const { notebooks, autoNotes } = useSelector((state) => state.note);
+  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const { notebooks, autoNotes, notes, user } = useSelector(
+    (state) => state.note,
+  );
   const { toast } = useToast();
-  const [anName] = useState(
-    autoNotes?.forEach((autoNote) => {
-      if (autoNote.autoNoteNotebookID === notebook_id) {
-        return autoNote.autoNoteName;
-      }
-    }),
-  );
-  const [isAutoNoteExists] = useState(
-    autoNotes?.forEach((autoNote) => {
-      if (autoNote.autoNoteNotebookID === notebook_id) {
-        return true;
-      }
-      return false;
-    }),
-  );
+  const [loading, setLoading] = useState(false);
+  const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
+  const [checkNotebookName, setCheckNotebookName] = useState('');
+  const [notebookNameError, setNotebookNameError] = useState(false);
+  const [anName, setANName] = useState('');
+  const [autoNoteExists, setAutoNoteExists] = useState(false);
+  const [mount, setMount] = useState(false);
 
-  async function handleDelete() {
+  useEffect(() => {
+    setMount(true);
+  }, []);
+
+  useEffect(() => {
+    setNotebookNameError(
+      checkNotebookName && checkNotebookName != notebookName ? true : false,
+    );
+  }, [checkNotebookName, notebookName]);
+
+  useEffect(() => {
+    autoNotes?.map((autoNote) => {
+      if (autoNote.autoNoteNotebookID === notebook_id) {
+        setAutoNoteExists(true);
+        setANName(autoNote.autoNoteName);
+      }
+      setANName('');
+      setAutoNoteExists(false);
+    });
+  }, [autoNotes, notebook_id]);
+
+  async function handleDelete(e) {
+    e.preventDefault();
     try {
-      await axios.delete(
-        `${process.env.API}/api/notebooks/delete/${notebook_id}`,
+      setLoading(true);
+      let filteredNotes,
+        filteredNotebooks = [];
+      if (alsoDeleteNotes) {
+        filteredNotes = notes?.filter(
+          (note) => note.notebook_ref_id !== notebook_id,
+        );
+      }
+      Object.keys(notebooks).forEach((notebookID) => {
+        if (notebookID != notebook_id) {
+          filteredNotebooks.push(notebooks[notebookID]);
+        }
+      });
+      await axios.put(
+        `${process.env.API}/api/data/update`,
+        { notes: filteredNotes, notebooks: filteredNotebooks },
         {
           headers: {
-            notesDocID: notesDocID,
+            notesDocID: user?.userData?.notesDocID,
           },
         },
       );
@@ -61,7 +97,10 @@ export default function DeleteNotebookAlertDialog({
         ),
         className: 'bg-green-500',
       });
+      setOpen(false);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error(error);
       toast({
         description: 'Oops! something went wrong. Try again later!',
@@ -70,19 +109,20 @@ export default function DeleteNotebookAlertDialog({
     }
   }
 
+  if (!mount) return null;
+
   return (
-    <AlertDialog onClick={(e) => e.stopPropagation()}>
-      <AlertDialogTrigger
-        className="text-red-400 flex justify-between w-44 pr-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {children}
-      </AlertDialogTrigger>
-      {notebooks[notebook_id].usedInTemplate && isAutoNoteExists ? (
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Can&apos;t delete notebook</AlertDialogTitle>
-            <AlertDialogDescription>
+    <Dialog open={open} setOpen={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            {autoNoteExists ? "Can't delete notebook" : 'Delete Notebook'}
+          </DialogTitle>
+          <DialogDescription className="hidden"></DialogDescription>
+        </DialogHeader>
+        {autoNoteExists ? (
+          <section>
+            <p>
               Cannot delete this notebook because this notebook is used in the
               <span className="font-bold px-1 inline-block underline">
                 {anName}
@@ -96,35 +136,77 @@ export default function DeleteNotebookAlertDialog({
                 {anName}&apos;s
               </span>
               notebook and then you can delete the delete this notebook.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Close</AlertDialogCancel>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      ) : (
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This operation cannot be reverse. This will permanently delete the
-              <span className="font-bold px-1">
-                {notebooks[notebook_id]?.notebookName}
-              </span>
-              notebook, but doesn&apos;t delete your notes.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className={cn(buttonVariants({ variant: 'destructive' }))}
-            >
-              Delete Notebook
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      )}
-    </AlertDialog>
+            </p>
+            <DialogFooter>
+              <DialogClose
+                className={cn(buttonVariants({ variant: 'secondary' }))}
+                onClick={() => {
+                  setOpen(false);
+                  setCheckNotebookName('');
+                }}
+              >
+                Close
+              </DialogClose>
+              <Link href={`${process.env.API}/dashboard/auto-note`}>
+                <Button>Go to autonote</Button>
+              </Link>
+            </DialogFooter>
+          </section>
+        ) : (
+          <form onSubmit={(e) => handleDelete(e)}>
+            <div className="pb-2">
+              <Label htmlFor="notebookName">Enter Notebook Name</Label>
+              <Input
+                id="notebookName"
+                value={checkNotebookName}
+                onChange={(e) => setCheckNotebookName(e.target.value)}
+                required
+              />
+              <Label className="text-red-600">
+                {notebookNameError && "Notebook doesn't exists"}
+              </Label>
+            </div>
+            <div className="flex align-center text-center my-2">
+              <Checkbox
+                checked={alsoDeleteNotes}
+                onCheckedChange={setAlsoDeleteNotes}
+                id="alsoDeleteNotes"
+              />
+              <Label className="pl-1 text-md" htmlFor="alsoDeleteNotes">
+                Also delete notes inside this notebook.
+              </Label>
+            </div>
+            <DialogFooter>
+              <DialogClose
+                className={cn(buttonVariants({ variant: 'secondary' }))}
+                onClick={() => {
+                  setOpen(false);
+                  setCheckNotebookName('');
+                  setAlsoDeleteNotes(false);
+                }}
+              >
+                Cancel
+              </DialogClose>
+              <Button
+                variant="destructive"
+                type="submit"
+                className={cn(!isDesktop && 'my-2', 'font-semibold')}
+                disabled={
+                  notebookNameError || loading || checkNotebookName.trim() == ''
+                }
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  </div>
+                ) : (
+                  'Delete Notebook'
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

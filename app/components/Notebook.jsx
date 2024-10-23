@@ -14,13 +14,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { AccordionHeader } from '@radix-ui/react-accordion';
 import { ArrowDownToLine, Ellipsis, Pen, Trash2 } from 'lucide-react';
-import DeleteNotebookAlertDialog from './DeleteNotebookAlertDialog';
 import EditNotebookNameAlertDialog from './EditNotebookNameAlertDialog';
 import ExportNotebookDialog from './ExportNotebookDialog';
 import { useState } from 'react';
+import DeleteNotebookDialog from './DeleteNotebookAlertDialog';
 
 export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
   const [open, setOpen] = useState(false);
+  const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
+
   return (
     <AccordionItem key={notebook_id} value={notebook_id}>
       <AccordionHeader className="flex justify-between px-3 items-center w-full">
@@ -52,13 +54,11 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
               Export Notebook <ArrowDownToLine className="w-4 h-4" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
-              <DeleteNotebookAlertDialog
-                notebook_id={notebook_id}
-                notesDocID={notesDocID}
-              >
-                Delete notebook <Trash2 className="w-4 h-4" />
-              </DeleteNotebookAlertDialog>
+            <DropdownMenuItem
+              className="flex justify-between pr-6 text-red-600"
+              onClick={() => setAlsoDeleteNotes(true)}
+            >
+              Delete notebook <Trash2 className="w-4 h-4" />
             </DropdownMenuItem>
           </DropdownMenuContent>
           <ExportNotebookDialog
@@ -66,6 +66,12 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
             setOpen={setOpen}
             notes={notes}
             notebook_id={notebook_id}
+          />
+          <DeleteNotebookDialog
+            open={alsoDeleteNotes}
+            setOpen={setAlsoDeleteNotes}
+            notebook_id={notebook_id}
+            notebookName={notebooks[notebook_id].notebookName}
           />
         </DropdownMenu>
       </AccordionHeader>
@@ -82,7 +88,9 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
             );
           })
         ) : (
-          <div className="">No notes here.</div>
+          <div className="bg-white dark:bg-neutral-800 flex align-center justify-center rounded-md px-2 py-4 text-lg">
+            Notebook is empty!
+          </div>
         )}
       </AccordionContent>
     </AccordionItem>

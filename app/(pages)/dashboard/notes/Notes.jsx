@@ -17,6 +17,9 @@ import { useSelector } from 'react-redux';
 import hotkeys from 'hotkeys-js';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import NoteNotFoundSVG from '@/public/note-not-found.svg';
+import { Label } from '@/components/ui/label';
 
 const NotesComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -60,7 +63,11 @@ const NotesComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" className="p-2">
+                  <Button
+                    variant="secondary"
+                    className="p-2"
+                    aria-label="add note"
+                  >
                     <Plus />
                   </Button>
                 </DialogTrigger>
@@ -90,8 +97,19 @@ const NotesComponent = () => {
                   />
                 );
               })}
-            {notes.length == 0 && <div> No Notes created yet.</div>}
           </section>
+          {notes.length == 0 && (
+            <div className="flex text-center h-inherit justify-center align-center">
+              <div>
+                <Image
+                  src={NoteNotFoundSVG}
+                  alt="No notes created yet!"
+                  loading="lazy"
+                />
+                <Label className="text-lg">Note not created yet!</Label>
+              </div>
+            </div>
+          )}
           <NewNoteDialog />
         </Dialog>
       </Tooltip>

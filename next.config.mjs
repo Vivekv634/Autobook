@@ -1,3 +1,5 @@
+import withPWA from 'next-pwa';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
@@ -22,6 +24,13 @@ const nextConfig = {
     ],
   },
   reactStrictMode: false,
+  swcMinify: true,
 };
 
-export default nextConfig;
+export default withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+})(nextConfig);
+
+export const productionBrowserSourceMaps = true;

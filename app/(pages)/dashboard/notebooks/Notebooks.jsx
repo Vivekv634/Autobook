@@ -8,6 +8,7 @@ import { Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import NewNotebookDialog from '@/app/components/NewNotebookDialog';
+import NotebookNotFoundSVG from '@/public/notebook-not-found.svg';
 
 import {
   Tooltip,
@@ -19,6 +20,8 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import hotkeys from 'hotkeys-js';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { Label } from '@/components/ui/label';
 
 const NotebookComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -67,7 +70,11 @@ const NotebookComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" className="p-2">
+                  <Button
+                    variant="secondary"
+                    className="p-2"
+                    aria-label="add notebook"
+                  >
                     <Plus />
                   </Button>
                 </DialogTrigger>
@@ -108,7 +115,16 @@ const NotebookComponent = () => {
                   })}
               </Accordion>
             ) : (
-              <div className="">No notebooks here.</div>
+              <div className="flex text-center h-inherit justify-center align-center">
+                <div>
+                  <Image
+                    src={NotebookNotFoundSVG}
+                    alt="Notebook not created yet!"
+                    loading="lazy"
+                  />
+                  <Label className="text-lg">Notebook not created yet!</Label>
+                </div>
+              </div>
             )}
           </section>
           <NewNotebookDialog />

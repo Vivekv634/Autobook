@@ -3,8 +3,11 @@ import DeleteAllTrashNotesAlertDialog from '@/app/components/DeleteAllTrashNotes
 import Note from '@/app/components/Note';
 import RestoreAllTrashNotesAlertDialog from '@/app/components/RestoreAllTrashNotesAlertDialog';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import { useSelector } from 'react-redux';
+import TrashSVG from '@/public/trash.svg';
 
 const TrashComponent = () => {
   const { deletedNotes, user, notebooks } = useSelector((state) => state.note);
@@ -40,8 +43,11 @@ const TrashComponent = () => {
         </>
       )}
       {deletedNotes.length == 0 && (
-        <div className="flex items-center justify-between h-full text-3xl">
-          Empty bin!
+        <div className="flex text-center h-inherit justify-center align-center">
+          <div>
+            <Image src={TrashSVG} alt="Empty bin!" loading="lazy" />
+            <Label className="text-lg">Empty bin!</Label>
+          </div>
         </div>
       )}
     </section>
