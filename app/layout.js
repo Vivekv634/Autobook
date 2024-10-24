@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/icons/favicon.ico" />
         <meta name="theme-color" content="#90cdf4" />
       </head>
-      <body>
+      <body className="selection:bg-fuchsia-300 selection:text-zinc-900">
         <LayoutComponent>{children}</LayoutComponent>
       </body>
     </html>

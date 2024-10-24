@@ -17,7 +17,9 @@ import { useSelector } from 'react-redux';
 const DesktopSidebar = () => {
   const router = useRouter();
   const { user } = useSelector((state) => state.note);
-  const [userTheme, setUserTheme] = useState(false);
+  const [userTheme, setUserTheme] = useState(
+    user && user.userData && user.userData?.theme,
+  );
   const pathName = usePathname();
   const { setTheme } = useTheme();
 
@@ -25,7 +27,7 @@ const DesktopSidebar = () => {
     onAuthStateChanged(auth, (User) => {
       if (User) {
         setUserTheme(user?.userData?.theme);
-        setTheme(user?.userData?.theme ? 'dark' : 'light');
+        setTheme(user?.userData?.theme);
       } else {
         router.push('/login');
       }
@@ -79,7 +81,11 @@ const DesktopSidebar = () => {
         <div className="bottom-0 absolute left-0">
           <div className="flex justify-between m-1 p-1">
             <Label className="text-xl my-auto">Dark Mode</Label>
-            <Switch checked={userTheme} onCheckedChange={setUserTheme} />
+            <Switch
+              aria-label="theme toggle button"
+              checked={userTheme}
+              onCheckedChange={setUserTheme}
+            />
           </div>
           <Link href="/account/profile">
             <Button className="w-full mb-1 text-lg" variant="outline">

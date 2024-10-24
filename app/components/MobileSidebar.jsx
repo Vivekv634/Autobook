@@ -32,7 +32,9 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 const MobileSidebar = () => {
   const { user } = useSelector((state) => state.note);
-  const [userTheme, setUserTheme] = useState(false);
+  const [userTheme, setUserTheme] = useState(
+    user && user.userData && user.userData?.theme,
+  );
   const [name, setName] = useState('');
   const { setTheme } = useTheme();
   const pathName = usePathname();
@@ -42,7 +44,7 @@ const MobileSidebar = () => {
     onAuthStateChanged(auth, (User) => {
       if (User) {
         setUserTheme(user?.userData?.theme);
-        setTheme(user?.userData?.theme ? 'dark' : 'light');
+        setTheme(user?.userData?.theme);
         setName(user?.userData?.name);
       } else {
         router.push('/login');
@@ -102,7 +104,11 @@ const MobileSidebar = () => {
             <SheetFooter className="mt-6">
               <div className="flex justify-between m-1 p-1">
                 <Label className="text-xl my-auto">Dark Mode</Label>
-                <Switch checked={userTheme} onCheckedChange={setUserTheme} />
+                <Switch
+                  aria-label="theme toggle button"
+                  checked={userTheme}
+                  onCheckedChange={setUserTheme}
+                />
               </div>
             </SheetFooter>
           </div>
