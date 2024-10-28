@@ -9,11 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/components/ui/use-toast';
 import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
-import { Loader2, Pen, PenLine } from 'lucide-react';
+import { Loader2, Pen } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
@@ -125,7 +124,7 @@ const NoteEditor = ({ params }) => {
           className={cn(
             !isDesktop &&
               'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
-            isDesktop && 'flex justify-end gap-2 print:hidden',
+            isDesktop && 'flex justify-end gap-2 my-4 print:hidden',
           )}
         >
           <div>
@@ -163,7 +162,6 @@ const NoteEditor = ({ params }) => {
             )}
           </Button>
         </div>
-        <Separator className="my-2" />
         <div
           className={cn(
             'flex px-1 border rounded-md pr-4 items-center mb-3 print:hidden',
@@ -183,38 +181,32 @@ const NoteEditor = ({ params }) => {
           </Label>
         </div>
         <div className="w-full px-2 mb-3 print:hidden">
-          {noteTagsInput ? (
-            !tagsEditable ? (
-              <Label
-                className="flex flex-wrap items-center gap-1 cursor-pointer"
-                onClick={() => setTagsEditable(true)}
-              >
-                {noteTagsInput
-                  .split(' ')
-                  .filter((tag) => tag.trim() !== '')
-                  .map((tag) => `#${tag}`)
-                  .join(' ')}
-                <Pen className="h-3 w-3" />
-              </Label>
+          <Label
+            className={cn(
+              'flex flex-wrap items-center gap-1 cursor-pointer',
+              tagsEditable && 'hidden',
+            )}
+            onClick={() => setTagsEditable(true)}
+          >
+            {noteTagsInput ? (
+              noteTagsInput
+                ?.split(' ')
+                .filter((tag) => tag.trim() !== '')
+                .map((tag) => `#${tag}`)
+                .join(' ')
             ) : (
-              <Input
-                autoFocus
-                onBlur={() => setTagsEditable(false)}
-                value={noteTagsInput}
-                onChange={(e) => setNoteTagsInput(e.target.value)}
-                disabled={loading}
-              />
-            )
-          ) : (
-            !tagsEditable && (
-              <Label
-                onClick={() => setTagsEditable(true)}
-                className="flex gap-1 items-center cursor-pointer"
-              >
-                Add tags <PenLine className="h-3 w-3" />
-              </Label>
-            )
-          )}
+              <>Add tags </>
+            )}
+            <Pen className="h-3 w-3" />
+          </Label>
+          <Input
+            autoFocus
+            onBlur={() => setTagsEditable(false)}
+            value={noteTagsInput}
+            onChange={(e) => setNoteTagsInput(e.target.value)}
+            disabled={loading || !tagsEditable}
+            className={cn(!tagsEditable && 'hidden')}
+          />
         </div>
         <div
           id="editorjs"

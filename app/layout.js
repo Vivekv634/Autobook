@@ -26,6 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={poppins.className} suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link rel="icon" href="/icons/favicon.ico" />
         <meta name="theme-color" content="#90cdf4" />

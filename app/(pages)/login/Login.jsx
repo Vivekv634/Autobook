@@ -68,7 +68,7 @@ const LoginComponent = () => {
 
   return (
     <main className="grid place-items-center h-screen">
-      <Card className="w-11/12 md:w-3/12">
+      <Card>
         <CardHeader className="text-center">
           <CardTitle>Welcome to AutoBook</CardTitle>
           <CardDescription>Write notes in the way you want.</CardDescription>

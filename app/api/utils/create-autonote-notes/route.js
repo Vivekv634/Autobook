@@ -6,7 +6,7 @@ import { db } from '@/firebase.config';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { uid } from 'uid';
-const { emailTemplate } = require('../../../utils/emailTemplate');
+import { emailTemplate } from '@/app/utils/emailTemplate';
 
 //eslint-disable-next-line
 export async function PATCH(request) {
@@ -64,7 +64,7 @@ export async function PATCH(request) {
             noteCreated++;
             const visitLink = `https://autobook1.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
             sendEmail(
-              userDetails.email,
+              userDetails?.email,
               'Note Created by AutoNote',
               emailTemplate(
                 userDetails.name,
