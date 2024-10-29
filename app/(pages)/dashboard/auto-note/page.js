@@ -1,5 +1,5 @@
 import React from 'react';
-import AutoNoteComponent from './AutoNote';
+import AutoNoteComponent from './AutoNotes';
 
 export const metadata = {
   title: 'AutoNote - AutoBook',

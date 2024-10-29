@@ -98,18 +98,20 @@ const NotesComponent = () => {
                 );
               })}
           </section>
-          {notes.length == 0 && (
-            <div className="flex text-center h-inherit justify-center align-center">
-              <div>
-                <Image
-                  src={NoteNotFoundSVG}
-                  alt="No notes created yet!"
-                  loading="lazy"
-                />
-                <Label className="text-lg">Note not created yet!</Label>
+          <section className="flex justify-center items-center h-full">
+            {notes.length == 0 && (
+              <div className="flex text-center h-inherit justify-center align-center">
+                <div>
+                  <Image
+                    src={NoteNotFoundSVG}
+                    alt="No notes created yet!"
+                    loading="lazy"
+                  />
+                  <Label className="text-lg">Note not created yet!</Label>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </section>
           <NewNoteDialog />
         </Dialog>
       </Tooltip>

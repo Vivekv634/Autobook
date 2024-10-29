@@ -8,15 +8,15 @@ export default async function sendEmail(to, subject, msg) {
       port: 587,
       host: 'smtp.gmail.com',
       auth: {
-        user: process.env.EMAIL || 'vaishvivek634@gmail.com',
-        pass: process.env.PASSWORD || 'eesvsnbpddtlzthk',
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
       },
       logger: true,
       debug: true,
     });
 
     const info = await transporter.sendMail({
-      from: process.env.EMAIL || 'vaishvivek634@gmail.com',
+      from: process.env.EMAIL,
       to,
       subject,
       html: msg,

@@ -7,6 +7,14 @@ import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { uid } from 'uid';
 import { emailTemplate } from '@/app/utils/emailTemplate';
+import webpush from 'web-push';
+
+// Set up VAPID keys for push notifications
+webpush.setVapidDetails(
+  `mailto:${process.env.EMAIL}`,
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY,
+);
 
 //eslint-disable-next-line
 export async function PATCH(request) {
@@ -63,6 +71,8 @@ export async function PATCH(request) {
             );
             noteCreated++;
             const visitLink = `https://autobook1.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
+
+            // Send email notification
             sendEmail(
               userDetails?.email,
               'Note Created by AutoNote',
@@ -73,6 +83,24 @@ export async function PATCH(request) {
                 visitLink,
               ),
             );
+
+            // Push notification payload
+            const payload = JSON.stringify({
+              title: 'New Note Created!',
+              body: `${autoNote.autoNoteName} just created a new note "${titleFormatter(autoNote.titleFormat, autoNote.noteGenerated)}"`,
+              icon: '/icons/icon-128x128.png', // Add appropriate icon
+              data: { url: visitLink },
+            });
+
+            // Send push notification if user subscription is available
+            if (userDetails.pushSubscription) {
+              webpush
+                .sendNotification(userDetails.subscription, payload)
+                .catch((error) => {
+                  console.error('Push notification error:', error);
+                });
+            }
+
             batch.update(notesDoc.ref, notesData);
           }
         }

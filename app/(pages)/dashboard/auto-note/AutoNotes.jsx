@@ -88,6 +88,8 @@ const AutoNoteComponent = () => {
               autoNotes.map((autoNote, index) => {
                 return <AutoNote key={index} autoNote={autoNote} />;
               })}
+          </section>
+          <section className="flex justify-center items-center h-full">
             {autoNotes?.length == 0 && (
               <div className="flex text-center h-inherit justify-center align-center">
                 <div>

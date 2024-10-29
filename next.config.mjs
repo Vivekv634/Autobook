@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-export const nextConfig = {
+const nextConfig = {
   env: {
     // API: 'http://localhost:3000',
     API: 'https://autobook1.vercel.app',
@@ -26,3 +26,4 @@ export const nextConfig = {
 };
 
 export const productionBrowserSourceMaps = true;
+export default nextConfig;

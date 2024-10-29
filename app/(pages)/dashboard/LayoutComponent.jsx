@@ -18,7 +18,9 @@ const LayoutComponent = ({ children }) => {
     <main className={cn(!isDesktop && 'h-screen', isDesktop && 'flex gap-1')}>
       <Menubar />
       <section
-        className={cn(isDesktop && 'w-full p-3 border-box overflow-auto')}
+        className={cn(
+          isDesktop && 'w-full h-screen p-3 border-box overflow-auto',
+        )}
       >
         {children}
       </section>

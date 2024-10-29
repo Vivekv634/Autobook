@@ -91,31 +91,33 @@ const NotebookComponent = () => {
                 />
               </div>
             </CommandDialog>
-            {notes && notebooks ? (
+            {notebooks.length > 0 && (
               <Accordion
                 collapsible="true"
                 type="multiple"
                 className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
                 defaultValue={Object.keys(notebooks)}
               >
-                {Object.keys(notebooks).length !== 0 &&
-                  Object.keys(notebooks).map((notebook_id) => {
-                    const filteredNotes = notes.filter(
-                      (note) => note.notebook_ref_id === notebook_id,
-                    );
-                    return (
-                      <Notebook
-                        notebooks={notebooks}
-                        notes={filteredNotes}
-                        notebook_id={notebook_id}
-                        key={notebook_id}
-                        notesDocID={user.userData.notesDocID}
-                      />
-                    );
-                  })}
+                {Object.keys(notebooks).map((notebook_id) => {
+                  const filteredNotes = notes.filter(
+                    (note) => note.notebook_ref_id === notebook_id,
+                  );
+                  return (
+                    <Notebook
+                      notebooks={notebooks}
+                      notes={filteredNotes}
+                      notebook_id={notebook_id}
+                      key={notebook_id}
+                      notesDocID={user.userData.notesDocID}
+                    />
+                  );
+                })}
               </Accordion>
-            ) : (
-              <div className="flex text-center h-inherit justify-center align-center">
+            )}
+          </section>
+          <section className="flex justify-center items-center h-full">
+            {Object.keys(notebooks).length == 0 && (
+              <div className="flex text-center h-full justify-center items-center">
                 <div>
                   <Image
                     src={NotebookNotFoundSVG}

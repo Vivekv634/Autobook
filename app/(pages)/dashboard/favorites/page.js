@@ -1,5 +1,5 @@
 import React from 'react';
-import FavoriteComponent from './Favorite';
+import FavoriteComponent from './Favorites';
 
 export const metadata = {
   title: 'Favorites - AutoBook',
@@ -10,4 +10,3 @@ const Favorite = () => {
 };
 
 export default Favorite;
-
