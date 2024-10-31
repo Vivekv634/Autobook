@@ -1,4 +1,3 @@
-import sendEmail from '@/app/utils/emailTransporter';
 import noteGenerationPeriodTime from '@/app/utils/noteGenerationPeriodTime';
 import { notes as Notes, autoNote as AutoNote } from '@/app/utils/schema';
 import { titleFormatter } from '@/app/utils/titleFormatter';
@@ -6,15 +5,16 @@ import { db } from '@/firebase.config';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { uid } from 'uid';
+import nodemailer from 'nodemailer';
 import { emailTemplate } from '@/app/utils/emailTemplate';
-import webpush from 'web-push';
 
-// Set up VAPID keys for push notifications
-webpush.setVapidDetails(
-  `mailto:${process.env.EMAIL}`,
-  process.env.VAPID_PUBLIC_KEY,
-  process.env.VAPID_PRIVATE_KEY,
-);
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
+  },
+});
 
 //eslint-disable-next-line
 export async function PATCH(request) {
@@ -70,36 +70,30 @@ export async function PATCH(request) {
               an.autoNoteID === autoNote.autoNoteID ? updatedAutoNoteBody : an,
             );
             noteCreated++;
-            const visitLink = `https://autobook1.vercel.app/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
 
-            // Send email notification
-            sendEmail(
-              userDetails?.email,
-              'Note Created by AutoNote',
-              emailTemplate(
+            if (userDetails && userDetails.email) {
+              const visitLink = `${process.env.API}/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
+              const to = userDetails.email;
+              const html = emailTemplate(
                 userDetails.name,
                 autoNote.autoNoteName,
-                titleFormatter(autoNote.titleFormat, autoNote.noteGenerated),
+                newNoteBody.title,
                 visitLink,
-              ),
-            );
+              );
 
-            // Push notification payload
-            const payload = JSON.stringify({
-              title: 'New Note Created!',
-              body: `${autoNote.autoNoteName} just created a new note "${titleFormatter(autoNote.titleFormat, autoNote.noteGenerated)}"`,
-              icon: '/icons/icon-128x128.png', // Add appropriate icon
-              data: { url: visitLink },
-            });
-
-            // Send push notification if user subscription is available
-            if (userDetails.pushSubscription) {
-              webpush
-                .sendNotification(userDetails.subscription, payload)
-                .catch((error) => {
-                  console.error('Push notification error:', error);
-                });
+              transporter
+                .sendMail({
+                  from: process.env.EMAIL,
+                  to,
+                  subject: 'New AutoNote Created!',
+                  html,
+                })
+                .catch((error) => console.error('Error sending email:', error));
             }
+            console.info({
+              from: process.env.EMAIL,
+              to: userDetails.email,
+            });
 
             batch.update(notesDoc.ref, notesData);
           }
@@ -109,9 +103,15 @@ export async function PATCH(request) {
 
     await batch.commit();
 
+    if (noteCreated) {
+      return NextResponse.json(
+        { result: `${noteCreated} AutoNotes notes updated successfully!` },
+        { status: 201 },
+      );
+    }
     return NextResponse.json(
-      { result: `${noteCreated} AutoNotes notes updated successfully!` },
-      { status: 201 },
+      { result: '0 AutoNote notes created.' },
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
