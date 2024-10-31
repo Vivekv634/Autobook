@@ -1,9 +1,7 @@
 'use client';
 import AutoNote from '@/app/components/AutoNote';
-import AutoNoteSearchDialog from '@/app/components/AutoNoteSearchDialog';
 import NewAutoNoteDialog from '@/app/components/NewAutoNoteDialog';
 import { Button } from '@/components/ui/button';
-import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import {
@@ -13,29 +11,19 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import hotkeys from 'hotkeys-js';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import AutoNoteNotFoundSVG from '@/public/autonote-not-found.svg';
+import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 
 const AutoNoteComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const [commandOpen, setCommandOpen] = useState(false);
   const { autoNotes } = useSelector((state) => state.note);
   const [newAutoNoteDialog, setNewAutoNoteDialog] = useState(false);
-
-  hotkeys('ctrl+m, command+m', (e) => {
-    e.preventDefault();
-    setNewAutoNoteDialog(true);
-  });
-
-  hotkeys('ctrl+k, command+k', (e) => {
-    e.preventDefault();
-    setCommandOpen(true);
-  });
+  const [open, setOpen] = useState(false);
 
   return (
     <TooltipProvider>
@@ -44,13 +32,11 @@ const AutoNoteComponent = () => {
           <section className="p-2 flex flex-col">
             <div className="flex justify-between gap-1 mb-2">
               <div
-                onClick={() => {
-                  setCommandOpen(true);
-                }}
+                onClick={() => setOpen((open) => !open)}
                 className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
               >
                 <span className="mx-2 cursor-pointer flex justify-between">
-                  Search autonotes...
+                  Search
                   <code
                     className={cn(
                       !isDesktop && 'hidden',
@@ -70,16 +56,6 @@ const AutoNoteComponent = () => {
               </TooltipTrigger>
               <TooltipContent>Add new note. (CTRL+M)</TooltipContent>
             </div>
-            <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-              <CommandInput placeholder="Search your auto notes..." />
-              <div className="m-3">
-                <AutoNoteSearchDialog
-                  searchData={autoNotes}
-                  noFoundPrompt="No auto notes found."
-                  setOpen={setCommandOpen}
-                />
-              </div>
-            </CommandDialog>
             {autoNotes?.length > 0 &&
               autoNotes.map((autoNote, index) => {
                 return <AutoNote key={index} autoNote={autoNote} />;
@@ -100,6 +76,7 @@ const AutoNoteComponent = () => {
             )}
           </section>
           <NewAutoNoteDialog />
+          <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
         </Dialog>
       </Tooltip>
     </TooltipProvider>

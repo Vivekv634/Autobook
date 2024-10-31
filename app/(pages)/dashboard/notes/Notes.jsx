@@ -1,9 +1,7 @@
 'use client';
 import NewNoteDialog from '@/app/components/NewNoteDialog';
 import Note from '@/app/components/Note';
-import NoteSearchDialog from '@/app/components/NoteSearchDialog';
 import { Button } from '@/components/ui/button';
-import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import {
   Tooltip,
@@ -14,28 +12,18 @@ import {
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import hotkeys from 'hotkeys-js';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import NoteNotFoundSVG from '@/public/note-not-found.svg';
 import { Label } from '@/components/ui/label';
+import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 
 const NotesComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notes, user, notebooks } = useSelector((state) => state.note);
-  const [commandOpen, setCommandOpen] = useState(false);
   const [newNoteDialog, setNewNoteDialog] = useState(false);
-
-  hotkeys('ctrl+m, command+m', (e) => {
-    e.preventDefault();
-    setNewNoteDialog(true);
-  });
-
-  hotkeys('ctrl+k, command+k', (e) => {
-    e.preventDefault();
-    setCommandOpen(true);
-  });
+  const [open, setOpen] = useState(false);
 
   return (
     <TooltipProvider>
@@ -44,13 +32,11 @@ const NotesComponent = () => {
           <section className="p-2 flex flex-col">
             <div className="flex justify-between gap-1 mb-2">
               <div
-                onClick={() => {
-                  setCommandOpen(true);
-                }}
+                onClick={() => setOpen((open) => !open)}
                 className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
               >
                 <span className="mx-2 cursor-pointer flex justify-between">
-                  Search notes...
+                  Search
                   <code
                     className={cn(
                       !isDesktop && 'hidden',
@@ -70,16 +56,6 @@ const NotesComponent = () => {
               </TooltipTrigger>
               <TooltipContent>Add new note.(CTRL+M)</TooltipContent>
             </div>
-            <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-              <CommandInput placeholder="Search your notes..." />
-              <div className="m-3">
-                <NoteSearchDialog
-                  searchData={notes}
-                  noFoundPrompt="No notes found."
-                  setOpen={setCommandOpen}
-                />
-              </div>
-            </CommandDialog>
             {notes.length > 0 &&
               notes.map((note, index) => {
                 return (
@@ -109,6 +85,7 @@ const NotesComponent = () => {
             )}
           </section>
           <NewNoteDialog />
+          <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
         </Dialog>
       </Tooltip>
     </TooltipProvider>

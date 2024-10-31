@@ -1,9 +1,7 @@
 'use client';
 import { Notebook } from '@/app/components/Notebook';
-import NoteBookSearchDialog from '@/app/components/NotebookSearchDialog';
 import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,28 +15,18 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import hotkeys from 'hotkeys-js';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
+import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 
 const NotebookComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notes, notebooks, user } = useSelector((state) => state.note);
-  const [commandOpen, setCommandOpen] = useState(false);
   const [newNotebookDialog, setNewNotebookDialog] = useState(false);
   const [mount, setMount] = useState(false);
-
-  hotkeys('ctrl+m, command+m', (e) => {
-    e.preventDefault();
-    setNewNotebookDialog(true);
-  });
-
-  hotkeys('ctrl+k, command+k', (e) => {
-    e.preventDefault();
-    setCommandOpen(true);
-  });
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setMount(true);
@@ -51,13 +39,11 @@ const NotebookComponent = () => {
           <section className="p-2 flex flex-col">
             <div className="flex justify-between gap-1 mb-2">
               <div
-                onClick={() => {
-                  setCommandOpen(true);
-                }}
+                onClick={() => setOpen((open) => !open)}
                 className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto cursor-pointer"
               >
                 <span className="mx-2 cursor-pointer flex justify-between">
-                  Search notebooks...
+                  Search
                   <code
                     className={cn(
                       !isDesktop && 'hidden',
@@ -77,16 +63,6 @@ const NotebookComponent = () => {
               </TooltipTrigger>
               <TooltipContent>Add new notebook.(CTRL+M)</TooltipContent>
             </div>
-            <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-              <CommandInput placeholder="Search your notebooks..." />
-              <div className="m-3">
-                <NoteBookSearchDialog
-                  searchData={notebooks}
-                  noFoundPrompt="No notebooks found."
-                  setOpen={setCommandOpen}
-                />
-              </div>
-            </CommandDialog>
             {Object.keys(notebooks).length && (
               <Accordion
                 collapsible="true"
@@ -126,6 +102,7 @@ const NotebookComponent = () => {
             )}
           </section>
           <NewNotebookDialog />
+          <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
         </Dialog>
       </Tooltip>
     </TooltipProvider>

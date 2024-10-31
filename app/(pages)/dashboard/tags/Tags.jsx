@@ -1,45 +1,39 @@
 'use client';
-import TagsSearchDialog from '@/app/components/TagsSearchDialog';
 import Tag from '@/app/components/Tag';
 import { Accordion } from '@/components/ui/accordion';
-import { CommandDialog, CommandInput } from '@/components/ui/command';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import hotkeys from 'hotkeys-js';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import TagNotFoundSVG from '@/public/tag-not-found.svg';
+import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
+import { cn } from '@/lib/utils';
+import { useMediaQuery } from 'usehooks-ts';
 
 const TagsComponent = () => {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { tagsData, notebooks, user } = useSelector((state) => state.note);
-  const [commandOpen, setCommandOpen] = useState(false);
-
-  hotkeys('ctrl+k, command+k', (e) => {
-    e.preventDefault();
-    setCommandOpen(true);
-  });
+  const [open, setOpen] = useState(false);
 
   return (
     <>
       <section className="p-2 flex flex-col">
         <div
-          onClick={() => {
-            setCommandOpen(true);
-          }}
+          onClick={() => setOpen((open) => !open)}
           className="rounded-md border px-1 py-2 mb-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
         >
-          <span className="ml-2 cursor-pointer">Search your tags...</span>
+          <span className="ml-2 flex justify-between cursor-pointer">
+            Search
+            <code
+              className={cn(
+                !isDesktop && 'hidden',
+                'px-1 border rounded-md text-center',
+              )}
+            >
+              CTRL+K
+            </code>
+          </span>
         </div>
-        <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
-          <CommandInput placeholder="Search your tags..." />
-          <div className="m-3">
-            <TagsSearchDialog
-              searchData={Object.keys(tagsData)}
-              noFoundPrompt="No tags found."
-              setOpen={setCommandOpen}
-            />
-          </div>
-        </CommandDialog>
         {Object.keys(tagsData).length > 0 && (
           <Accordion
             collapsible="true"
@@ -74,6 +68,7 @@ const TagsComponent = () => {
           </div>
         )}
       </section>
+      <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
     </>
   );
 };

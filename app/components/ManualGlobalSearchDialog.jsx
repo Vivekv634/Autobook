@@ -1,0 +1,150 @@
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from '@/components/ui/command';
+import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { pages } from '../utils/pageData';
+import { Settings, UserRound } from 'lucide-react';
+
+export default function ManualGlobalSearchDialog({ open, setOpen }) {
+  const { notes, notebooks, tagsData, autoNotes, user } = useSelector(
+    (state) => state.note,
+  );
+  const router = useRouter();
+
+  const handleNoteOnClick = (noteData) => {
+    router.push(`/dashboard/${user?.userData?.notesDocID}/${noteData.noteID}`);
+    setOpen((open) => !open);
+  };
+
+  const handleNotebookOnClick = (notebook_id) => {
+    router.push(`/dashboard/notebooks#${notebook_id}`);
+    setOpen((open) => !open);
+  };
+
+  const handleTagsOnClick = (tag) => {
+    router.push(`/dashboard/tags#${tag}`);
+    setOpen((open) => !open);
+  };
+
+  const handleAutoNoteOnClick = (autoNote) => {
+    router.push(`/dashboard/auto-note#${autoNote.autoNoteID}`);
+    setOpen((open) => !open);
+  };
+
+  const handlePageRedirect = (page) => {
+    router.push(page.address);
+    setOpen((open) => !open);
+  };
+
+  return (
+    <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandInput placeholder="search..." />
+      <CommandList>
+        <CommandEmpty>No result found.</CommandEmpty>
+        <CommandGroup heading="Go to">
+          {pages.map((page, index) => {
+            return (
+              <CommandItem key={index}>
+                <div className="flex" onClick={() => handlePageRedirect(page)}>
+                  {page.icon}
+                  <span className="ml-1">{page.label}</span>
+                </div>
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Notes">
+          {notes?.map((note, index) => {
+            return (
+              <CommandItem key={index} asChild>
+                <div onClick={() => handleNoteOnClick(note)}>
+                  {pages[0].icon}
+                  <span className="ml-1">{note?.title}</span>
+                </div>
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Notebooks">
+          {Object.keys(notebooks).length &&
+            Object.keys(notebooks).map((notebook_id, index) => {
+              return (
+                <CommandItem key={index} asChild>
+                  <div onClick={() => handleNotebookOnClick(notebook_id)}>
+                    {pages[1].icon}
+                    <span className="ml-1">
+                      {notebooks[notebook_id].notebookName}
+                    </span>
+                  </div>
+                </CommandItem>
+              );
+            })}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Tags">
+          {Object.keys(tagsData).length &&
+            Object.keys(tagsData).map((tag, index) => {
+              return (
+                <CommandItem key={index} asChild>
+                  <div
+                    className="flex w-full h-full"
+                    onClick={() => handleTagsOnClick(tag)}
+                  >
+                    {pages[3].icon}
+                    <span className="ml-1">{tag}</span>
+                  </div>
+                </CommandItem>
+              );
+            })}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Auto Notes">
+          {autoNotes?.map((autoNote, index) => {
+            return (
+              <CommandItem key={index} asChild>
+                <div onClick={() => handleAutoNoteOnClick(autoNote)}>
+                  {pages[4].icon}
+                  <span className="ml-1">{autoNote.autoNoteName}</span>
+                </div>
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
+        <CommandSeparator />
+        <CommandGroup heading="Account">
+          <CommandItem asChild>
+            <div
+              onClick={() => {
+                router.push('/account/profile');
+                setOpen((open) => !open);
+              }}
+            >
+              <UserRound />
+              <span className="ml-1">Profile</span>
+            </div>
+          </CommandItem>
+          <CommandItem asChild>
+            <div
+              onClick={() => {
+                router.push('/account/settings');
+                setOpen((open) => !open);
+              }}
+            >
+              <Settings />
+              <span className="ml-1">Settings</span>
+            </div>
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
+  );
+}
