@@ -13,7 +13,7 @@ export default function LayoutComponent({ children }) {
       <Provider store={store}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

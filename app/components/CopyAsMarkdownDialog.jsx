@@ -17,7 +17,7 @@ import { gfm } from 'turndown-plugin-gfm';
 import { useMediaQuery } from 'usehooks-ts';
 
 export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
@@ -30,7 +30,7 @@ export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Markdown copied to clipboard!',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       setOpen(false);

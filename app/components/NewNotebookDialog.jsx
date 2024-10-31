@@ -19,7 +19,7 @@ import { useMediaQuery } from 'usehooks-ts';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
 
 const NewNotebookDialog = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
@@ -55,7 +55,7 @@ const NewNotebookDialog = () => {
             created successfully!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);

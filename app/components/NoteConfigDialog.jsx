@@ -28,7 +28,7 @@ import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 
 export default function NoteConfigDialog({ note, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [tags, setTags] = useState(note?.tagsList.join(' ') || '');
   const [newNotebookName, setNewNotebookName] = useState('');
@@ -122,7 +122,7 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Note updated successfully!',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);

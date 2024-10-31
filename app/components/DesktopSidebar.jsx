@@ -1,47 +1,42 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Settings, UserRound, LogOutIcon } from 'lucide-react';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarTrigger,
+} from '@/components/ui/menubar';
+import React, { useEffect } from 'react';
+import { Settings, UserRound, LogOut } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Switch } from '@/components/ui/switch';
-import { useTheme } from 'next-themes';
 import { auth } from '@/firebase.config';
 
 import { pages } from '../utils/pageData';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useSelector } from 'react-redux';
+import LogOutAlertDialog from './LogOutAlertDialog';
+import setTheme from '../utils/theme';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 const DesktopSidebar = () => {
   const router = useRouter();
   const { user } = useSelector((state) => state.note);
-  const [userTheme, setUserTheme] = useState(
-    user && user.userData && user.userData?.theme,
-  );
   const pathName = usePathname();
-  const { setTheme } = useTheme();
 
   useEffect(() => {
     onAuthStateChanged(auth, (User) => {
       if (User) {
-        setUserTheme(user?.userData?.theme);
         setTheme(user?.userData?.theme);
       } else {
         router.push('/login');
       }
     });
-  }, [setTheme, router, user?.userData?.theme]);
-
-  useEffect(() => {
-    setTheme(userTheme ? 'dark' : 'light');
-  }, [userTheme, setTheme]);
-
-  const LogOut = () => {
-    auth.signOut();
-    window.location.reload();
-  };
+  }, [router, user?.userData?.theme]);
 
   return (
     <aside className="h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden">
@@ -78,37 +73,45 @@ const DesktopSidebar = () => {
             <ScrollBar />
           </ScrollArea>
         </div>
-        <div className="bottom-0 absolute left-0">
-          <div className="flex justify-between m-1 p-1">
-            <Label className="text-xl my-auto">Dark Mode</Label>
-            <Switch
-              aria-label="theme toggle button"
-              checked={userTheme}
-              onCheckedChange={setUserTheme}
-            />
-          </div>
-          <Link href="/account/profile">
-            <Button className="w-full mb-1 text-lg" variant="outline">
-              <UserRound className="h-5 mx-1 my-auto" />
-              Profile
-            </Button>
-          </Link>
-          <Link href="/account/settings">
-            <Button className="w-full mb-1 text-lg" variant="outline">
-              <Settings className="h-5 mx-1 my-auto" />
-              Settings
-            </Button>
-          </Link>
-          <Button
-            className="w-full mb-1"
-            variant="destructive"
-            onClick={LogOut}
-          >
-            <div className="flex justify-center w-full text-lg">
-              <LogOutIcon className="h-5 mx-1 my-auto" />
-              Logout
-            </div>
-          </Button>
+        <div className="bottom-0 absolute left-0 w-full">
+          <Menubar>
+            <MenubarMenu>
+              <MenubarTrigger asChild className="w-full p-0">
+                <div className="flex justify-center items-center">
+                  <Avatar>
+                    <AvatarImage
+                      src={`https://ui-avatars.com/api/?background=random&name=${user?.userData?.name}`}
+                      alt={user?.userData?.name}
+                    />
+                  </Avatar>
+                  <Label className="truncate ml-2">
+                    {user?.userData?.name}
+                  </Label>
+                </div>
+              </MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem asChild>
+                  <Link href="/account/profile">
+                    <UserRound className="h-4 mx-1 my-auto" /> Profile
+                  </Link>
+                </MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem asChild>
+                  <Link href="/account/settings">
+                    <Settings className="h-4 mx-1 my-auto" />
+                    Settings
+                  </Link>
+                </MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem asChild>
+                  <LogOutAlertDialog className="text-red-600 w-full">
+                    <LogOut className="h-4 mx-1 my-auto" />
+                    Logout
+                  </LogOutAlertDialog>
+                </MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
         </div>
       </div>
     </aside>

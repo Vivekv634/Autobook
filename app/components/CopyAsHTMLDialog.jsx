@@ -15,7 +15,7 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { useMediaQuery } from 'usehooks-ts';
 
 export default function CopyAsHTMLDialog({ html, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
   const { toast } = useToast();
 
@@ -25,7 +25,7 @@ export default function CopyAsHTMLDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'HTML copied to clipboard!',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       setOpen(false);

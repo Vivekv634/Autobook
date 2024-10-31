@@ -24,7 +24,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 
 const NotebookComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notes, notebooks, user } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
   const [newNotebookDialog, setNewNotebookDialog] = useState(false);
@@ -54,7 +54,7 @@ const NotebookComponent = () => {
                 onClick={() => {
                   setCommandOpen(true);
                 }}
-                className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto cursor-pointer"
+                className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto cursor-pointer"
               >
                 <span className="mx-2 cursor-pointer flex justify-between">
                   Search notebooks...
@@ -70,11 +70,7 @@ const NotebookComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    className="p-2"
-                    aria-label="add notebook"
-                  >
+                  <Button className="px-3" aria-label="add notebook">
                     <Plus />
                   </Button>
                 </DialogTrigger>
@@ -91,11 +87,11 @@ const NotebookComponent = () => {
                 />
               </div>
             </CommandDialog>
-            {notebooks.length > 0 && (
+            {Object.keys(notebooks).length && (
               <Accordion
                 collapsible="true"
                 type="multiple"
-                className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
+                className="w-full bg-neutral-900 rounded-md px-2 border"
                 defaultValue={Object.keys(notebooks)}
               >
                 {Object.keys(notebooks).map((notebook_id) => {

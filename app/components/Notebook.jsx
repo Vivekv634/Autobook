@@ -88,7 +88,7 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
             );
           })
         ) : (
-          <div className="bg-white dark:bg-neutral-800 flex align-center justify-center rounded-md px-2 py-4 text-lg">
+          <div className="bg-neutral-800 flex align-center justify-center rounded-md px-2 py-4 text-lg">
             Notebook is empty!
           </div>
         )}

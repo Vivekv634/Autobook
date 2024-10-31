@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 
 export default function ChangePasswordDialog({ open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const { toast } = useToast();
@@ -31,7 +31,7 @@ export default function ChangePasswordDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Password reset email sent!',
-          className: 'bg-green-500',
+          className: 'bg-green-500 text-white',
         });
       })
       .catch((error) => {

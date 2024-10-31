@@ -22,7 +22,7 @@ import { useMediaQuery } from 'usehooks-ts';
 import AutoNoteNotFoundSVG from '@/public/autonote-not-found.svg';
 
 const AutoNoteComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [commandOpen, setCommandOpen] = useState(false);
   const { autoNotes } = useSelector((state) => state.note);
   const [newAutoNoteDialog, setNewAutoNoteDialog] = useState(false);
@@ -47,7 +47,7 @@ const AutoNoteComponent = () => {
                 onClick={() => {
                   setCommandOpen(true);
                 }}
-                className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+                className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
               >
                 <span className="mx-2 cursor-pointer flex justify-between">
                   Search autonotes...
@@ -63,11 +63,7 @@ const AutoNoteComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    className="p-2"
-                    aria-label="add autonote"
-                  >
+                  <Button className="px-3" aria-label="add autonote">
                     <Plus />
                   </Button>
                 </DialogTrigger>

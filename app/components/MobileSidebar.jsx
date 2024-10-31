@@ -3,14 +3,12 @@ import { Menu, Settings, LogOutIcon, UserRound } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { Label } from '@/components/ui/label';
+// import { Label } from '@/components/ui/label';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { Switch } from '@/components/ui/switch';
+// import { Switch } from '@/components/ui/switch';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Sheet,
-  SheetFooter,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -29,32 +27,24 @@ import { auth } from '@/firebase.config';
 import { pages } from '../utils/pageData';
 import { useSelector } from 'react-redux';
 import { onAuthStateChanged } from 'firebase/auth';
+import setTheme from '../utils/theme';
 
 const MobileSidebar = () => {
   const { user } = useSelector((state) => state.note);
-  const [userTheme, setUserTheme] = useState(
-    user && user.userData && user.userData?.theme,
-  );
   const [name, setName] = useState('');
-  const { setTheme } = useTheme();
   const pathName = usePathname();
   const router = useRouter();
 
   useEffect(() => {
     onAuthStateChanged(auth, (User) => {
       if (User) {
-        setUserTheme(user?.userData?.theme);
         setTheme(user?.userData?.theme);
         setName(user?.userData?.name);
       } else {
         router.push('/login');
       }
     });
-  }, [setTheme, name, user?.userData?.theme, user?.userData?.name, router]);
-
-  useEffect(() => {
-    setTheme(userTheme ? 'dark' : 'light');
-  }, [userTheme, setTheme]);
+  }, [name, user?.userData?.theme, user?.userData?.name, router]);
 
   const LogOut = () => {
     auth.signOut();
@@ -101,16 +91,6 @@ const MobileSidebar = () => {
                 })}
               </div>
             </section>
-            <SheetFooter className="mt-6">
-              <div className="flex justify-between m-1 p-1">
-                <Label className="text-xl my-auto">Dark Mode</Label>
-                <Switch
-                  aria-label="theme toggle button"
-                  checked={userTheme}
-                  onCheckedChange={setUserTheme}
-                />
-              </div>
-            </SheetFooter>
           </div>
         </SheetContent>
       </Sheet>

@@ -11,15 +11,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useSelector } from 'react-redux';
-import { useTheme } from 'next-themes';
 import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
-import { pages } from '@/app/utils/pageData';
+import { pages, themes } from '@/app/utils/pageData';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ImportNotesDialog from '@/app/components/ImportNotesDialog';
 import ExportAllNotes from '@/app/components/ExportAllNotes';
 import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
+import setTheme from '@/app/utils/theme';
 
 const SettingsComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -34,18 +34,18 @@ const SettingsComponent = () => {
   const [importNotes, setImportNotes] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
-  const { setTheme } = useTheme();
   const { toast } = useToast();
 
-  const handleThemeChange = async (theme) => {
-    const body = { theme };
-    setUserTheme(theme);
+  const handleThemeChange = async () => {
+    const body = { theme: userTheme };
     await axios.put(
       `${process.env.API}/api/account/update/${user.userID}`,
       body,
     );
-    toast({ description: 'Theme updated!', className: 'bg-green-500' });
-    setTheme(theme);
+    toast({
+      description: 'Theme updated!',
+      className: 'bg-green-500 text-white',
+    });
   };
 
   const handleDefaultHomePageChange = async (page) => {
@@ -54,7 +54,7 @@ const SettingsComponent = () => {
     });
     toast({
       description: 'Default home page updated!',
-      className: 'bg-green-500',
+      className: 'bg-green-500 text-white',
     });
   };
 
@@ -68,7 +68,7 @@ const SettingsComponent = () => {
     );
     toast({
       description: 'Trash interval updated!',
-      className: 'bg-green-500',
+      className: 'bg-green-500 text-white',
     });
   };
 
@@ -77,27 +77,42 @@ const SettingsComponent = () => {
       <div className="p-2 border rounded-md mt-2 mx-1">
         <Label className="text-2xl font-extrabold block">Appearance</Label>
         <Separator className="my-2" />
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-start">
           <div>
             <Label className="block font-bold">Default Theme</Label>
             <Label className="text-muted-foreground">
               Set your prefered app theme
             </Label>
           </div>
-          <Select
-            value={userTheme}
-            onValueChange={(e) => {
-              handleThemeChange(e);
-            }}
-          >
-            <SelectTrigger className="w-fit gap-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="light">Light</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col items-end gap-2">
+            <Select
+              value={userTheme}
+              onValueChange={(e) => {
+                setUserTheme(e);
+                setTheme(e);
+              }}
+            >
+              <SelectTrigger className="w-fit gap-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(themes).map((theme) => {
+                  const color = `text-${theme}-600`;
+                  return (
+                    <SelectItem className={color} value={theme} key={theme}>
+                      {theme.toUpperCase()}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+            <Button
+              className={cn(user?.userData?.theme === userTheme && 'hidden')}
+              onClick={handleThemeChange}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
       <div className="p-2 border rounded-md mt-2 mx-1">
@@ -119,7 +134,7 @@ const SettingsComponent = () => {
             <SelectTrigger className="w-fit gap-1">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent position="popper" side="top" align="start">
               {pages.map((page) => {
                 if (page.label == 'Trash') {
                   return;

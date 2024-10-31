@@ -21,7 +21,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
   const showdown = require('showdown');
   const converter = new showdown.Converter();
   const { user } = useSelector((state) => state.note);
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { toast } = useToast();
 
   const importNotes = (e) => {
@@ -66,7 +66,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
       });
       toast({
         description: 'Note(s) imported successfully!',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
       setOpen(false);
     } catch (error) {

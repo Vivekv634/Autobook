@@ -25,7 +25,7 @@ export default function DeleteAllTrashNotesAlertDialog({ children }) {
           notesDocID: user.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes deleted!', className: 'bg-green-500' });
+      toast({ description: 'All notes deleted!', className: 'bg-green-500 text-white' });
     } catch (error) {
       console.error(error);
       toast({

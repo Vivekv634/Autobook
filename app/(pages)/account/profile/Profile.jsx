@@ -22,7 +22,7 @@ import ChangePasswordDialog from '@/app/components/ChangePasswordDialog';
 
 const ProfileComponent = () => {
   const { user } = useSelector((state) => state.note);
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [userNameDialog, setUserNameDialog] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState(false);
   const [changeEmail, setChangeEmail] = useState(false);

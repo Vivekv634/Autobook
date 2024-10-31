@@ -13,7 +13,7 @@ import axios from 'axios';
 import { useToast } from '@/components/ui/use-toast';
 
 const EditAutoNoteTemplate = ({ params }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { autoNotes, user } = useSelector((state) => state.note);
   const [data, setData] = useState();
   const editorInstance = useRef(null);
@@ -69,7 +69,7 @@ const EditAutoNoteTemplate = ({ params }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);

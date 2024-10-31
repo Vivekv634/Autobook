@@ -27,7 +27,7 @@ export default function DeleteNotebookDialog({
   notebook_id,
   notebookName,
 }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notebooks, autoNotes, notes, user } = useSelector(
     (state) => state.note,
   );
@@ -95,7 +95,7 @@ export default function DeleteNotebookDialog({
             notebook deleted
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
       setOpen(false);
       setLoading(false);

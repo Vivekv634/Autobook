@@ -33,7 +33,7 @@ export default function ExportAllNotebooks({ open, setOpen }) {
   const { user, notes, notebooks } = useSelector((state) => state.note);
   const { toast } = useToast();
   const zip = new JSZip();
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
 

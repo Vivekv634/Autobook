@@ -22,7 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import AutoNoteContextMenu from './AutoNoteContextMenu';
 
 const AutoNote = ({ autoNote }) => {
-  // const isDesktop = useMediaQuery('(min-width: 640px)');
+  // const isDesktop = useMediaQuery('(min-width: 768px)');
   const autoNoteUpdationTimeAgo = formatDistanceToNowStrict(
     autoNote?.autoNoteUpdationDate,
     { addSuffix: true },

@@ -31,7 +31,7 @@ export default function ExportAllNotes({ open, setOpen }) {
   const [exporttype, setExportType] = useState('html');
   const { user, notes } = useSelector((state) => state.note);
   const zip = new JSZip();
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
 

@@ -35,7 +35,7 @@ import axios from 'axios';
 import textToEditorJs from '../utils/textToEditorJs';
 
 const NewAutoNoteDialog = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [autoNoteName, setAutoNoteName] = useState('');
   const [titleFormat, setTitleFormat] = useState('');
   const [showHelp, setShowHelp] = useState(false);
@@ -49,9 +49,7 @@ const NewAutoNoteDialog = () => {
   const [anNotebook, setANNotebook] = useState(
     autoNote.autoNoteNotebookID ?? 'none',
   );
-  const [newNotebookFlag, setNewNotebookFlag] = useState(
-    Object.keys(notebooks).length == 0,
-  );
+  const [newNotebookFlag, setNewNotebookFlag] = useState(true);
   const [templateFromDevice, setTemplateFromDevice] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
   const [notebookNameError, setNotebookNameError] = useState(null);
@@ -219,7 +217,7 @@ const NewAutoNoteDialog = () => {
       setAutoNoteState('running');
       toast({
         description: 'Auto Note Created Successfully!',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);

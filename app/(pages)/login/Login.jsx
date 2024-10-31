@@ -53,7 +53,7 @@ const LoginComponent = () => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        toast({ description: 'Login Successful', className: 'bg-green-500' });
+        toast({ description: 'Login Successful', className: 'bg-green-500 text-white' });
         setLoading(false);
       })
       .catch((error) => {

@@ -22,14 +22,14 @@ import {
 } from '@/components/ui/tooltip';
 
 const Note = ({ note, notesDocID, notebook_name }) => {
-  // const isDesktop = useMediaQuery('(min-width: 640px)');
+  // const isDesktop = useMediaQuery('(min-width: 768px)');
   const timeAgo = formatDistanceToNowStrict(note.updation_date, {
     addSuffix: true,
   });
 
   return (
     <TooltipProvider>
-      <Card className="my-1">
+      <Card className="my-1 select-none">
         <NoteContextMenu note={note} notesDocID={notesDocID}>
           <CardContent className="cursor-pointer">
             <CardHeader className="px-0">

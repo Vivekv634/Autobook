@@ -28,7 +28,7 @@ import { auth } from '@/firebase.config';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
 
 export default function NewNoteDialog() {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [noteTitle, setNoteTitle] = useState('');
   const [tags, setTags] = useState('');
   const [newNotebookName, setNewNotebookName] = useState('');
@@ -114,7 +114,7 @@ export default function NewNoteDialog() {
       setLoading(false);
       toast({
         description: 'Note Created successfully!',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);

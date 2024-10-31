@@ -25,7 +25,7 @@ export default function NoteSearchDialog({
       <CommandEmpty>{noFoundPrompt}</CommandEmpty>
       {searchData.map((data, index) => {
         return (
-          <CommandItem key={index}>
+          <CommandItem key={index} className="cursor-pointer">
             <div
               onClick={() => {
                 handleOnClickCommandItem(data);

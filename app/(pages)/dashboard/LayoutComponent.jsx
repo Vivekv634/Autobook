@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const LayoutComponent = ({ children }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [mount, setMount] = useState(false);
 
   useEffect(() => {

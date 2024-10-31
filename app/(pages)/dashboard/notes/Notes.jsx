@@ -22,7 +22,7 @@ import NoteNotFoundSVG from '@/public/note-not-found.svg';
 import { Label } from '@/components/ui/label';
 
 const NotesComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notes, user, notebooks } = useSelector((state) => state.note);
   const [commandOpen, setCommandOpen] = useState(false);
   const [newNoteDialog, setNewNoteDialog] = useState(false);
@@ -47,7 +47,7 @@ const NotesComponent = () => {
                 onClick={() => {
                   setCommandOpen(true);
                 }}
-                className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+                className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
               >
                 <span className="mx-2 cursor-pointer flex justify-between">
                   Search notes...
@@ -63,11 +63,7 @@ const NotesComponent = () => {
               </div>
               <TooltipTrigger asChild>
                 <DialogTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    className="p-2"
-                    aria-label="add note"
-                  >
+                  <Button className="px-3" aria-label="add note">
                     <Plus />
                   </Button>
                 </DialogTrigger>

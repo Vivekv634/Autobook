@@ -16,7 +16,7 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { useMediaQuery } from 'usehooks-ts';
 
 export default function ExportAsHTMLDialog({ html, noteTitle, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
   const { toast } = useToast();
 

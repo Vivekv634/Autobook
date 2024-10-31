@@ -98,7 +98,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
         },
       );
       dispatch(setNotes(response.data.result));
-      toast({ ...toastMessage, className: 'bg-green-500' });
+      toast({ ...toastMessage, className: 'bg-green-500 text-white' });
     } catch (error) {
       console.error(error);
       toast({
@@ -171,7 +171,7 @@ const NoteDropDownMenu = ({ note, notesDocID, children }) => {
       },
     );
     dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', className: 'bg-green-500' });
+    toast({ description: 'Note duplicated!', className: 'bg-green-500 text-white' });
   };
 
   return (

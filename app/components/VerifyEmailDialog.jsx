@@ -18,7 +18,7 @@ import { sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/firebase.config';
 
 export default function VerifyEmailDialog({ open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -29,7 +29,7 @@ export default function VerifyEmailDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Verification Email sent!',
-          className: 'bg-green-500',
+          className: 'bg-green-500 text-white',
         });
       })
       .catch((error) => {

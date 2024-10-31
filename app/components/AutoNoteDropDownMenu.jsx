@@ -49,7 +49,7 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
       );
       toast({
         description: 'Auto Note updated successfully',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);
@@ -80,7 +80,7 @@ const AutoNoteDropDownMenu = ({ autoNote, children }) => {
       );
       toast({
         description: 'New Note created successfully',
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       console.error(error);

@@ -31,7 +31,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 
 const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [autoNoteName, setAutoNoteName] = useState(autoNote.autoNoteName);
   const [titleFormat, setTitleFormat] = useState(autoNote.titleFormat);
   const [showHelp, setShowHelp] = useState(false);
@@ -148,7 +148,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
             updated!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
       setLoading(false);
       setOpen(false);

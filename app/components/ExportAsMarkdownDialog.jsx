@@ -23,7 +23,7 @@ export default function ExportAsMarkdownDialog({
   open,
   setOpen,
 }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);

@@ -21,7 +21,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '../utils/editorConfig';
 
 const NoteEditor = ({ params }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notebooks, notes } = useSelector((state) => state.note);
   const [editorNote, setEditorNote] = useState();
   const { noteID, notesDocID } = params;
@@ -212,7 +212,7 @@ const NoteEditor = ({ params }) => {
           id="editorjs"
           className={cn(
             !isDesktop && 'mx-1 px-1',
-            isDesktop && 'px-20 py-4 ',
+            isDesktop && 'px-10 py-4 ',
             'border rounded-md',
           )}
         />

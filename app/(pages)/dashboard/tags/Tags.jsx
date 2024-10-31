@@ -26,7 +26,7 @@ const TagsComponent = () => {
           onClick={() => {
             setCommandOpen(true);
           }}
-          className="rounded-md bg-neutral-100 dark:bg-neutral-800 px-1 py-2 mb-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+          className="rounded-md border px-1 py-2 mb-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
         >
           <span className="ml-2 cursor-pointer">Search your tags...</span>
         </div>
@@ -44,7 +44,7 @@ const TagsComponent = () => {
           <Accordion
             collapsible="true"
             type="multiple"
-            className="w-full rounded-md px-2 bg-neutral-100 dark:bg-neutral-900"
+            className="w-full rounded-md px-2 bg-neutral-900"
             defaultValue={Object.keys(tagsData)}
           >
             {Object.keys(tagsData).length !== 0 &&

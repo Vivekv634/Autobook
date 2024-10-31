@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 
 const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [autoNoteName, setAutoNoteName] = useState('');
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
   const [alsoDeleteNotebook, setAlsoDeleteNotebook] = useState(false);
@@ -75,7 +75,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
             <span className="font-bold">{autoNoteName}</span> AutoNote deleted!
           </span>
         ),
-        className: 'bg-green-500',
+        className: 'bg-green-500 text-white',
       });
     } catch (error) {
       setLoading(false);

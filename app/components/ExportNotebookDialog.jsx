@@ -39,7 +39,7 @@ export default function ExportNotebookDialog({
   const { notebooks } = useSelector((state) => state.note);
   const zip = new JSZip();
   const notebookFolder = zip.folder(notebooks[notebook_id].notebookName);
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const [exporttype, setExportType] = useState('html');
   const { toast } = useToast();
   const turndownServices = new TurndownService();
@@ -72,7 +72,7 @@ export default function ExportNotebookDialog({
         .then((blob) =>
           saveAs(blob, `${notebooks[notebook_id].notebookName}.zip`),
         );
-      toast({ description: 'Notebook Exported!', className: 'bg-green-500' });
+      toast({ description: 'Notebook Exported!', className: 'bg-green-500 text-white' });
     } catch (error) {
       console.error(error);
       toast({

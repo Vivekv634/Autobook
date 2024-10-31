@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 
 export default function EditUserNameDialog({ open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   const { user } = useSelector((state) => state.note);
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function EditUserNameDialog({ open, setOpen }) {
         body,
         { headers: { notesDocID: user.userData.notesDocID } },
       );
-      toast({ description: 'Name updated!', className: 'bg-green-500' });
+      toast({ description: 'Name updated!', className: 'bg-green-500 text-white' });
       setLoading(false);
       setOpen(false);
     } catch (error) {
