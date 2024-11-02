@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useToast } from '@/components/ui/use-toast';
 import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
 import { Loader2, Pen } from 'lucide-react';
@@ -19,13 +18,14 @@ import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '../utils/editorConfig';
+import { useCustomToast } from './SendToast';
 
 const NoteEditor = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const { notebooks, notes } = useSelector((state) => state.note);
+  const { notebooks, user, notes } = useSelector((state) => state.note);
   const [editorNote, setEditorNote] = useState();
   const { noteID, notesDocID } = params;
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const [noteTitle, setNoteTitle] = useState();
   const [tagsEditable, setTagsEditable] = useState(false);
   const [noteTagsInput, setNoteTagsInput] = useState();
@@ -98,7 +98,7 @@ const NoteEditor = ({ params }) => {
       await axios.put(`${process.env.API}/api/notes/update/${noteID}`, body, {
         headers: { notesDocID },
       });
-      toast({ description: 'Changes Saved!', className: 'bg-green-400' });
+      toast({ description: 'Changes Saved!', color: user.userData.theme });
     } catch (error) {
       console.error('Saving failed: ', error);
       toast({
@@ -109,13 +109,14 @@ const NoteEditor = ({ params }) => {
       setLoading(false);
     }
   }, [
-    toast,
     editorInstance,
-    noteID,
-    noteTagsInput,
     noteTitle,
+    noteTagsInput,
     notebookValue,
+    noteID,
     notesDocID,
+    toast,
+    user.userData.theme,
   ]);
   return (
     <section className="h-full box-border">

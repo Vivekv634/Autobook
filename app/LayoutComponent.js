@@ -11,12 +11,7 @@ export default function LayoutComponent({ children }) {
   return (
     <>
       <Provider store={store}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider forcedTheme="dark" attribute="class" enableSystem={true}>
           <SpeedInsights />
           <Analytics />
           {children}

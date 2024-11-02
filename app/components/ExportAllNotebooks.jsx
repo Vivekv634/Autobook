@@ -26,12 +26,12 @@ import { gfm } from 'turndown-plugin-gfm';
 import { convert } from 'html-to-text';
 import { useMediaQuery } from 'usehooks-ts';
 import { saveAs } from 'file-saver';
-import { useToast } from '@/components/ui/use-toast';
+import { useCustomToast } from './SendToast';
 
 export default function ExportAllNotebooks({ open, setOpen }) {
   const [exporttype, setExportType] = useState('html');
   const { user, notes, notebooks } = useSelector((state) => state.note);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const zip = new JSZip();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const turndownServices = new TurndownService();

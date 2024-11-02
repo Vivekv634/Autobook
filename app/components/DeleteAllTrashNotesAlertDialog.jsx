@@ -10,13 +10,13 @@ import {
 } from '@/components/ui/alert-dialog';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
+import { useCustomToast } from './SendToast';
 
 export default function DeleteAllTrashNotesAlertDialog({ children }) {
   const { user } = useSelector((state) => state.note);
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   const deleteAll = async () => {
     try {
@@ -25,7 +25,7 @@ export default function DeleteAllTrashNotesAlertDialog({ children }) {
           notesDocID: user.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes deleted!', className: 'bg-green-500 text-white' });
+      toast({ description: 'All notes deleted!', color: user.userData.theme });
     } catch (error) {
       console.error(error);
       toast({

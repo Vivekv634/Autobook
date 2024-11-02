@@ -7,17 +7,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { Copy } from 'lucide-react';
 import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
 
 export default function CopyAsHTMLDialog({ html, open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const { user } = useSelector((state) => state.note);
   const formattedHTML = pretty(html, { ocd: true });
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   function copy() {
     try {
@@ -25,7 +27,7 @@ export default function CopyAsHTMLDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'HTML copied to clipboard!',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       setOpen(false);

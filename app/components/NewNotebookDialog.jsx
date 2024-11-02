@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
 import { auth } from '@/firebase.config';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
@@ -17,6 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
+import { useCustomToast } from './SendToast';
 
 const NewNotebookDialog = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -24,7 +24,7 @@ const NewNotebookDialog = () => {
   const [loading, setLoading] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
   const { notebooks, user } = useSelector((state) => state.note);
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   useEffect(() => {
     const notebookNames = Object.values(notebooks).map((notebook) => {
@@ -55,7 +55,7 @@ const NewNotebookDialog = () => {
             created successfully!
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);

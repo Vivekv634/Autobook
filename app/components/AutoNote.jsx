@@ -22,7 +22,6 @@ import { Separator } from '@/components/ui/separator';
 import AutoNoteContextMenu from './AutoNoteContextMenu';
 
 const AutoNote = ({ autoNote }) => {
-  // const isDesktop = useMediaQuery('(min-width: 768px)');
   const autoNoteUpdationTimeAgo = formatDistanceToNowStrict(
     autoNote?.autoNoteUpdationDate,
     { addSuffix: true },
@@ -48,11 +47,6 @@ const AutoNote = ({ autoNote }) => {
                   </TooltipTrigger>
                   <TooltipContent>{autoNote.autoNoteName}</TooltipContent>
                 </Tooltip>
-                {/* {!isDesktop && ( */}
-                {/*   <AutoNoteDropDownMenu autoNote={autoNote}> */}
-                {/*     <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" /> */}
-                {/*   </AutoNoteDropDownMenu> */}
-                {/* )} */}
               </CardTitle>
             </CardHeader>
             <div className="flex justify-between w-full">

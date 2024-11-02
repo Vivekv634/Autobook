@@ -18,9 +18,9 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/firebase.config';
+import { useCustomToast } from '@/app/components/SendToast';
 
 const RegisterComponent = () => {
   const [name, setName] = useState('');
@@ -29,7 +29,7 @@ const RegisterComponent = () => {
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   const router = useRouter();
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const RegisterComponent = () => {
       RegisterResponse.data.result &&
         toast({
           desciption: 'Registration successful! Now login.',
-          className: 'bg-green-500 text-white',
+          color: 'green',
         });
       router.push('/login');
     } catch (error) {

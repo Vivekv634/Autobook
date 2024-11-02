@@ -17,14 +17,16 @@ import {
   verifyBeforeUpdateEmail,
 } from 'firebase/auth';
 import { auth } from '@/firebase.config';
-import { useToast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
 
 export default function ChangeEmailDialog({ open, setOpen }) {
+  const { user } = useSelector((state) => state.note);
   const [loading, setLoading] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   const handleEmailChange = async (e) => {
     e.preventDefault();
@@ -45,7 +47,7 @@ export default function ChangeEmailDialog({ open, setOpen }) {
       toast({
         description:
           'A verification email has been sent to your new email address. Please verify it to complete the change.',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
 
       setLoading(false);

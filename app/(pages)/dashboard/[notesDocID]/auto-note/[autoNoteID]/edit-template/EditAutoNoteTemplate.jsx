@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '@/app/utils/editorConfig';
 import axios from 'axios';
-import { useToast } from '@/components/ui/use-toast';
+import { useCustomToast } from '@/app/components/SendToast';
 
 const EditAutoNoteTemplate = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -19,7 +19,7 @@ const EditAutoNoteTemplate = ({ params }) => {
   const editorInstance = useRef(null);
   const [loading, setLoading] = useState(false);
   const [autoNote, setAutoNote] = useState();
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   useEffect(() => {
     autoNotes.map((autoNote) => {
@@ -69,7 +69,7 @@ const EditAutoNoteTemplate = ({ params }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);

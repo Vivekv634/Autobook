@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { pages } from '../utils/pageData';
 import { Settings, UserRound } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function ManualGlobalSearchDialog({ open, setOpen }) {
   const { notes, notebooks, tagsData, autoNotes, user } = useSelector(
@@ -52,7 +53,10 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           {pages.map((page, index) => {
             return (
               <CommandItem key={index}>
-                <div className="flex" onClick={() => handlePageRedirect(page)}>
+                <div
+                  className="flex w-full h-full"
+                  onClick={() => handlePageRedirect(page)}
+                >
                   {page.icon}
                   <span className="ml-1">{page.label}</span>
                 </div>
@@ -61,11 +65,17 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Notes">
+        <CommandGroup
+          className={cn(!notes?.length && 'hidden')}
+          heading="Notes"
+        >
           {notes?.map((note, index) => {
             return (
               <CommandItem key={index} asChild>
-                <div onClick={() => handleNoteOnClick(note)}>
+                <div
+                  className="flex w-full h-full"
+                  onClick={() => handleNoteOnClick(note)}
+                >
                   {pages[0].icon}
                   <span className="ml-1">{note?.title}</span>
                 </div>
@@ -74,12 +84,18 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Notebooks">
+        <CommandGroup
+          className={cn(!Object.keys(notebooks).length && 'hidden')}
+          heading="Notebooks"
+        >
           {Object.keys(notebooks).length &&
             Object.keys(notebooks).map((notebook_id, index) => {
               return (
                 <CommandItem key={index} asChild>
-                  <div onClick={() => handleNotebookOnClick(notebook_id)}>
+                  <div
+                    className="flex w-full h-full"
+                    onClick={() => handleNotebookOnClick(notebook_id)}
+                  >
                     {pages[1].icon}
                     <span className="ml-1">
                       {notebooks[notebook_id].notebookName}
@@ -90,7 +106,10 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
             })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Tags">
+        <CommandGroup
+          className={cn(!Object.keys(tagsData).length && 'hidden')}
+          heading="Tags"
+        >
           {Object.keys(tagsData).length &&
             Object.keys(tagsData).map((tag, index) => {
               return (
@@ -107,7 +126,10 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
             })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Auto Notes">
+        <CommandGroup
+          className={cn(!autoNotes?.length && 'hidden')}
+          heading="Auto Notes"
+        >
           {autoNotes?.map((autoNote, index) => {
             return (
               <CommandItem key={index} asChild>

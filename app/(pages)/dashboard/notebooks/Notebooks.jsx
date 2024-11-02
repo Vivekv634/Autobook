@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
+import hotkeys from 'hotkeys-js';
 
 const NotebookComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -28,6 +29,10 @@ const NotebookComponent = () => {
   const [mount, setMount] = useState(false);
   const [open, setOpen] = useState(false);
 
+  hotkeys('ctrl+m, command+m', (e) => {
+    e.preventDefault();
+    setNewNotebookDialog(true);
+  });
   useEffect(() => {
     setMount(true);
   }, [mount]);

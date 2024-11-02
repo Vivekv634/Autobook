@@ -20,16 +20,16 @@ import DeleteAutoNoteDialog from './DeleteAutoNoteDialog';
 import { notes, state } from '../utils/schema';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useToast } from '@/components/ui/use-toast';
 import { titleFormatter } from '../utils/titleFormatter';
 import { useRouter } from 'next/navigation';
 import { uid } from 'uid';
+import { useCustomToast } from './SendToast';
 
 const AutoNoteContextMenu = ({ autoNote, children }) => {
   const [deleteDialogOpen, setDeteleDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { user, notebooks } = useSelector((state) => state.note);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const router = useRouter();
 
   const handleAutoNoteStateChange = async (newState) => {
@@ -53,7 +53,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);
@@ -87,7 +87,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       );
       toast({
         description: 'New Note created successfully',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);

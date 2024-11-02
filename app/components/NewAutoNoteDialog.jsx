@@ -1,7 +1,6 @@
 import { Button, buttonVariants } from '@/components/ui/button';
 import htmlToEditorJs from '../utils/htmlToEditor';
 import { useSelector } from 'react-redux';
-import { useToast } from '@/components/ui/use-toast';
 import { acceptedFileType } from '../utils/schema';
 import {
   DialogClose,
@@ -33,6 +32,7 @@ import VerifyEmailTemplate from './VerifyEmailTemplate';
 import Showdown from 'showdown';
 import axios from 'axios';
 import textToEditorJs from '../utils/textToEditorJs';
+import { useCustomToast } from './SendToast';
 
 const NewAutoNoteDialog = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -54,7 +54,7 @@ const NewAutoNoteDialog = () => {
   const [newNotebookName, setNewNotebookName] = useState('');
   const [notebookNameError, setNotebookNameError] = useState(null);
   const [notebookNamePreview, setNotebookNamePreview] = useState(null);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const converter = new Showdown.Converter();
 
   useEffect(() => {
@@ -93,12 +93,18 @@ const NewAutoNoteDialog = () => {
     e.preventDefault();
     try {
       if (anNotebook === 'none' && !newNotebookFlag) {
-        toast({ description: 'You must select a notebook first!' });
+        toast({
+          description: 'You must select a notebook first!',
+          color: user.userData.theme,
+        });
         setLoading(false);
         return;
       }
       if (newNotebookName == '' && newNotebookFlag) {
-        toast({ description: 'Create a new notebook first!' });
+        toast({
+          description: 'Create a new notebook first!',
+          color: user.userData.theme,
+        });
         setLoading(true);
         return;
       }
@@ -217,7 +223,7 @@ const NewAutoNoteDialog = () => {
       setAutoNoteState('running');
       toast({
         description: 'Auto Note Created Successfully!',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);

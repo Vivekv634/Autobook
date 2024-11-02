@@ -14,15 +14,15 @@ import textToEditorJs from '../utils/textToEditorJs';
 import htmlToEditorJs from '../utils/htmlToEditor';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useToast } from '@/components/ui/use-toast';
 import { acceptedFileType } from '../utils/schema';
+import { useCustomToast } from './SendToast';
 
 export default function ImportNotesDialog({ open, setOpen }) {
   const showdown = require('showdown');
   const converter = new showdown.Converter();
   const { user } = useSelector((state) => state.note);
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   const importNotes = (e) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
       });
       toast({
         description: 'Note(s) imported successfully!',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
       setOpen(false);
     } catch (error) {

@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { Copy } from 'lucide-react';
 import pretty from 'pretty';
@@ -15,14 +14,17 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
 
 export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
+  const { user } = useSelector((state) => state.note);
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
   const Markdown = turndownServices.turndown(formattedHTML);
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   function copy() {
     try {
@@ -30,7 +32,7 @@ export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Markdown copied to clipboard!',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       setOpen(false);

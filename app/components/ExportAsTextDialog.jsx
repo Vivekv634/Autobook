@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import download from 'downloadjs';
 import { convert } from 'html-to-text';
@@ -15,12 +14,13 @@ import { Download } from 'lucide-react';
 import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
 
 export default function ExportAsTextDialog({ html, noteTitle, open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
   const Text = convert(formattedHTML);
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   function copy() {
     try {

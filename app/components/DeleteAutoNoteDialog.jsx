@@ -12,12 +12,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useToast } from '@/components/ui/use-toast';
 import { Loader2 } from 'lucide-react';
 import { useMediaQuery } from 'usehooks-ts';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import { useCustomToast } from './SendToast';
 
 const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -29,7 +29,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
   const { autoNotes, notebooks, notes, user } = useSelector(
     (state) => state.note,
   );
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   useEffect(() => {
     setAutoNoteNameError(
@@ -75,7 +75,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
             <span className="font-bold">{autoNoteName}</span> AutoNote deleted!
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       setLoading(false);

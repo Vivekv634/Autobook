@@ -13,11 +13,12 @@ import {
 import { Input } from '@/components/ui/input';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
 
 export default function EditNotebookNameAlertDialog({
   children,
@@ -30,7 +31,8 @@ export default function EditNotebookNameAlertDialog({
   const [newNotebookPreview, setNewNotebookPreview] = useState('');
   const [notebookNameError, setNotebookNameError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const { user } = useSelector((state) => state.note);
+  const toast = useCustomToast();
 
   useEffect(() => {
     if (newNotebookName.trim() === notebookName) {
@@ -85,7 +87,7 @@ export default function EditNotebookNameAlertDialog({
             <span className="font-bold">{notebookName}</span> notebook updated!
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
       setLoading(false);
     } catch (error) {

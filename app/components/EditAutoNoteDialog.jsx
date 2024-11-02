@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/select';
 import { generationPeriod } from '../utils/schema';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 import { titleFormatter } from '../utils/titleFormatter';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from 'usehooks-ts';
@@ -29,6 +28,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { uid } from 'uid';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { useCustomToast } from './SendToast';
 
 const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -43,7 +43,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
   const [newNotebookName, setNewNotebookName] = useState('');
   const [newNotebookPreview, setNewNotebookPreview] = useState('');
   const [notebookNameError, setNotebookNameError] = useState(null);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const { user } = useSelector((state) => state.note);
 
   useEffect(() => {
@@ -148,7 +148,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
             updated!
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
       setLoading(false);
       setOpen(false);

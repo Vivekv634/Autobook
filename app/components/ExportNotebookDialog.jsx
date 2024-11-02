@@ -26,9 +26,9 @@ import pretty from 'pretty';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { convert } from 'html-to-text';
-import { useToast } from '@/components/ui/use-toast';
 import { saveAs } from 'file-saver';
 import { exportType } from '../utils/schema';
+import { useCustomToast } from './SendToast';
 
 export default function ExportNotebookDialog({
   notes,
@@ -36,12 +36,12 @@ export default function ExportNotebookDialog({
   open,
   setOpen,
 }) {
-  const { notebooks } = useSelector((state) => state.note);
+  const { user, notebooks } = useSelector((state) => state.note);
   const zip = new JSZip();
   const notebookFolder = zip.folder(notebooks[notebook_id].notebookName);
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [exporttype, setExportType] = useState('html');
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
 
@@ -72,7 +72,7 @@ export default function ExportNotebookDialog({
         .then((blob) =>
           saveAs(blob, `${notebooks[notebook_id].notebookName}.zip`),
         );
-      toast({ description: 'Notebook Exported!', className: 'bg-green-500 text-white' });
+      toast({ description: 'Notebook Exported!', color: user.userData.theme });
     } catch (error) {
       console.error(error);
       toast({

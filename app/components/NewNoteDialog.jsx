@@ -21,11 +21,11 @@ import { useSelector } from 'react-redux';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useMediaQuery } from 'usehooks-ts';
 import { uid } from 'uid';
-import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { auth } from '@/firebase.config';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
+import { useCustomToast } from './SendToast';
 
 export default function NewNoteDialog() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -38,7 +38,7 @@ export default function NewNoteDialog() {
   const [notebookNamePreview, setNotebookNamePreview] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const { notebooks, user } = useSelector((state) => state.note);
 
   useEffect(() => {
@@ -114,7 +114,7 @@ export default function NewNoteDialog() {
       setLoading(false);
       toast({
         description: 'Note Created successfully!',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);

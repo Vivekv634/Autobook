@@ -17,9 +17,9 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/firebase.config';
+import { useCustomToast } from '@/app/components/SendToast';
 
 const LoginComponent = () => {
   const [email, setEmail] = useState('');
@@ -28,7 +28,7 @@ const LoginComponent = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const router = useRouter();
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -53,7 +53,7 @@ const LoginComponent = () => {
     setLoading(true);
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        toast({ description: 'Login Successful', className: 'bg-green-500 text-white' });
+        toast({ description: 'Login Successful', color: 'green' });
         setLoading(false);
       })
       .catch((error) => {

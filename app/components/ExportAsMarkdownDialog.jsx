@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import download from 'downloadjs';
 import { Download } from 'lucide-react';
@@ -16,6 +15,7 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
 
 export default function ExportAsMarkdownDialog({
   html,
@@ -28,7 +28,7 @@ export default function ExportAsMarkdownDialog({
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
   const Markdown = turndownServices.turndown(formattedHTML);
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   function copy() {
     try {

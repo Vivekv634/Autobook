@@ -7,17 +7,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { Printer } from 'lucide-react';
 import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
 
 export default function NotePrintDialog({ html, open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const formattedHTML = pretty(html, { ocd: true });
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   function printHTML() {
     try {

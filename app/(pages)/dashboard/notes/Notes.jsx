@@ -18,6 +18,7 @@ import Image from 'next/image';
 import NoteNotFoundSVG from '@/public/note-not-found.svg';
 import { Label } from '@/components/ui/label';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
+import hotkeys from 'hotkeys-js';
 
 const NotesComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -25,6 +26,10 @@ const NotesComponent = () => {
   const [newNoteDialog, setNewNoteDialog] = useState(false);
   const [open, setOpen] = useState(false);
 
+  hotkeys('ctrl+m, window+m, command+m', (e) => {
+    e.preventDefault();
+    setNewNoteDialog(true);
+  });
   return (
     <TooltipProvider>
       <Tooltip>

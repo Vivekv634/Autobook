@@ -13,14 +13,16 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
-import { useToast } from '@/components/ui/use-toast';
 import { sendEmailVerification } from 'firebase/auth';
 import { auth } from '@/firebase.config';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
 
 export default function VerifyEmailDialog({ open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const { user } = useSelector((state) => state.note);
+  const toast = useCustomToast();
 
   const sendVerificationEmail = () => {
     setLoading(true);
@@ -29,7 +31,7 @@ export default function VerifyEmailDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Verification Email sent!',
-          className: 'bg-green-500 text-white',
+          color: user.userData.theme,
         });
       })
       .catch((error) => {

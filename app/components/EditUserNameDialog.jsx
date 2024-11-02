@@ -10,18 +10,18 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
 
 export default function EditUserNameDialog({ open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const { user } = useSelector((state) => state.note);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const [loading, setLoading] = useState(false);
   const [newName, setNewName] = useState(user?.userData?.name ?? '');
 
@@ -35,7 +35,7 @@ export default function EditUserNameDialog({ open, setOpen }) {
         body,
         { headers: { notesDocID: user.userData.notesDocID } },
       );
-      toast({ description: 'Name updated!', className: 'bg-green-500 text-white' });
+      toast({ description: 'Name updated!', color: user.userData.theme });
       setLoading(false);
       setOpen(false);
     } catch (error) {

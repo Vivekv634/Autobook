@@ -1,6 +1,5 @@
 'use client';
 import { useSelector } from 'react-redux';
-import { useToast } from '@/components/ui/use-toast';
 import { useEffect, useState } from 'react';
 import {
   Dialog,
@@ -20,6 +19,7 @@ import Link from 'next/link';
 import { useMediaQuery } from 'usehooks-ts';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { useCustomToast } from './SendToast';
 
 export default function DeleteNotebookDialog({
   open,
@@ -31,7 +31,7 @@ export default function DeleteNotebookDialog({
   const { notebooks, autoNotes, notes, user } = useSelector(
     (state) => state.note,
   );
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const [loading, setLoading] = useState(false);
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
   const [checkNotebookName, setCheckNotebookName] = useState('');
@@ -95,7 +95,7 @@ export default function DeleteNotebookDialog({
             notebook deleted
           </span>
         ),
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
       setOpen(false);
       setLoading(false);

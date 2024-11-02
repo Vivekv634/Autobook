@@ -9,19 +9,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { auth } from '@/firebase.config';
 import { cn } from '@/lib/utils';
 import { updatePassword } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
 
 export default function ChangePasswordDialog({ open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const { user } = useSelector((state) => state.note);
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export default function ChangePasswordDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Password reset email sent!',
-          className: 'bg-green-500 text-white',
+          color: user.userData.theme,
         });
       })
       .catch((error) => {

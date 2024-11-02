@@ -23,9 +23,9 @@ import { useSelector } from 'react-redux';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useMediaQuery } from 'usehooks-ts';
 import { uid } from 'uid';
-import { useToast } from '@/components/ui/use-toast';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { useCustomToast } from './SendToast';
 
 export default function NoteConfigDialog({ note, open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -38,7 +38,7 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
   const [notebookNamePreview, setNotebookNamePreview] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
+  const toast = useCustomToast();
   const { notebooks, user } = useSelector((state) => state.note);
 
   useEffect(() => {
@@ -122,7 +122,7 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Note updated successfully!',
-        className: 'bg-green-500 text-white',
+        color: user.userData.theme,
       });
     } catch (error) {
       console.error(error);

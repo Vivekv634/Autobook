@@ -18,12 +18,18 @@ import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import AutoNoteNotFoundSVG from '@/public/autonote-not-found.svg';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
+import hotkeys from 'hotkeys-js';
 
 const AutoNoteComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const { autoNotes } = useSelector((state) => state.note);
   const [newAutoNoteDialog, setNewAutoNoteDialog] = useState(false);
   const [open, setOpen] = useState(false);
+
+  hotkeys('ctrl+m, command+m', (e) => {
+    e.preventDefault();
+    setNewAutoNoteDialog(true);
+  });
 
   return (
     <TooltipProvider>

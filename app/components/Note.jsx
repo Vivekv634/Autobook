@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/tooltip';
 
 const Note = ({ note, notesDocID, notebook_name }) => {
-  // const isDesktop = useMediaQuery('(min-width: 768px)');
   const timeAgo = formatDistanceToNowStrict(note.updation_date, {
     addSuffix: true,
   });
@@ -40,11 +39,6 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                   </TooltipTrigger>
                   <TooltipContent>{note.title}</TooltipContent>
                 </Tooltip>
-                {/* {!isDesktop && ( */}
-                {/*   <NoteDropDownMenu note={note} notesDocID={notesDocID}> */}
-                {/*     <EllipsisVertical className="h-9 w-6 min-w-6 border rounded-sm" /> */}
-                {/*   </NoteDropDownMenu> */}
-                {/* )} */}
               </CardTitle>
             </CardHeader>
             <div className="flex justify-between w-full">

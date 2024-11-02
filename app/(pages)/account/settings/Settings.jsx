@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/select';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { useToast } from '@/components/ui/use-toast';
 import { pages, themes } from '@/app/utils/pageData';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ import ImportNotesDialog from '@/app/components/ImportNotesDialog';
 import ExportAllNotes from '@/app/components/ExportAllNotes';
 import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 import setTheme from '@/app/utils/theme';
+import { useCustomToast } from '@/app/components/SendToast';
 
 const SettingsComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -34,7 +34,7 @@ const SettingsComponent = () => {
   const [importNotes, setImportNotes] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
-  const { toast } = useToast();
+  const toast = useCustomToast();
 
   const handleThemeChange = async () => {
     const body = { theme: userTheme };
@@ -44,7 +44,7 @@ const SettingsComponent = () => {
     );
     toast({
       description: 'Theme updated!',
-      className: 'bg-green-500 text-white',
+      color: user.userData.theme,
     });
   };
 
@@ -54,7 +54,7 @@ const SettingsComponent = () => {
     });
     toast({
       description: 'Default home page updated!',
-      className: 'bg-green-500 text-white',
+      color: user.userData.theme,
     });
   };
 
@@ -68,7 +68,7 @@ const SettingsComponent = () => {
     );
     toast({
       description: 'Trash interval updated!',
-      className: 'bg-green-500 text-white',
+      color: user.userData.theme,
     });
   };
 

@@ -11,10 +11,9 @@ import {
   Type,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setDeletedNotes, setNotes } from '../redux/slices/noteSlice';
 import axios from 'axios';
-import { useToast } from '@/components/ui/use-toast';
 import { uid } from 'uid';
 import { usePathname } from 'next/navigation';
 import {
@@ -38,9 +37,11 @@ import ExportAsHTMLDialog from './ExportAsHTMLDialog';
 import ExportAsMarkdownDialog from './ExportAsMarkdownDialog';
 import NotePrintDialog from './NotePrintDialog';
 import NoteConfigDialog from './NoteConfigDialog';
+import { useCustomToast } from './SendToast';
 
 export default function NoteContextMenu({ children, notesDocID, note }) {
-  const { toast } = useToast();
+  const toast = useCustomToast();
+  const { user } = useSelector((state) => state.note);
   const dispatch = useDispatch();
   const router = useRouter();
   const pathName = usePathname();
@@ -98,7 +99,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         },
       );
       dispatch(setNotes(response.data.result));
-      toast({ ...toastMessage, className: 'bg-green-500 text-white' });
+      toast({ ...toastMessage, color: user.userData.theme });
     } catch (error) {
       console.error(error);
       toast({
@@ -125,7 +126,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         (note) => note.isTrash === true,
       );
       dispatch(setDeletedNotes(filterDeletedNotes));
-      toast({ description: 'Note restored!' });
+      toast({ description: 'Note restored!', color: user.userData.theme });
     } catch (error) {
       console.error(error);
       toast({
@@ -149,7 +150,10 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         (note) => note.isTrash === true,
       );
       dispatch(setDeletedNotes(filterDeletedNotes));
-      toast({ description: 'Note deleted forever!' });
+      toast({
+        description: 'Note deleted forever!',
+        color: user.userData.theme,
+      });
     } catch (error) {
       console.error(error);
       toast({
@@ -171,7 +175,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
       },
     );
     dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', className: 'bg-green-500 text-white' });
+    toast({ description: 'Note duplicated!', color: user.userData.theme });
   };
 
   return (

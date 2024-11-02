@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { pages } from '../utils/pageData';
 import { Settings, UserRound } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function GlobalSearchDialog() {
   const { notes, notebooks, tagsData, autoNotes, user } = useSelector(
@@ -78,7 +79,10 @@ export default function GlobalSearchDialog() {
           })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Notes">
+        <CommandGroup
+          className={cn(!notes?.length && 'hidden')}
+          heading="Notes"
+        >
           {notes?.map((note, index) => {
             return (
               <CommandItem key={index} asChild>
@@ -94,7 +98,10 @@ export default function GlobalSearchDialog() {
           })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Notebooks">
+        <CommandGroup
+          className={cn(!Object.keys(notebooks).length && 'hidden')}
+          heading="Notebooks"
+        >
           {Object.keys(notebooks).length &&
             Object.keys(notebooks).map((notebook_id, index) => {
               return (
@@ -113,7 +120,10 @@ export default function GlobalSearchDialog() {
             })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Tags">
+        <CommandGroup
+          className={cn(!Object.keys(tagsData).length && 'hidden')}
+          heading="Tags"
+        >
           {Object.keys(tagsData).length &&
             Object.keys(tagsData).map((tag, index) => {
               return (
@@ -130,7 +140,10 @@ export default function GlobalSearchDialog() {
             })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Auto Notes">
+        <CommandGroup
+          className={cn(!autoNotes?.length && 'hidden')}
+          heading="Auto Notes"
+        >
           {autoNotes?.map((autoNote, index) => {
             return (
               <CommandItem key={index} asChild>
