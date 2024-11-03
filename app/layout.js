@@ -1,6 +1,7 @@
 import './globals.css';
 import { Poppins } from 'next/font/google';
 import LayoutComponent from './LayoutComponent';
+import { cn } from '@/lib/utils';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -24,7 +25,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={poppins.className} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={cn(poppins.className, 'scroll-smooth')}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />

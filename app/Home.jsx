@@ -1,39 +1,40 @@
 'use client';
 import React from 'react';
 import '@/app/globals.css';
-import { GlobeHome } from '@/app/components/GlobeHome';
 import { FloatingDockHome } from './components/FloatingDock';
-import { Button, buttonVariants } from '@/components/ui/button';
-import Link from 'next/link';
-import { auth } from '@/firebase.config';
+import SpotlightHome from './components/Home';
+import { Spotlight } from '@/components/ui/spotlight';
+import { Features } from '@/app/components/Features';
+import AutoNoteWorking from './components/AutoNoteWorking';
+import WhyChooseAutoBook from './components/WhyChooseAutoBook';
+import GithubInfo from './components/GithubInfo';
 
 const HomeComponent = () => {
-  const Logout = () => {
-    auth.signOut();
-  };
   return (
-    <>
-      <main className="md:container h-screen mx-auto *:p-0 *:m-0">
-        <Button onClick={Logout} variant="outline">
-          Logout
-        </Button>
-        <Link
-          className={buttonVariants({ variant: 'outline' })}
-          href="/register"
-        >
-          <button>Register</button>
-        </Link>
-        <Link className={buttonVariants({ variant: 'outline' })} href="/login">
-          <button>Login</button>
-        </Link>
-        <div className="fixed flex justify-center w-full left-0 z-50 bottom-3">
-          <FloatingDockHome />
-        </div>
-        <section className="my-5" id="home">
-          <GlobeHome />
-        </section>
-      </main>
-    </>
+    <main className="md:container h-screen mx-auto *:p-0 *:m-0">
+      <Spotlight
+        className="-top-5 left-20 md:left-60 md:-top-20"
+        fill="white"
+      />
+      <div className="fixed flex justify-center w-full left-0 z-50 bottom-3">
+        <FloatingDockHome />
+      </div>
+      <section id="home">
+        <SpotlightHome />
+      </section>
+      <section id="features" className="py-10">
+        <Features />
+      </section>
+      <section id="autoNoteWorking" className="py-10">
+        <AutoNoteWorking />
+      </section>
+      <section id="whyChooseAutoBook" className="py-10">
+        <WhyChooseAutoBook />
+      </section>
+      <section id="githubInfo" className="py-10">
+        <GithubInfo />
+      </section>
+    </main>
   );
 };
 

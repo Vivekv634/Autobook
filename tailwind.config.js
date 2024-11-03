@@ -1,3 +1,5 @@
+import svgToTinyDataUri from 'mini-svg-data-uri';
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
@@ -26,8 +28,19 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        spotlight: {
+          '0%': {
+            opacity: 0,
+            transform: 'translate(-72%, -62%) scale(0.5)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translate(-50%,-40%) scale(1)',
+          },
+        },
       },
       animation: {
+        spotlight: 'spotlight 2s ease .75s 1 forwards',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
@@ -73,5 +86,48 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwind-scrollbar'), require('tailwindcss-animate')],
+  plugins: [
+    addVariablesForColors,
+    require('tailwind-scrollbar'),
+    require('tailwindcss-animate'),
+    function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          'bg-dot-thick': (value) => ({
+            backgroundImage: `url("${svgToTinyDataUri(
+              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="2.5"></circle></svg>`,
+            )}")`,
+          }),
+        },
+        {
+          values: flattenColorPalette(theme('backgroundColor')),
+          type: 'color',
+        },
+      );
+    },
+  ],
 };
+
+function flattenColorPalette(colors) {
+  return Object.assign(
+    {},
+    ...Object.entries(colors).flatMap(([color, values]) =>
+      typeof values === 'object'
+        ? Object.entries(values).map(([key, hex]) => ({
+            [`${color}-${key}`]: hex,
+          }))
+        : [{ [color]: values }],
+    ),
+  );
+}
+
+function addVariablesForColors({ addBase, theme }) {
+  let allColors = flattenColorPalette(theme('colors'));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val]),
+  );
+
+  addBase({
+    ':root': newVars,
+  });
+}

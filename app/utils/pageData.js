@@ -1,13 +1,11 @@
 import { Hash, Star, Trash2, Clock4, StickyNote, Book } from 'lucide-react';
 import {
   IconBrandGithub,
-  IconBrandX,
-  IconExchange,
   IconHome,
-  IconNewSection,
+  IconTool,
+  IconUsers,
   IconWand,
 } from '@tabler/icons-react';
-import Image from 'next/image';
 export const pages = [
   {
     label: 'Notes',
@@ -687,44 +685,172 @@ export const floatingDockLinks = [
     href: '#features',
   },
   {
-    title: 'Components',
+    title: 'How it works?',
     icon: (
-      <IconNewSection className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      <IconTool className="h-full w-full text-neutral-500 dark:text-neutral-300" />
     ),
-    href: '#',
+    href: '#autoNoteWorking',
   },
   {
-    title: 'Aceternity UI',
+    title: 'Why choose us?',
     icon: (
-      <Image
-        src="https://assets.aceternity.com/logo-dark.png"
-        width={20}
-        height={20}
-        alt="Aceternity Logo"
-      />
+      <IconUsers className="h-full w-full text-neutral-500 dark:text-neutral-300" />
     ),
-    href: '#',
-  },
-  {
-    title: 'Changelog',
-    icon: (
-      <IconExchange className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-    ),
-    href: '#',
-  },
-
-  {
-    title: 'Twitter',
-    icon: (
-      <IconBrandX className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-    ),
-    href: '#',
+    href: '#whyChooseAutoBook',
   },
   {
     title: 'GitHub',
     icon: (
       <IconBrandGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />
     ),
-    href: '#',
+    href: '#githubInfo',
+  },
+];
+
+const SkeletonOne = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        Cross-Platform Accessibility
+      </p>
+      <p className="font-normal text-base text-white"></p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        AutoBook is designed as a PWA, making it accessible across devices with
+        a responsive, user-friendly interface.
+      </p>
+    </div>
+  );
+};
+
+const SkeletonTwo = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        AutoNote Scheduling
+      </p>
+      <p className="font-normal text-base text-white"></p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        Automate your note creation based on time intervals to save time and
+        streamline your workflow.
+      </p>
+    </div>
+  );
+};
+
+const SkeletonThree = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        Instant Notifications
+      </p>
+      <p className="font-normal text-base text-white"></p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        Receive emails and push notifications every time a new note is
+        generated.
+      </p>
+    </div>
+  );
+};
+
+const SkeletonFour = () => {
+  return (
+    <div>
+      <p className="font-bold md:text-4xl text-xl text-white">
+        Intelligent Templates
+      </p>
+      <p className="font-normal text-base text-white"></p>
+      <p className="font-normal text-base my-4 max-w-lg text-neutral-200">
+        Use and customize templates tailored to your needs to standardize
+        information capture.
+      </p>
+    </div>
+  );
+};
+
+export const cards = [
+  {
+    id: 1,
+    content: <SkeletonOne />,
+    className: 'md:col-span-2',
+    thumbnail:
+      'https://www.shutterstock.com/image-vector/crossplatform-development-abstract-concept-vector-600nw-2376330895.jpg',
+  },
+  {
+    id: 2,
+    content: <SkeletonTwo />,
+    className: 'col-span-1',
+    thumbnail:
+      'https://www.shutterstock.com/image-vector/planning-important-appointments-scheduling-activities-600nw-2434197807.jpg',
+  },
+  {
+    id: 3,
+    content: <SkeletonThree />,
+    className: 'col-span-1',
+    thumbnail:
+      'https://images.unsplash.com/photo-1643845892686-30c241c3938c?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    id: 4,
+    content: <SkeletonFour />,
+    className: 'md:col-span-2',
+    thumbnail:
+      'https://images.unsplash.com/photo-1716363340859-e2a0ab1396a5?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+];
+export const timeLineData = [
+  {
+    title: 'Step 1',
+    content: (
+      <div>
+        <h2 className="text-neutral-800 dark:text-neutral-200 text-lg md:text-xl lg:text-2xl font-normal mb-8">
+          Choose or Customize Your Template: Select from a range of note
+          templates designed for various use cases, or create your own.
+        </h2>
+      </div>
+    ),
+  },
+  {
+    title: 'Step 2',
+    content: (
+      <div>
+        <h2 className="text-neutral-800 dark:text-neutral-200 text-lg md:text-xl lg:text-2xl font-normal mb-8">
+          Set Your Schedule: Choose a frequency—hourly, daily, or weekly—and let
+          AutoBook handle the rest.
+        </h2>
+      </div>
+    ),
+  },
+  {
+    title: 'Step 3',
+    content: (
+      <div>
+        <h2 className="text-neutral-800 dark:text-neutral-200 text-lg md:text-xl lg:text-2xl font-normal mb-4">
+          Get Notified and Access Your Notes: Receive instant notifications and
+          view your organized notes anytime.
+        </h2>
+      </div>
+    ),
+  },
+];
+export const whyChooseUsCards = [
+  {
+    title:
+      'Efficiency: Reduce time spent on repetitive note-taking tasks with automated scheduling.',
+    src: 'https://images.unsplash.com/photo-1544819667-9bfc1de23d4e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    title:
+      'Reliability: AutoBook’s notifications ensure you’re always in the loop with real-time updates.',
+    src: 'https://plus.unsplash.com/premium_photo-1682309526815-efe5d6225117?q=80&w=2112&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    title:
+      'Customization: Tailor templates and notifications to fit your unique needs.',
+    src: 'https://plus.unsplash.com/premium_photo-1719933739393-6086c1bfa4cc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  },
+  {
+    title:
+      'Fast and Lightweight: Optimized as a PWA for quick loading and offline access.',
+    src: 'https://plus.unsplash.com/premium_photo-1673460448921-9126847f12b8?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
 ];
