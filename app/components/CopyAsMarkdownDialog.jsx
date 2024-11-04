@@ -32,7 +32,7 @@ export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Markdown copied to clipboard!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       setOpen(false);

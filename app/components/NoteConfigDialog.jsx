@@ -107,14 +107,14 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
         await axios.post(
           `${process.env.API}/api/notebooks/create`,
           newNotebookBody,
-          { headers: { notesDocID: user.userData.notesDocID } },
+          { headers: { notesDocID: user?.userData?.notesDocID } },
         );
       }
       await axios.put(
         `${process.env.API}/api/notes/update/${note.noteID}`,
         noteBody,
         {
-          headers: { notesDocID: user.userData.notesDocID },
+          headers: { notesDocID: user?.userData?.notesDocID },
         },
       );
       setNewNotebookName('');
@@ -122,7 +122,7 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Note updated successfully!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -244,7 +244,8 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
             >
               {loading ? (
                 <div className="flex items-center">
-                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
                 </div>
               ) : (
                 'Save Changes'

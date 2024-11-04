@@ -47,7 +47,7 @@ export default function ChangeEmailDialog({ open, setOpen }) {
       toast({
         description:
           'A verification email has been sent to your new email address. Please verify it to complete the change.',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
 
       setLoading(false);
@@ -99,7 +99,8 @@ export default function ChangeEmailDialog({ open, setOpen }) {
             <Button type="submit">
               {loading ? (
                 <div className="flex items-center">
-                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
                 </div>
               ) : (
                 'Send Verification Email'

@@ -45,7 +45,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
         updatedAutoNoteBody,
-        { headers: { notesDocID: user.userData.notesDocID } },
+        { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       toast({
         description: (
@@ -53,7 +53,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -78,16 +78,16 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
         body: autoNote.template || '{}',
       };
       await axios.post(`${process.env.API}/api/notes/create`, newNoteBody, {
-        headers: { notesDocID: user.userData.notesDocID },
+        headers: { notesDocID: user?.userData?.notesDocID },
       });
       await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
         { noteGenerated: autoNote.noteGenerated + 1 },
-        { headers: { notesDocID: user.userData.notesDocID } },
+        { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       toast({
         description: 'New Note created successfully',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -113,7 +113,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
           <ContextMenuItem
             onClick={() =>
               router.push(
-                `/dashboard/${user.userData.notesDocID}/auto-note/${autoNote.autoNoteID}/edit-template`,
+                `/dashboard/${user?.userData?.notesDocID}/auto-note/${autoNote.autoNoteID}/edit-template`,
               )
             }
             className="flex justify-between items-center"

@@ -3,6 +3,7 @@ import htmlToEditorJs from '../utils/htmlToEditor';
 import { useSelector } from 'react-redux';
 import { acceptedFileType } from '../utils/schema';
 import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -34,7 +35,7 @@ import axios from 'axios';
 import textToEditorJs from '../utils/textToEditorJs';
 import { useCustomToast } from './SendToast';
 
-const NewAutoNoteDialog = () => {
+const NewAutoNoteDialog = ({ open, setOpen }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [autoNoteName, setAutoNoteName] = useState('');
   const [titleFormat, setTitleFormat] = useState('');
@@ -95,7 +96,7 @@ const NewAutoNoteDialog = () => {
       if (anNotebook === 'none' && !newNotebookFlag) {
         toast({
           description: 'You must select a notebook first!',
-          color: user.userData.theme,
+          color: user?.userData?.theme,
         });
         setLoading(false);
         return;
@@ -103,7 +104,7 @@ const NewAutoNoteDialog = () => {
       if (newNotebookName == '' && newNotebookFlag) {
         toast({
           description: 'Create a new notebook first!',
-          color: user.userData.theme,
+          color: user?.userData?.theme,
         });
         setLoading(true);
         return;
@@ -207,23 +208,24 @@ const NewAutoNoteDialog = () => {
         `${process.env.API}/api/auto-notes/create`,
         newAutoNoteBody,
         {
-          headers: { notesDocID: user.userData.notesDocID },
+          headers: { notesDocID: user?.userData?.notesDocID },
         },
       );
       await axios.put(
         `${process.env.API}/api/notebooks/updateall`,
         updatedNotebookArray,
-        { headers: { notesDocID: user.userData.notesDocID } },
+        { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       setLoading(false);
       setNewNotebookName('');
       setAutoNoteName('');
       setTitleFormat('');
       setPeriod('1 day');
+      setOpen((open) => !open);
       setAutoNoteState('running');
       toast({
         description: 'Auto Note Created Successfully!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -238,230 +240,238 @@ const NewAutoNoteDialog = () => {
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Create auto note</DialogTitle>
-      </DialogHeader>
-      <form onSubmit={(e) => handleCreateAutoNote(e)}>
-        <div className="my-2">
-          <Label htmlFor="autoNoteName" className="font-semibold">
-            Auto Note Name
-            <span className="text-muted-foreground text-[.8rem]">
-              (Required)
-            </span>
-          </Label>
-          <Input
-            id="autoNoteName"
-            value={autoNoteName}
-            onChange={(e) => setAutoNoteName(e.target.value)}
-            placeholder="Your auto note name"
-            required
-          />
-        </div>
-        <div>
-          <Label
-            htmlFor="titleFormat"
-            className="flex items-center gap-1 font-semibold text-center"
-          >
-            Title Format <CircleHelp className="h-4 w-4 cursor-pointer" />
-            <span className="text-muted-foreground text-[.8rem]">
-              (Required)
-            </span>
-          </Label>
-          <Input
-            id="titleFormat"
-            className="my-2"
-            value={titleFormat}
-            onChange={(e) => setTitleFormat(e.target.value)}
-            onFocus={() => setShowHelp(true)}
-            onBlur={() => setShowHelp(false)}
-            placeholder="Your title format"
-            required
-          />
-          <Label className="text-muted-foreground">
-            {showHelp && (
-              <>
-                <div className="font-extrabold mb-1">
-                  Preview: {titleFormatter(titleFormat, 0)}
-                </div>
-                <div className="leading-4">
-                  Available Formatters: <br />
-                  #COUNT : Number of notes + 1
-                  <br />
-                  #TIME : Current time
-                  <br />
-                  #DATE : Current Date
-                  <br />
-                  #FULLDATE : Current full date
-                  <br />
-                  #DATEONLY : Current Date only
-                  <br />
-                </div>
-              </>
-            )}
-          </Label>
-          <div className={cn(newNotebookFlag && 'hidden')}>
-            <Label className="font-semibold">
-              Select Notebook
-              <span className="text-muted-foreground text-[.8rem]">
-                (Required)
-              </span>
-            </Label>
-            <Select
-              value={anNotebook}
-              onValueChange={(e) => setANNotebook(e)}
-              disabled={newNotebookFlag}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
-                <SelectItem value="none" key="none" className="text-red-400">
-                  Select Notebook
-                </SelectItem>
-                {Object.keys(notebooks).map((notebook_id, index) => {
-                  return (
-                    <SelectItem value={notebook_id} key={index}>
-                      {notebooks[notebook_id].notebookName}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className={cn(!newNotebookFlag && 'hidden')}>
-            <Label className="font-semibold">
-              New Notebook Name
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create auto note</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={(e) => handleCreateAutoNote(e)}>
+          <div className="my-2">
+            <Label htmlFor="autoNoteName" className="font-semibold">
+              Auto Note Name
               <span className="text-muted-foreground text-[.8rem]">
                 (Required)
               </span>
             </Label>
             <Input
-              placeholder="Enter New Notebook Name..."
-              value={newNotebookName}
-              onChange={(e) => setNewNotebookName(e.target.value)}
-              required={newNotebookFlag}
-              disabled={!newNotebookFlag}
-            />
-            <Label className={cn('text-red-400')}>{notebookNameError}</Label>
-            <Label
-              className={cn(
-                (notebookNameError || newNotebookName.trim() == '') && 'hidden',
-                'my-1 font-semibold',
-              )}
-            >
-              Preview: {notebookNamePreview}
-            </Label>
-          </div>
-          <div className="flex items-center gap-1 my-2">
-            <Checkbox
-              checked={newNotebookFlag}
-              onCheckedChange={setNewNotebookFlag}
-              id="newNotebook"
-            />
-            <Label htmlFor="newNotebook">Create a new Notebook</Label>
-          </div>
-          <div className={cn(templateFromDevice && 'hidden')}>
-            <Label className="font-semibold">Select Template from notes</Label>
-            <Select
-              value={selectedtemplateNote}
-              onValueChange={(e) => setSelectedTemplateNote(e)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
-                <SelectItem value="none" key="none" className="text-red-400">
-                  None
-                </SelectItem>
-                {templateNotes?.map((note, index) => {
-                  return (
-                    <SelectItem value={note.noteID} key={index}>
-                      {note.title}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className={cn(!templateFromDevice && 'hidden')}>
-            <Label className="font-semibold">Select Template from Device</Label>
-            <Input
-              type="file"
+              id="autoNoteName"
+              value={autoNoteName}
+              onChange={(e) => setAutoNoteName(e.target.value)}
+              placeholder="Your auto note name"
               required
-              accept=".md, .txt, .html, .json"
-              className="my-2"
-              disabled={!templateFromDevice}
             />
           </div>
-          <div className="flex items-center gap-1 my-2">
-            <Checkbox
-              checked={templateFromDevice}
-              onCheckedChange={setTemplateFromDevice}
-              id="templateFromDevice"
-            />
-            <Label htmlFor="templateFromDevice">Select from device</Label>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between my-3">
-            <div className="text-lg font-semibold">Generation period</div>
-            <Select value={period} onValueChange={(e) => setPeriod(e)}>
-              <SelectTrigger className="w-fit">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
-                {generationPeriod.map((period, index) => {
-                  return (
-                    <SelectItem key={index} value={period.value}>
-                      {period.label}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between my-3">
-            <div className="text-lg font-semibold">State</div>
-            <Select
-              value={autoNoteState}
-              onValueChange={(e) => setAutoNoteState(e)}
+          <div>
+            <Label
+              htmlFor="titleFormat"
+              className="flex items-center gap-1 font-semibold text-center"
             >
-              <SelectTrigger className="w-fit">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
-                {state.map((state, index) => {
-                  return (
-                    <SelectItem key={index} value={state.value}>
-                      {state.label}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
+              Title Format <CircleHelp className="h-4 w-4 cursor-pointer" />
+              <span className="text-muted-foreground text-[.8rem]">
+                (Required)
+              </span>
+            </Label>
+            <Input
+              id="titleFormat"
+              className="my-2"
+              value={titleFormat}
+              onChange={(e) => setTitleFormat(e.target.value)}
+              onFocus={() => setShowHelp(true)}
+              onBlur={() => setShowHelp(false)}
+              placeholder="Your title format"
+              required
+            />
+            <Label className="text-muted-foreground">
+              {showHelp && (
+                <>
+                  <div className="font-extrabold mb-1">
+                    Preview: {titleFormatter(titleFormat, 0)}
+                  </div>
+                  <div className="leading-4">
+                    Available Formatters: <br />
+                    #COUNT : Number of notes + 1
+                    <br />
+                    #TIME : Current time
+                    <br />
+                    #DATE : Current Date
+                    <br />
+                    #FULLDATE : Current full date
+                    <br />
+                    #DATEONLY : Current Date only
+                    <br />
+                  </div>
+                </>
+              )}
+            </Label>
+            <div className={cn(newNotebookFlag && 'hidden')}>
+              <Label className="font-semibold">
+                Select Notebook
+                <span className="text-muted-foreground text-[.8rem]">
+                  (Required)
+                </span>
+              </Label>
+              <Select
+                value={anNotebook}
+                onValueChange={(e) => setANNotebook(e)}
+                disabled={newNotebookFlag}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" side="top" align="end">
+                  <SelectItem value="none" key="none" className="text-red-400">
+                    Select Notebook
+                  </SelectItem>
+                  {Object.keys(notebooks).map((notebook_id, index) => {
+                    return (
+                      <SelectItem value={notebook_id} key={index}>
+                        {notebooks[notebook_id].notebookName}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className={cn(!newNotebookFlag && 'hidden')}>
+              <Label className="font-semibold">
+                New Notebook Name
+                <span className="text-muted-foreground text-[.8rem]">
+                  (Required)
+                </span>
+              </Label>
+              <Input
+                placeholder="Enter New Notebook Name..."
+                value={newNotebookName}
+                onChange={(e) => setNewNotebookName(e.target.value)}
+                required={newNotebookFlag}
+                disabled={!newNotebookFlag}
+              />
+              <Label className={cn('text-red-400')}>{notebookNameError}</Label>
+              <Label
+                className={cn(
+                  (notebookNameError || newNotebookName.trim() == '') &&
+                    'hidden',
+                  'my-1 font-semibold',
+                )}
+              >
+                Preview: {notebookNamePreview}
+              </Label>
+            </div>
+            <div className="flex items-center gap-1 my-2">
+              <Checkbox
+                checked={newNotebookFlag}
+                onCheckedChange={setNewNotebookFlag}
+                id="newNotebook"
+              />
+              <Label htmlFor="newNotebook">Create a new Notebook</Label>
+            </div>
+            <div className={cn(templateFromDevice && 'hidden')}>
+              <Label className="font-semibold">
+                Select Template from notes
+              </Label>
+              <Select
+                value={selectedtemplateNote}
+                onValueChange={(e) => setSelectedTemplateNote(e)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" side="top" align="end">
+                  <SelectItem value="none" key="none" className="text-red-400">
+                    None
+                  </SelectItem>
+                  {templateNotes?.map((note, index) => {
+                    return (
+                      <SelectItem value={note.noteID} key={index}>
+                        {note.title}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className={cn(!templateFromDevice && 'hidden')}>
+              <Label className="font-semibold">
+                Select Template from Device
+              </Label>
+              <Input
+                type="file"
+                required
+                accept=".md, .txt, .html, .json"
+                className="my-2"
+                disabled={!templateFromDevice}
+              />
+            </div>
+            <div className="flex items-center gap-1 my-2">
+              <Checkbox
+                checked={templateFromDevice}
+                onCheckedChange={setTemplateFromDevice}
+                id="templateFromDevice"
+              />
+              <Label htmlFor="templateFromDevice">Select from device</Label>
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between my-3">
+              <div className="text-lg font-semibold">Generation period</div>
+              <Select value={period} onValueChange={(e) => setPeriod(e)}>
+                <SelectTrigger className="w-fit">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" side="top" align="end">
+                  {generationPeriod.map((period, index) => {
+                    return (
+                      <SelectItem key={index} value={period.value}>
+                        {period.label}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between my-3">
+              <div className="text-lg font-semibold">State</div>
+              <Select
+                value={autoNoteState}
+                onValueChange={(e) => setAutoNoteState(e)}
+              >
+                <SelectTrigger className="w-fit">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper" side="top" align="end">
+                  {state.map((state, index) => {
+                    return (
+                      <SelectItem key={index} value={state.value}>
+                        {state.label}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
-            Cancel
-          </DialogClose>
-          <Button
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
-            disabled={error != null || loading || notebookNameError}
-            type="submit"
-          >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] animate-spin" /> Loading...
-              </div>
-            ) : (
-              'Save Changes'
-            )}
-          </Button>
-        </DialogFooter>
-      </form>
-    </DialogContent>
+          <DialogFooter>
+            <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+              Cancel
+            </DialogClose>
+            <Button
+              className={cn(!isDesktop && 'my-2', 'font-semibold')}
+              disabled={error != null || loading || notebookNameError}
+              type="submit"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
+                </div>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 export default NewAutoNoteDialog;

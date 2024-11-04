@@ -11,6 +11,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '@/app/utils/editorConfig';
 import axios from 'axios';
 import { useCustomToast } from '@/app/components/SendToast';
+import hotkeys from 'hotkeys-js';
 
 const EditAutoNoteTemplate = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -20,6 +21,11 @@ const EditAutoNoteTemplate = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [autoNote, setAutoNote] = useState();
   const toast = useCustomToast();
+
+  hotkeys('ctrl+s, command+m', (e) => {
+    e.preventDefault();
+    handleSave();
+  });
 
   useEffect(() => {
     autoNotes.map((autoNote) => {
@@ -59,7 +65,7 @@ const EditAutoNoteTemplate = ({ params }) => {
         await axios.put(
           `${process.env.API}/api/auto-notes/update/${params.autoNoteID}`,
           { template: templateBody },
-          { headers: { notesDocID: user.userData.notesDocID } },
+          { headers: { notesDocID: user?.userData?.notesDocID } },
         );
       });
       setLoading(false);
@@ -69,7 +75,7 @@ const EditAutoNoteTemplate = ({ params }) => {
             <span className="font-bold">{autoNote.autoNoteName}</span> updated!
           </span>
         ),
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -100,7 +106,8 @@ const EditAutoNoteTemplate = ({ params }) => {
           >
             {loading ? (
               <div className="flex items-center">
-                <Loader2 className="h-[18px] animate-spin" /> Loading...
+                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />
+                Loading...
               </div>
             ) : (
               'Save changes'

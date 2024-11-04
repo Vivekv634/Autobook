@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '../utils/editorConfig';
 import { useCustomToast } from './SendToast';
+import hotkeys from 'hotkeys-js';
 
 const NoteEditor = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -32,6 +33,11 @@ const NoteEditor = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [notebookValue, setNotebookValue] = useState();
   const [editorInstance, setEditorInstance] = useState(null);
+
+  hotkeys('ctrl+s, command+m', (e) => {
+    e.preventDefault();
+    save();
+  });
 
   useEffect(() => {
     notes.map((note) => {
@@ -57,48 +63,38 @@ const NoteEditor = ({ params }) => {
 
   useEffect(() => {
     if (!editorNote?.body) return;
-
     const editor = new EditorJS({
       ...editorConfig,
       readOnly: editorNote?.isReadOnly,
       data: JSON.parse(editorNote?.body || '{}'),
     });
-
-    // Set the editor instance in state
     setEditorInstance(editor);
-
-    // Cleanup: Destroy the editor when the component unmounts or when dependencies change
     return () => {
       if (editor) {
         if (typeof editor.destroy === 'function') {
-          // If destroy exists, use it
           editor.destroy();
         } else {
-          // If no destroy method exists, manually clean up
           setEditorInstance(null);
         }
       }
     };
   }, [editorNote?.body, editorNote?.isReadOnly]);
 
-  // Save the note
   const save = useCallback(async () => {
-    if (!editorInstance) return; // Ensure editor is initialized
-
+    if (!editorInstance) return;
     setLoading(true);
     try {
-      const outputData = await editorInstance.save(); // Get the editor data
+      const outputData = await editorInstance.save();
       const body = {
         body: JSON.stringify(outputData),
         title: noteTitle,
         tagsList: noteTagsInput.split(' ').filter((tag) => tag.trim() !== ''),
         notebook_ref_id: notebookValue,
       };
-      // Save the note using an API call
       await axios.put(`${process.env.API}/api/notes/update/${noteID}`, body, {
         headers: { notesDocID },
       });
-      toast({ description: 'Changes Saved!', color: user.userData.theme });
+      toast({ description: 'Changes Saved!', color: user?.userData?.theme });
     } catch (error) {
       console.error('Saving failed: ', error);
       toast({
@@ -116,7 +112,7 @@ const NoteEditor = ({ params }) => {
     noteID,
     notesDocID,
     toast,
-    user.userData.theme,
+    user?.userData?.theme,
   ]);
   return (
     <section className="h-full box-border">
@@ -156,7 +152,8 @@ const NoteEditor = ({ params }) => {
           >
             {loading ? (
               <div className="flex items-center">
-                <Loader2 className="h-[18px] animate-spin" /> Loading...
+                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                Loading...
               </div>
             ) : (
               'Save changes'

@@ -29,7 +29,7 @@ export default function CopyAsTextDialog({ html, open, setOpen }) {
       setOpen(false);
       toast({
         description: 'Text copied to clipboard!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       setOpen(false);

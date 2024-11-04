@@ -129,13 +129,13 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
       await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
         autoNoteBody,
-        { headers: { notesDocID: user.userData.notesDocID } },
+        { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       await axios.put(
         `${process.env.API}/api/notebooks/updateall`,
         updatedNotebooksArray,
         {
-          headers: { notesDocID: user.userData.notesDocID },
+          headers: { notesDocID: user?.userData?.notesDocID },
         },
       );
       setNewNotebookName('');
@@ -148,7 +148,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
             updated!
           </span>
         ),
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
       setLoading(false);
       setOpen(false);
@@ -288,7 +288,8 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
           >
             {loading ? (
               <div className="flex items-center">
-                <Loader2 className="h-[18px] animate-spin" /> Loading...
+                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                Loading...
               </div>
             ) : (
               'Save Changes'

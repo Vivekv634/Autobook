@@ -67,7 +67,7 @@ export default function ExportAllNotebooks({ open, setOpen }) {
       });
       zip
         .generateAsync({ type: 'blob' })
-        .then((blob) => saveAs(blob, `${user.userData.name}.zip`));
+        .then((blob) => saveAs(blob, `${user?.userData?.name}.zip`));
     } catch (error) {
       console.error(error);
       toast({

@@ -58,7 +58,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
               body: `{"blocks" : ${JSON.stringify(blocks)}}`,
             };
             await axios.post(`${process.env.API}/api/notes/create`, noteBody, {
-              headers: { notesDocID: user.userData.notesDocID },
+              headers: { notesDocID: user?.userData?.notesDocID },
             });
           });
           reader.readAsText(file);
@@ -66,7 +66,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
       });
       toast({
         description: 'Note(s) imported successfully!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
       setOpen(false);
     } catch (error) {

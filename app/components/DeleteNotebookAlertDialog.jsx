@@ -95,7 +95,7 @@ export default function DeleteNotebookDialog({
             notebook deleted
           </span>
         ),
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
       setOpen(false);
       setLoading(false);
@@ -197,7 +197,8 @@ export default function DeleteNotebookDialog({
               >
                 {loading ? (
                   <div className="flex items-center">
-                    <Loader2 className="h-[18px] animate-spin" /> Loading...
+                    <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                    Loading...
                   </div>
                 ) : (
                   'Delete Notebook'

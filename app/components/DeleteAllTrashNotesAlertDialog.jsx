@@ -22,10 +22,13 @@ export default function DeleteAllTrashNotesAlertDialog({ children }) {
     try {
       await axios.delete(`${process.env.API}/api/notes/deleteall`, {
         headers: {
-          notesDocID: user.userData?.notesDocID,
+          notesDocID: user?.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes deleted!', color: user.userData.theme });
+      toast({
+        description: 'All notes deleted!',
+        color: user?.userData?.theme,
+      });
     } catch (error) {
       console.error(error);
       toast({

@@ -128,7 +128,8 @@ const RegisterComponent = () => {
             >
               {isLoading ? (
                 <div className="flex">
-                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
                 </div>
               ) : (
                 'Sign Up'

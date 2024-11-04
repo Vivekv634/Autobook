@@ -52,11 +52,11 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         <CommandGroup heading="Go to">
           {pages.map((page, index) => {
             return (
-              <CommandItem key={index}>
-                <div
-                  className="flex w-full h-full"
-                  onClick={() => handlePageRedirect(page)}
-                >
+              <CommandItem
+                onSelect={() => handlePageRedirect(page)}
+                key={index}
+              >
+                <div className="flex w-full h-full">
                   {page.icon}
                   <span className="ml-1">{page.label}</span>
                 </div>
@@ -71,11 +71,12 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         >
           {notes?.map((note, index) => {
             return (
-              <CommandItem key={index} asChild>
-                <div
-                  className="flex w-full h-full"
-                  onClick={() => handleNoteOnClick(note)}
-                >
+              <CommandItem
+                onSelect={() => handleNoteOnClick(note)}
+                key={index}
+                asChild
+              >
+                <div className="flex w-full h-full">
                   {pages[0].icon}
                   <span className="ml-1">{note?.title}</span>
                 </div>
@@ -91,11 +92,12 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           {Object.keys(notebooks).length &&
             Object.keys(notebooks).map((notebook_id, index) => {
               return (
-                <CommandItem key={index} asChild>
-                  <div
-                    className="flex w-full h-full"
-                    onClick={() => handleNotebookOnClick(notebook_id)}
-                  >
+                <CommandItem
+                  onSelect={() => handleNotebookOnClick(notebook_id)}
+                  key={index}
+                  asChild
+                >
+                  <div className="flex w-full h-full">
                     {pages[1].icon}
                     <span className="ml-1">
                       {notebooks[notebook_id].notebookName}
@@ -113,11 +115,12 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           {Object.keys(tagsData).length &&
             Object.keys(tagsData).map((tag, index) => {
               return (
-                <CommandItem key={index} asChild>
-                  <div
-                    className="flex w-full h-full"
-                    onClick={() => handleTagsOnClick(tag)}
-                  >
+                <CommandItem
+                  onSelect={() => handleTagsOnClick(tag)}
+                  key={index}
+                  asChild
+                >
+                  <div className="flex w-full h-full">
                     {pages[3].icon}
                     <span className="ml-1">{tag}</span>
                   </div>
@@ -132,8 +135,12 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         >
           {autoNotes?.map((autoNote, index) => {
             return (
-              <CommandItem key={index} asChild>
-                <div onClick={() => handleAutoNoteOnClick(autoNote)}>
+              <CommandItem
+                onSelect={() => handleAutoNoteOnClick(autoNote)}
+                key={index}
+                asChild
+              >
+                <div>
                   {pages[4].icon}
                   <span className="ml-1">{autoNote.autoNoteName}</span>
                 </div>
@@ -143,24 +150,26 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Account">
-          <CommandItem asChild>
-            <div
-              onClick={() => {
-                router.push('/account/profile');
-                setOpen((open) => !open);
-              }}
-            >
+          <CommandItem
+            onSelect={() => {
+              router.push('/account/profile');
+              setOpen((open) => !open);
+            }}
+            asChild
+          >
+            <div>
               <UserRound />
               <span className="ml-1">Profile</span>
             </div>
           </CommandItem>
-          <CommandItem asChild>
-            <div
-              onClick={() => {
-                router.push('/account/settings');
-                setOpen((open) => !open);
-              }}
-            >
+          <CommandItem
+            onSelect={() => {
+              router.push('/account/settings');
+              setOpen((open) => !open);
+            }}
+            asChild
+          >
+            <div>
               <Settings />
               <span className="ml-1">Settings</span>
             </div>

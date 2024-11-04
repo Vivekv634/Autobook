@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { isEmail } from 'validator';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import {
   Card,
@@ -17,14 +17,31 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { auth } from '@/firebase.config';
 import { useCustomToast } from '@/app/components/SendToast';
+import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const LoginComponent = () => {
   const [email, setEmail] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -65,62 +82,119 @@ const LoginComponent = () => {
         setLoading(false);
       });
   };
+  const handleResetPassword = async () => {
+    try {
+      setResetLoading(true);
+      await sendPasswordResetEmail(auth, resetEmail);
+      toast({ description: 'Check your email inbox!', color: 'green' });
+      setResetLoading(false);
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: 'Oops! something went wrong!',
+        variant: 'destructive',
+      });
+      setResetLoading(false);
+    }
+  };
 
   return (
     <main className="grid place-items-center h-screen">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>Welcome to AutoBook</CardTitle>
-          <CardDescription>Write notes in the way you want.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleFormSubmit} className="flex flex-col gap-3">
-            <div>
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="john@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Label className="text-red-600 text-center">{error}</Label>
+      <Dialog>
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle>Welcome to AutoBook</CardTitle>
+            <CardDescription>Write notes in the way you want.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleFormSubmit} className="flex flex-col gap-3">
+              <div>
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Label
+                className={cn('text-red-600 text-center', !error && 'hidden')}
+              >
+                {error}
+              </Label>
+              <Label className="flex justify-end underline hover:no-underline font-semibold my-1">
+                <DialogTrigger className="border">
+                  <span>Forgot password?</span>
+                </DialogTrigger>
+              </Label>
+              <Button
+                type="submit"
+                className="w-full font-semibold"
+                disabled={loading || error}
+              >
+                {loading ? (
+                  <div className="flex">
+                    <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                    Loading...
+                  </div>
+                ) : (
+                  'Sign in'
+                )}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex flex-col">
+            <Label className="w-full text-center">
+              Don&apos;t have an account?{' '}
+              <strong className="underline font-semibold hover:no-underline">
+                <Link href="/register">Register here</Link>
+              </strong>
+            </Label>
+          </CardFooter>
+        </Card>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset password</DialogTitle>
+            <DialogDescription className="hidden"></DialogDescription>
+          </DialogHeader>
+          <Input
+            value={resetEmail}
+            onChange={(e) => setResetEmail(e.target.value)}
+            placeholder="Email address"
+          />
+          <DialogFooter>
+            <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+              Cancel
+            </DialogClose>
             <Button
-              type="submit"
-              className="w-full font-semibold"
-              disabled={loading || error}
+              disabled={resetLoading || resetEmail.trim() === ''}
+              onClick={handleResetPassword}
+              className="flex items-center"
             >
-              {loading ? (
+              {resetLoading ? (
                 <div className="flex">
-                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />
+                  Loading...
                 </div>
               ) : (
-                'Sign in'
+                'Reset password'
               )}
             </Button>
-          </form>
-        </CardContent>
-        <CardFooter className="">
-          <Label className="w-full text-center">
-            Don&apos;t have an account?{' '}
-            <strong className="underline">
-              <Link href="/register">Register here</Link>
-            </strong>
-          </Label>
-        </CardFooter>
-      </Card>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 };

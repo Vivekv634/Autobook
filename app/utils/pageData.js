@@ -282,6 +282,19 @@ export const themes = {
     'chart-5': '340 75% 55%',
   },
 };
+
+export const themeColors = {
+  dark: 'bg-neutral-800',
+  red: 'bg-red-500',
+  green: 'bg-green-500',
+  rose: 'bg-rose-500',
+  orange: 'bg-orange-500',
+  yellow: 'bg-yellow-500',
+  violet: 'bg-violet-500',
+  gray: 'bg-gray-500',
+  blue: 'bg-blue-500',
+};
+
 export const globeConfig = {
   pointSize: 4,
   globeColor: '#062056',

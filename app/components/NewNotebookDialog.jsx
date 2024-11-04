@@ -1,5 +1,6 @@
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -18,7 +19,7 @@ import { useMediaQuery } from 'usehooks-ts';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
 import { useCustomToast } from './SendToast';
 
-const NewNotebookDialog = () => {
+const NewNotebookDialog = ({ open, setOpen }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -44,10 +45,11 @@ const NewNotebookDialog = () => {
       await axios.post(
         `${process.env.API}/api/notebooks/create`,
         { notebookName: newNotebookName },
-        { headers: { notesDocID: user.userData.notesDocID } },
+        { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       setLoading(false);
       setNewNotebookName('');
+      setOpen((open) => !open);
       toast({
         description: (
           <span>
@@ -55,7 +57,7 @@ const NewNotebookDialog = () => {
             created successfully!
           </span>
         ),
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -70,39 +72,42 @@ const NewNotebookDialog = () => {
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>New Notebook</DialogTitle>
-      </DialogHeader>
-      <form onSubmit={(e) => handleCreateNewNotebook(e)}>
-        <Input
-          value={newNotebookName}
-          onChange={(e) => setNewNotebookName(e.target.value)}
-          required
-          placeholder="Notebook Name"
-          className="mb-2"
-        />
-        <Label className="text-red-400">{error}</Label>
-        <DialogFooter>
-          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
-            Cancel
-          </DialogClose>
-          <Button
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
-            disabled={error || loading}
-            type="submit"
-          >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] animate-spin" /> Loading...
-              </div>
-            ) : (
-              'Create Notebook'
-            )}
-          </Button>
-        </DialogFooter>
-      </form>
-    </DialogContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>New Notebook</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={(e) => handleCreateNewNotebook(e)}>
+          <Input
+            value={newNotebookName}
+            onChange={(e) => setNewNotebookName(e.target.value)}
+            required
+            placeholder="Notebook Name"
+            className="mb-2"
+          />
+          <Label className="text-red-400">{error}</Label>
+          <DialogFooter>
+            <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+              Cancel
+            </DialogClose>
+            <Button
+              className={cn(!isDesktop && 'my-2', 'font-semibold')}
+              disabled={error || loading}
+              type="submit"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
+                </div>
+              ) : (
+                'Create Notebook'
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -17,7 +17,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ui-avatars.com',
+        hostname: 'api.dicebear.com',
       },
       {
         protocol: 'https',
@@ -30,6 +30,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'assets.aceternity.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
       },
     ],
   },

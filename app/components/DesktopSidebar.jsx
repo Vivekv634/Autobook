@@ -7,7 +7,7 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from '@/components/ui/menubar';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Settings, UserRound, LogOut } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -27,16 +27,24 @@ const DesktopSidebar = () => {
   const router = useRouter();
   const { user } = useSelector((state) => state.note);
   const pathName = usePathname();
+  const [profileURL, setProfileURL] = useState();
 
   useEffect(() => {
     onAuthStateChanged(auth, (User) => {
       if (User) {
         setTheme(user?.userData?.theme);
+        if (user?.userData?.profileURL) {
+          setProfileURL(user?.userData?.profileURL);
+        } else {
+          setProfileURL(
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${name ?? 'default'}`,
+          );
+        }
       } else {
         router.push('/login');
       }
     });
-  }, [router, user?.userData?.theme]);
+  }, [router, user?.userData?.profileURL, user?.userData?.theme]);
 
   return (
     <aside className="h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden">
@@ -79,10 +87,7 @@ const DesktopSidebar = () => {
               <MenubarTrigger asChild className="w-full p-0">
                 <div className="flex justify-center items-center">
                   <Avatar>
-                    <AvatarImage
-                      src={`https://ui-avatars.com/api/?background=random&name=${user?.userData?.name}`}
-                      alt={user?.userData?.name}
-                    />
+                    <AvatarImage src={profileURL} alt={user?.userData?.name} />
                   </Avatar>
                   <Label className="truncate ml-2">
                     {user?.userData?.name}

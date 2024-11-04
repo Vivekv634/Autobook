@@ -99,7 +99,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         },
       );
       dispatch(setNotes(response.data.result));
-      toast({ ...toastMessage, color: user.userData.theme });
+      toast({ ...toastMessage, color: user?.userData?.theme });
     } catch (error) {
       console.error(error);
       toast({
@@ -126,7 +126,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         (note) => note.isTrash === true,
       );
       dispatch(setDeletedNotes(filterDeletedNotes));
-      toast({ description: 'Note restored!', color: user.userData.theme });
+      toast({ description: 'Note restored!', color: user?.userData?.theme });
     } catch (error) {
       console.error(error);
       toast({
@@ -152,7 +152,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
       dispatch(setDeletedNotes(filterDeletedNotes));
       toast({
         description: 'Note deleted forever!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -175,7 +175,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
       },
     );
     dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', color: user.userData.theme });
+    toast({ description: 'Note duplicated!', color: user?.userData?.theme });
   };
 
   return (

@@ -52,7 +52,7 @@ export default function ExportAllNotes({ open, setOpen }) {
   }
 
   const exportAllNotes = () => {
-    const folderName = user.userData?.name ?? 'Notes';
+    const folderName = user?.userData?.name ?? 'Notes';
     const userNotes = zip.folder(folderName);
     notes?.forEach((note) => {
       let fileName = `${note.title}.${exporttype}`;

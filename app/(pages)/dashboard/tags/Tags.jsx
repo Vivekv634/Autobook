@@ -45,7 +45,7 @@ const TagsComponent = () => {
               Object.keys(tagsData).map((tag) => (
                 <Tag
                   key={tag}
-                  notesDocID={user.userData.notesDocID}
+                  notesDocID={user?.userData?.notesDocID}
                   notebooks={notebooks}
                   tagName={tag}
                   tagNotes={tagsData[tag]}

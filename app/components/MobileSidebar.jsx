@@ -3,9 +3,7 @@ import { Menu, Settings, LogOutIcon, UserRound } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-// import { Label } from '@/components/ui/label';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-// import { Switch } from '@/components/ui/switch';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Sheet,
@@ -31,6 +29,7 @@ import setTheme from '../utils/theme';
 
 const MobileSidebar = () => {
   const { user } = useSelector((state) => state.note);
+  const [profileURL, setProfileURL] = useState();
   const [name, setName] = useState('');
   const pathName = usePathname();
   const router = useRouter();
@@ -40,11 +39,24 @@ const MobileSidebar = () => {
       if (User) {
         setTheme(user?.userData?.theme);
         setName(user?.userData?.name);
+        if (user?.userData?.profileURL) {
+          setProfileURL(user?.userData?.profileURL);
+        } else {
+          setProfileURL(
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${name ?? 'default'}`,
+          );
+        }
       } else {
         router.push('/login');
       }
     });
-  }, [name, user?.userData?.theme, user?.userData?.name, router]);
+  }, [
+    name,
+    user?.userData?.theme,
+    user?.userData?.name,
+    router,
+    user?.userData?.profileURL,
+  ]);
 
   const LogOut = () => {
     auth.signOut();
@@ -55,7 +67,7 @@ const MobileSidebar = () => {
     <nav className="border-b flex justify-between p-2 px-4">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" className="p-3" aria-label="sidemenu">
+          <Button variant="outline" className="px-4" aria-label="sidemenu">
             <Menu />
           </Button>
         </SheetTrigger>
@@ -99,7 +111,8 @@ const MobileSidebar = () => {
         <DropdownMenuTrigger>
           <Avatar>
             <AvatarImage
-              src={`https://ui-avatars.com/api/?background=random&name=${name}`}
+              className="border rounded-full"
+              src={profileURL}
               alt="@shadcn"
             />
           </Avatar>

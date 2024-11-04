@@ -20,10 +20,13 @@ export default function RestoreAllTrashNotesAlertDialog({ children }) {
     try {
       await axios.get(`${process.env.API}/api/notes/restoreall`, {
         headers: {
-          notesDocID: user.userData?.notesDocID,
+          notesDocID: user?.userData?.notesDocID,
         },
       });
-      toast({ description: 'All notes restored!', color: user.userData.theme });
+      toast({
+        description: 'All notes restored!',
+        color: user?.userData?.theme,
+      });
     } catch (error) {
       console.error(error);
       toast({

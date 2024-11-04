@@ -65,7 +65,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
       }
       await axios.delete(`${process.env.API}/api/data/delete`, {
         data: body,
-        headers: { notesDocID: user.userData.notesDocID },
+        headers: { notesDocID: user?.userData?.notesDocID },
       });
       setLoading(false);
       setOpen(false);
@@ -75,7 +75,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
             <span className="font-bold">{autoNoteName}</span> AutoNote deleted!
           </span>
         ),
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       setLoading(false);
@@ -152,7 +152,8 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
             >
               {loading ? (
                 <div className="flex items-center">
-                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
                 </div>
               ) : (
                 'Delete AutoNote'

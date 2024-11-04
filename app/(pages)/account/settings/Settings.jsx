@@ -20,32 +20,45 @@ import ExportAllNotes from '@/app/components/ExportAllNotes';
 import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 import setTheme from '@/app/utils/theme';
 import { useCustomToast } from '@/app/components/SendToast';
+import { Loader2 } from 'lucide-react';
 
 const SettingsComponent = () => {
   const isDesktop = useMediaQuery('(min-width: 640px)');
   const { user } = useSelector((state) => state.note);
   const [userTheme, setUserTheme] = useState(
-    user && user.userData && user.userData?.theme,
+    user && user?.userData && user?.userData?.theme,
   );
   const [homePage] = useState(
-    user && user.userData && user.userData?.defaultHomePage,
+    user && user?.userData && user?.userData?.defaultHomePage,
   );
   const [interval] = useState(user?.userData?.trashInterval);
   const [importNotes, setImportNotes] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
+  const [themeLoading, setThemeLoading] = useState(false);
   const toast = useCustomToast();
 
   const handleThemeChange = async () => {
-    const body = { theme: userTheme };
-    await axios.put(
-      `${process.env.API}/api/account/update/${user.userID}`,
-      body,
-    );
-    toast({
-      description: 'Theme updated!',
-      color: user.userData.theme,
-    });
+    try {
+      setThemeLoading(true);
+      const body = { theme: userTheme };
+      await axios.put(
+        `${process.env.API}/api/account/update/${user.userID}`,
+        body,
+      );
+      setThemeLoading(false);
+      toast({
+        description: 'Theme updated!',
+        color: userTheme,
+      });
+    } catch (error) {
+      console.error(error);
+      setThemeLoading(false);
+      toast({
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleDefaultHomePageChange = async (page) => {
@@ -54,7 +67,7 @@ const SettingsComponent = () => {
     });
     toast({
       description: 'Default home page updated!',
-      color: user.userData.theme,
+      color: user?.userData?.theme,
     });
   };
 
@@ -68,7 +81,7 @@ const SettingsComponent = () => {
     );
     toast({
       description: 'Trash interval updated!',
-      color: user.userData.theme,
+      color: user?.userData?.theme,
     });
   };
 
@@ -110,7 +123,14 @@ const SettingsComponent = () => {
               className={cn(user?.userData?.theme === userTheme && 'hidden')}
               onClick={handleThemeChange}
             >
-              Save
+              {themeLoading ? (
+                <div className="flex items-center">
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
+                </div>
+              ) : (
+                'Save'
+              )}
             </Button>
           </div>
         </div>

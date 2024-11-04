@@ -33,7 +33,7 @@ export default function ChangePasswordDialog({ open, setOpen }) {
         setLoading(false);
         toast({
           description: 'Password reset email sent!',
-          color: user.userData.theme,
+          color: user?.userData?.theme,
         });
       })
       .catch((error) => {
@@ -77,7 +77,8 @@ export default function ChangePasswordDialog({ open, setOpen }) {
             >
               {loading ? (
                 <div className="flex items-center">
-                  <Loader2 className="h-[18px] animate-spin" /> Loading...
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
                 </div>
               ) : (
                 'Send Verification Email'

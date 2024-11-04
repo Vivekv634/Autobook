@@ -1,5 +1,6 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -27,7 +28,7 @@ import { auth } from '@/firebase.config';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
 import { useCustomToast } from './SendToast';
 
-export default function NewNoteDialog() {
+export default function NewNoteDialog({ open, setOpen }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const [noteTitle, setNoteTitle] = useState('');
   const [tags, setTags] = useState('');
@@ -104,17 +105,18 @@ export default function NewNoteDialog() {
         await axios.post(
           `${process.env.API}/api/notebooks/create`,
           newNotebookBody,
-          { headers: { notesDocID: user.userData.notesDocID } },
+          { headers: { notesDocID: user?.userData?.notesDocID } },
         );
       }
       await axios.post(`${process.env.API}/api/notes/create`, noteBody, {
-        headers: { notesDocID: user.userData.notesDocID },
+        headers: { notesDocID: user?.userData?.notesDocID },
       });
       setNewNotebookName('');
       setLoading(false);
+      setOpen((open) => !open);
       toast({
         description: 'Note Created successfully!',
-        color: user.userData.theme,
+        color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
@@ -129,118 +131,123 @@ export default function NewNoteDialog() {
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Create Note</DialogTitle>
-      </DialogHeader>
-      <form onSubmit={(e) => handleCreateNote(e)}>
-        <div>
-          <Label htmlFor="noteTitle">
-            Note Title{' '}
-            <span className="text-muted-foreground text-[.8rem]">
-              (Required)
-            </span>
-          </Label>
-          <Input
-            value={noteTitle}
-            onChange={(e) => setNoteTitle(e.target.value)}
-            id="noteTitle"
-            required
-          />
-        </div>
-        <div className="my-2">
-          <Label htmlFor="tags">
-            Tags{' '}
-            <span className="text-muted-foreground text-[.8rem]">
-              (Multiple with spaces)
-            </span>
-          </Label>
-          <Input
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            id="tags"
-            placeholder="tag1 tag2 ..."
-          />
-          <Label
-            className={cn(
-              tags.trim() == '' && 'hidden',
-              'text-muted-foreground',
-            )}
-          >
-            Preview: {tagsPreview}
-          </Label>
-        </div>
-        <div className={cn(newNotebookFlag && 'hidden')}>
-          <Label>Select Notebook</Label>
-          <Select
-            value={Notebook}
-            onValueChange={(e) => setNotebook(e)}
-            disabled={newNotebookFlag}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" side="top" align="end">
-              <SelectItem value="none" key="none" className="text-red-400">
-                Select Notebook
-              </SelectItem>
-              {Object.keys(notebooks).map((notebook_id, index) => {
-                return (
-                  <SelectItem value={notebook_id} key={index}>
-                    {notebooks[notebook_id].notebookName}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className={cn(!newNotebookFlag && 'hidden')}>
-          <Label>New Notebook Name</Label>
-          <Input
-            placeholder="Enter New Notebook Name..."
-            value={newNotebookName}
-            onChange={(e) => setNewNotebookName(e.target.value)}
-            disabled={!newNotebookFlag}
-          />
-          <Label
-            className={cn(
-              (newNotebookName.trim() == '' || newNotebookName == '') &&
-                'hidden',
-              'text-muted-foreground block mt-1',
-            )}
-          >
-            Preview: {notebookNamePreview}
-          </Label>
-          <Label className="text-red-400">{error}</Label>
-        </div>
-        <div className="flex items-center gap-1 my-2">
-          <Checkbox
-            checked={newNotebookFlag}
-            onCheckedChange={setNewNotebookFlag}
-            id="newNotebook"
-            disabled={Object.keys(notebooks).length == 0}
-          />
-          <Label htmlFor="newNotebook">Create a new Notebook</Label>
-        </div>
-        <DialogFooter>
-          <DialogClose className={cn(buttonVariants({ variant: 'secondary' }))}>
-            Cancel
-          </DialogClose>
-          <Button
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
-            disabled={loading || error}
-            type="submit"
-          >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] animate-spin" /> Loading...
-              </div>
-            ) : (
-              'Create Note'
-            )}
-          </Button>
-        </DialogFooter>
-      </form>
-    </DialogContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Note</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={(e) => handleCreateNote(e)}>
+          <div>
+            <Label htmlFor="noteTitle">
+              Note Title{' '}
+              <span className="text-muted-foreground text-[.8rem]">
+                (Required)
+              </span>
+            </Label>
+            <Input
+              value={noteTitle}
+              onChange={(e) => setNoteTitle(e.target.value)}
+              id="noteTitle"
+              required
+            />
+          </div>
+          <div className="my-2">
+            <Label htmlFor="tags">
+              Tags{' '}
+              <span className="text-muted-foreground text-[.8rem]">
+                (Multiple with spaces)
+              </span>
+            </Label>
+            <Input
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              id="tags"
+              placeholder="tag1 tag2 ..."
+            />
+            <Label
+              className={cn(
+                tags.trim() == '' && 'hidden',
+                'text-muted-foreground',
+              )}
+            >
+              Preview: {tagsPreview}
+            </Label>
+          </div>
+          <div className={cn(newNotebookFlag && 'hidden')}>
+            <Label>Select Notebook</Label>
+            <Select
+              value={Notebook}
+              onValueChange={(e) => setNotebook(e)}
+              disabled={newNotebookFlag}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper" side="top" align="end">
+                <SelectItem value="none" key="none" className="text-red-400">
+                  Select Notebook
+                </SelectItem>
+                {Object.keys(notebooks).map((notebook_id, index) => {
+                  return (
+                    <SelectItem value={notebook_id} key={index}>
+                      {notebooks[notebook_id].notebookName}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className={cn(!newNotebookFlag && 'hidden')}>
+            <Label>New Notebook Name</Label>
+            <Input
+              placeholder="Enter New Notebook Name..."
+              value={newNotebookName}
+              onChange={(e) => setNewNotebookName(e.target.value)}
+              disabled={!newNotebookFlag}
+            />
+            <Label
+              className={cn(
+                (newNotebookName.trim() == '' || newNotebookName == '') &&
+                  'hidden',
+                'text-muted-foreground block mt-1',
+              )}
+            >
+              Preview: {notebookNamePreview}
+            </Label>
+            <Label className="text-red-400">{error}</Label>
+          </div>
+          <div className="flex items-center gap-1 my-2">
+            <Checkbox
+              checked={newNotebookFlag}
+              onCheckedChange={setNewNotebookFlag}
+              id="newNotebook"
+              disabled={Object.keys(notebooks).length == 0}
+            />
+            <Label htmlFor="newNotebook">Create a new Notebook</Label>
+          </div>
+          <DialogFooter>
+            <DialogClose
+              className={cn(buttonVariants({ variant: 'secondary' }))}
+            >
+              Cancel
+            </DialogClose>
+            <Button
+              className={cn(!isDesktop && 'my-2', 'font-semibold')}
+              disabled={loading || error}
+              type="submit"
+            >
+              {loading ? (
+                <div className="flex items-center">
+                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
+                  Loading...
+                </div>
+              ) : (
+                'Create Note'
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
