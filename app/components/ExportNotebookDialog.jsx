@@ -19,7 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import JSZip from 'jszip';
 import editorJsToHtml from '../utils/editorJSToHTML';
 import pretty from 'pretty';
@@ -39,7 +39,7 @@ export default function ExportNotebookDialog({
   const { user, notebooks } = useSelector((state) => state.note);
   const zip = new JSZip();
   const notebookFolder = zip.folder(notebooks[notebook_id].notebookName);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const [exporttype, setExportType] = useState('html');
   const toast = useCustomToast();
   const turndownServices = new TurndownService();

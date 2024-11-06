@@ -12,14 +12,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 export default function EditUserNameDialog({ open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { user } = useSelector((state) => state.note);
   const toast = useCustomToast();
   const [loading, setLoading] = useState(false);
@@ -77,14 +77,7 @@ export default function EditUserNameDialog({ open, setOpen }) {
               type="submit"
               className={cn(!isDesktop && 'my-2', 'font-semibold')}
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Change Name'
-              )}
+              <ButtonLoader loading={loading} label="Change Name" />
             </Button>
           </DialogFooter>
         </form>

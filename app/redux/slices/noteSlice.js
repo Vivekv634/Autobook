@@ -8,6 +8,7 @@ const initialState = {
   user: {},
   autoNotes: [],
   trashInterval: null,
+  notesView: 'rows',
 };
 
 const noteSlice = createSlice({
@@ -41,6 +42,9 @@ const noteSlice = createSlice({
     setTrashInterval: (state, action) => {
       state.trashInterval = action.payload;
     },
+    setNotesView: (state, action) => {
+      state.notesView = action.payload;
+    },
   },
 });
 
@@ -54,5 +58,6 @@ export const {
   setUser,
   setAutoNotes,
   setTrashInterval,
+  setNotesView,
 } = noteSlice.actions;
 export default noteSlice.reducer;

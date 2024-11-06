@@ -24,14 +24,14 @@ import pretty from 'pretty';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
 import { convert } from 'html-to-text';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { saveAs } from 'file-saver';
 
 export default function ExportAllNotes({ open, setOpen }) {
   const [exporttype, setExportType] = useState('html');
   const { user, notes } = useSelector((state) => state.note);
   const zip = new JSZip();
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
 

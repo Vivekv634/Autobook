@@ -37,14 +37,19 @@ const DesktopSidebar = () => {
           setProfileURL(user?.userData?.profileURL);
         } else {
           setProfileURL(
-            `https://api.dicebear.com/9.x/lorelei/webp?seed=${name ?? 'default'}`,
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${user?.userData?.name ?? 'default'}`,
           );
         }
       } else {
         router.push('/login');
       }
     });
-  }, [router, user?.userData?.profileURL, user?.userData?.theme]);
+  }, [
+    router,
+    user?.userData?.name,
+    user?.userData?.profileURL,
+    user?.userData?.theme,
+  ]);
 
   return (
     <aside className="h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden">

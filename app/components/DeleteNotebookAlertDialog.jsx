@@ -16,10 +16,10 @@ import { Input } from '@/components/ui/input';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 export default function DeleteNotebookDialog({
   open,
@@ -27,7 +27,7 @@ export default function DeleteNotebookDialog({
   notebook_id,
   notebookName,
 }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { notebooks, autoNotes, notes, user } = useSelector(
     (state) => state.note,
   );
@@ -195,14 +195,7 @@ export default function DeleteNotebookDialog({
                   notebookNameError || loading || checkNotebookName.trim() == ''
                 }
               >
-                {loading ? (
-                  <div className="flex items-center">
-                    <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                    Loading...
-                  </div>
-                ) : (
-                  'Delete Notebook'
-                )}
+                <ButtonLoader loading={loading} label="Delete Notebook" />
               </Button>
             </DialogFooter>
           </form>

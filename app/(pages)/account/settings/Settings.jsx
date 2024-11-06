@@ -2,7 +2,7 @@
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import React, { useState } from 'react';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import {
   Select,
   SelectContent,
@@ -20,10 +20,10 @@ import ExportAllNotes from '@/app/components/ExportAllNotes';
 import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
 import setTheme from '@/app/utils/theme';
 import { useCustomToast } from '@/app/components/SendToast';
-import { Loader2 } from 'lucide-react';
+import ButtonLoader from '@/app/components/ButtonLoader';
 
 const SettingsComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { user } = useSelector((state) => state.note);
   const [userTheme, setUserTheme] = useState(
     user && user?.userData && user?.userData?.theme,
@@ -123,14 +123,7 @@ const SettingsComponent = () => {
               className={cn(user?.userData?.theme === userTheme && 'hidden')}
               onClick={handleThemeChange}
             >
-              {themeLoading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Save'
-              )}
+              <ButtonLoader loading={themeLoading} label="Save" />
             </Button>
           </div>
         </div>

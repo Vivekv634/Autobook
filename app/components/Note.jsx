@@ -28,7 +28,7 @@ const Note = ({ note, notesDocID, notebook_name }) => {
 
   return (
     <TooltipProvider>
-      <Card className="my-1 select-none">
+      <Card className="h-fit select-none">
         <NoteContextMenu note={note} notesDocID={notesDocID}>
           <CardContent className="cursor-pointer">
             <CardHeader className="px-0">
@@ -73,27 +73,27 @@ const Note = ({ note, notesDocID, notebook_name }) => {
               </div>
               <Label className="flex items-center">{timeAgo}</Label>
             </div>
+            <CardFooter
+              className={cn(
+                'flex flex-col items-start p-0 pt-1',
+                note?.tagsList?.length > 0 ? 'block' : 'hidden',
+              )}
+            >
+              <Separator />
+              <div className="w-full flex flex-wrap ">
+                {note.tagsList &&
+                  note.tagsList.map((tag, index) => {
+                    return (
+                      <Link
+                        className="pr-1 transition-all underline text-sm hover:text-green-500"
+                        key={index}
+                        href={`/dashboard/tags#${tag}`}
+                      >{`#${tag}`}</Link>
+                    );
+                  })}
+              </div>
+            </CardFooter>
           </CardContent>
-          <CardFooter
-            className={cn(
-              'flex flex-col items-start',
-              note?.tagsList?.length > 0 ? 'block' : 'hidden',
-            )}
-          >
-            <Separator />
-            <div className="w-full flex flex-wrap ">
-              {note.tagsList &&
-                note.tagsList.map((tag, index) => {
-                  return (
-                    <Link
-                      className="pr-1 transition-all underline text-sm hover:text-green-500"
-                      key={index}
-                      href={`/dashboard/tags#${tag}`}
-                    >{`#${tag}`}</Link>
-                  );
-                })}
-            </div>
-          </CardFooter>
         </NoteContextMenu>
       </Card>
     </TooltipProvider>

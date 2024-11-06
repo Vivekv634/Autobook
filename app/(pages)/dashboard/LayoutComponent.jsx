@@ -1,12 +1,12 @@
 'use client';
 import Menubar from '../../components/Sidebar';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import GlobalSearchDialog from '@/app/components/GlobalSearchDialog';
 
 const LayoutComponent = ({ children }) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [mount, setMount] = useState(false);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ const LayoutComponent = ({ children }) => {
       <Menubar />
       <section
         className={cn(
+          !isDesktop && 'mt-14',
           isDesktop && 'w-full h-screen p-3 border-box overflow-auto',
         )}
       >

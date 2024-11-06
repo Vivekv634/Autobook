@@ -15,7 +15,7 @@ const TrashComponent = () => {
   return (
     <section
       className={cn(
-        'p-2 flex flex-col',
+        'p-2 flex gap-2 flex-col',
         deletedNotes.length == 0 && 'items-center h-full justify-center',
       )}
     >
@@ -29,7 +29,6 @@ const TrashComponent = () => {
               <Button variant="destructive">Delete All</Button>
             </DeleteAllTrashNotesAlertDialog>
           </div>
-
           {deletedNotes?.map((note, index) => {
             return (
               <Note

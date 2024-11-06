@@ -6,7 +6,6 @@ import { isEmail } from 'validator';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -35,6 +34,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import ButtonLoader from '@/app/components/ButtonLoader';
 
 const LoginComponent = () => {
   const [email, setEmail] = useState('');
@@ -144,14 +144,7 @@ const LoginComponent = () => {
                 className="w-full font-semibold"
                 disabled={loading || error}
               >
-                {loading ? (
-                  <div className="flex">
-                    <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                    Loading...
-                  </div>
-                ) : (
-                  'Sign in'
-                )}
+                <ButtonLoader loading={loading} label="Sign in" />
               </Button>
             </form>
           </CardContent>
@@ -183,14 +176,7 @@ const LoginComponent = () => {
               onClick={handleResetPassword}
               className="flex items-center"
             >
-              {resetLoading ? (
-                <div className="flex">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />
-                  Loading...
-                </div>
-              ) : (
-                'Reset password'
-              )}
+              <ButtonLoader loading={resetLoading} label="Reset Password" />
             </Button>
           </DialogFooter>
         </DialogContent>

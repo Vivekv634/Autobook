@@ -11,11 +11,11 @@ import { cn } from '@/lib/utils';
 import { Printer } from 'lucide-react';
 import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 
 export default function NotePrintDialog({ html, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const formattedHTML = pretty(html, { ocd: true });
   const toast = useCustomToast();
 

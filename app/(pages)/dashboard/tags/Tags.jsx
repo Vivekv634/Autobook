@@ -8,10 +8,10 @@ import { Label } from '@/components/ui/label';
 import TagNotFoundSVG from '@/public/tag-not-found.svg';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 
 const TagsComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const { tagsData, notebooks, user } = useSelector((state) => state.note);
   const [open, setOpen] = useState(false);
 
@@ -54,8 +54,8 @@ const TagsComponent = () => {
           </Accordion>
         )}
       </section>
-      <section className="flex justify-center items-center h-full">
-        {Object.keys(tagsData).length == 0 && (
+      {Object.keys(tagsData).length == 0 && (
+        <section className="flex justify-center items-center h-full">
           <div className="flex text-center h-inherit justify-center align-center">
             <div>
               <Image
@@ -66,8 +66,8 @@ const TagsComponent = () => {
               <Label className="text-lg">Note not created yet!</Label>
             </div>
           </div>
-        )}
-      </section>
+        </section>
+      )}
       <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
     </>
   );

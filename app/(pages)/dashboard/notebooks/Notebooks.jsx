@@ -14,7 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
@@ -22,7 +22,7 @@ import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog'
 import hotkeys from 'hotkeys-js';
 
 const NotebookComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const { notes, notebooks, user } = useSelector((state) => state.note);
   const [mount, setMount] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -58,7 +58,7 @@ const NotebookComponent = () => {
               </span>
             </div>
             <TooltipTrigger asChild>
-              <Button className="px-3" aria-label="add notebook">
+              <Button className="h-11" aria-label="add notebook">
                 <Plus />
               </Button>
             </TooltipTrigger>
@@ -88,8 +88,8 @@ const NotebookComponent = () => {
             </Accordion>
           )}
         </section>
-        <section className="flex justify-center items-center h-full">
-          {Object.keys(notebooks).length == 0 && (
+        {Object.keys(notebooks).length == 0 && (
+          <section className="flex justify-center items-center h-full">
             <div className="flex text-center h-full justify-center items-center">
               <div>
                 <Image
@@ -100,8 +100,8 @@ const NotebookComponent = () => {
                 <Label className="text-lg">Notebook not created yet!</Label>
               </div>
             </div>
-          )}
-        </section>
+          </section>
+        )}
         <NewNotebookDialog
           open={newNotebookOpen}
           setOpen={setNewNotebookOpen}

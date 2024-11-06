@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import textToEditorJs from '../utils/textToEditorJs';
 import htmlToEditorJs from '../utils/htmlToEditor';
 import axios from 'axios';
@@ -21,7 +21,7 @@ export default function ImportNotesDialog({ open, setOpen }) {
   const showdown = require('showdown');
   const converter = new showdown.Converter();
   const { user } = useSelector((state) => state.note);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const toast = useCustomToast();
 
   const importNotes = (e) => {

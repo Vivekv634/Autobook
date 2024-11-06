@@ -12,14 +12,14 @@ import { Input } from '@/components/ui/input';
 import { auth } from '@/firebase.config';
 import { cn } from '@/lib/utils';
 import { updatePassword } from 'firebase/auth';
-import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 import { useSelector } from 'react-redux';
+import ButtonLoader from './ButtonLoader';
 
 export default function ChangePasswordDialog({ open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { user } = useSelector((state) => state.note);
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -75,14 +75,7 @@ export default function ChangePasswordDialog({ open, setOpen }) {
               type="submit"
               className={cn(!isDesktop && 'my-2', 'font-semibold')}
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Send Verification Email'
-              )}
+              <ButtonLoader loading={loading} label="Send Verification Email" />
             </Button>
           </DialogFooter>
         </form>

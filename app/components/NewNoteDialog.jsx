@@ -20,16 +20,16 @@ import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useSelector } from 'react-redux';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { uid } from 'uid';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import { auth } from '@/firebase.config';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 export default function NewNoteDialog({ open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [noteTitle, setNoteTitle] = useState('');
   const [tags, setTags] = useState('');
   const [newNotebookName, setNewNotebookName] = useState('');
@@ -236,14 +236,7 @@ export default function NewNoteDialog({ open, setOpen }) {
               disabled={loading || error}
               type="submit"
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Create Note'
-              )}
+              <ButtonLoader loading={loading} label="Create Note" />
             </Button>
           </DialogFooter>
         </form>

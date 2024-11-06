@@ -24,8 +24,8 @@ const FavoriteComponent = () => {
             );
           })}
       </section>
-      <section className="flex justify-center items-center h-full">
-        {favoriteNotes.length == 0 && (
+      {favoriteNotes.length == 0 && (
+        <section className="flex justify-center items-center h-full">
           <div className="flex text-center h-inherit justify-center align-center">
             <div>
               <Image
@@ -36,8 +36,8 @@ const FavoriteComponent = () => {
               <Label className="text-lg">Note not created yet!</Label>
             </div>
           </div>
-        )}
-      </section>
+        </section>
+      )}
     </>
   );
 };

@@ -14,13 +14,13 @@ import { Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import AutoNoteNotFoundSVG from '@/public/autonote-not-found.svg';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 import hotkeys from 'hotkeys-js';
 
 const AutoNoteComponent = () => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const { autoNotes } = useSelector((state) => state.note);
   const [newAutoNoteOpen, setNewAutoNoteOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -52,7 +52,7 @@ const AutoNoteComponent = () => {
               </span>
             </div>
             <TooltipTrigger asChild>
-              <Button className="px-3" aria-label="add autonote">
+              <Button className="h-11" aria-label="add autonote">
                 <Plus />
               </Button>
             </TooltipTrigger>
@@ -63,8 +63,8 @@ const AutoNoteComponent = () => {
               return <AutoNote key={index} autoNote={autoNote} />;
             })}
         </section>
-        <section className="flex justify-center items-center h-full">
-          {autoNotes?.length == 0 && (
+        {autoNotes?.length == 0 && (
+          <section className="flex justify-center items-center h-full">
             <div className="flex text-center h-inherit justify-center align-center">
               <div>
                 <Image
@@ -75,8 +75,8 @@ const AutoNoteComponent = () => {
                 <Label className="text-lg">AutoNote not created yet!</Label>
               </div>
             </div>
-          )}
-        </section>
+          </section>
+        )}
         <NewAutoNoteDialog
           open={newAutoNoteOpen}
           setOpen={setNewAutoNoteOpen}

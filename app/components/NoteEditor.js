@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
-import { Loader2, Pen } from 'lucide-react';
+import { Pen } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
@@ -20,6 +20,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '../utils/editorConfig';
 import { useCustomToast } from './SendToast';
 import hotkeys from 'hotkeys-js';
+import ButtonLoader from './ButtonLoader';
 
 const NoteEditor = ({ params }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -34,7 +35,7 @@ const NoteEditor = ({ params }) => {
   const [notebookValue, setNotebookValue] = useState();
   const [editorInstance, setEditorInstance] = useState(null);
 
-  hotkeys('ctrl+s, command+m', (e) => {
+  hotkeys('ctrl+s, command+s', (e) => {
     e.preventDefault();
     save();
   });
@@ -150,14 +151,7 @@ const NoteEditor = ({ params }) => {
             className="disabled:cursor-not-allowed font-semibold"
             onClick={save}
           >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                Loading...
-              </div>
-            ) : (
-              'Save changes'
-            )}
+            <ButtonLoader loading={loading} label="Save changes" />
           </Button>
         </div>
         <div

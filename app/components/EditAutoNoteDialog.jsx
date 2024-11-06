@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CircleHelp, Loader2 } from 'lucide-react';
+import { CircleHelp } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -22,16 +22,17 @@ import { generationPeriod } from '../utils/schema';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { titleFormatter } from '../utils/titleFormatter';
 import { cn } from '@/lib/utils';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { uid } from 'uid';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [autoNoteName, setAutoNoteName] = useState(autoNote.autoNoteName);
   const [titleFormat, setTitleFormat] = useState(autoNote.titleFormat);
   const [showHelp, setShowHelp] = useState(false);
@@ -286,14 +287,7 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
             onClick={handleSaveChanges}
             disabled={loading || notebookNameError}
           >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                Loading...
-              </div>
-            ) : (
-              'Save Changes'
-            )}
+            <ButtonLoader loading={loading} label="Save Changes" />
           </Button>
         </DialogFooter>
       </DialogContent>

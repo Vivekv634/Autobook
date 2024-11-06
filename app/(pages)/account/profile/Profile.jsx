@@ -8,7 +8,7 @@ import {
 import { cn } from '@/lib/utils';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import EditUserNameDialog from '@/app/components/EditUserNameDialog';
 import VerifyEmailDialog from '@/app/components/VerifyEmailDialog';
 import ChangeEmailDialog from '@/app/components/ChangeEmailDialog';
@@ -21,7 +21,7 @@ import { themeColors } from '@/app/utils/pageData';
 
 const ProfileComponent = () => {
   const { user } = useSelector((state) => state.note);
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const [userNameDialog, setUserNameDialog] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState(false);
   const [changeEmail, setChangeEmail] = useState(false);

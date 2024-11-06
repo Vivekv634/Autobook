@@ -13,12 +13,12 @@ import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 import { useSelector } from 'react-redux';
 
 export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const formattedHTML = pretty(html, { ocd: true });
   const { user } = useSelector((state) => state.note);
   const turndownServices = new TurndownService();

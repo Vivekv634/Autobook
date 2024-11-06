@@ -21,14 +21,14 @@ import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { useSelector } from 'react-redux';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { uid } from 'uid';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 export default function NoteConfigDialog({ note, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [tags, setTags] = useState(note?.tagsList.join(' ') || '');
   const [newNotebookName, setNewNotebookName] = useState('');
@@ -242,14 +242,7 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
               disabled={loading || error || noteTitle == ''}
               type="submit"
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Save Changes'
-              )}
+              <ButtonLoader loading={loading} label="Save Changes" />
             </Button>
           </DialogFooter>
         </form>

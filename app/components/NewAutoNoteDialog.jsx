@@ -13,9 +13,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { CircleHelp, Loader2 } from 'lucide-react';
+import { CircleHelp } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { titleFormatter } from '../utils/titleFormatter';
 import {
   Select,
@@ -34,9 +34,10 @@ import Showdown from 'showdown';
 import axios from 'axios';
 import textToEditorJs from '../utils/textToEditorJs';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 const NewAutoNoteDialog = ({ open, setOpen }) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [autoNoteName, setAutoNoteName] = useState('');
   const [titleFormat, setTitleFormat] = useState('');
   const [showHelp, setShowHelp] = useState(false);
@@ -459,14 +460,7 @@ const NewAutoNoteDialog = ({ open, setOpen }) => {
               disabled={error != null || loading || notebookNameError}
               type="submit"
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Save Changes'
-              )}
+              <ButtonLoader loading={loading} label="Save Changes" />
             </Button>
           </DialogFooter>
         </form>

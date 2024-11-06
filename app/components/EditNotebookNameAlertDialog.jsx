@@ -16,9 +16,9 @@ import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
 import { useCustomToast } from './SendToast';
 import { useSelector } from 'react-redux';
+import ButtonLoader from './ButtonLoader';
 
 export default function EditNotebookNameAlertDialog({
   children,
@@ -152,14 +152,7 @@ export default function EditNotebookNameAlertDialog({
               disabled={loading || notebookNameError}
               type="submit"
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Save Changes'
-              )}
+              <ButtonLoader loading={loading} label="Save Changes" />
             </AlertDialogAction>
           </AlertDialogFooter>
         </form>

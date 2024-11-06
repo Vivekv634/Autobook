@@ -7,7 +7,6 @@ import { isEmail } from 'validator';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -21,6 +20,7 @@ import { Label } from '@/components/ui/label';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@/firebase.config';
 import { useCustomToast } from '@/app/components/SendToast';
+import ButtonLoader from '@/app/components/ButtonLoader';
 
 const RegisterComponent = () => {
   const [name, setName] = useState('');
@@ -126,14 +126,7 @@ const RegisterComponent = () => {
               className="w-full font-semibold"
               disabled={isLoading || error}
             >
-              {isLoading ? (
-                <div className="flex">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Sign Up'
-              )}
+              <ButtonLoader loading={isLoading} label="Sign Up" />
             </Button>
           </form>
         </CardContent>

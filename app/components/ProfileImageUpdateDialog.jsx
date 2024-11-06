@@ -11,12 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { storage } from '@/firebase.config';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { ImageUp, Loader2 } from 'lucide-react';
+import { ImageUp } from 'lucide-react';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useCustomToast } from './SendToast';
 import axios from 'axios';
+import ButtonLoader from './ButtonLoader';
 
 export default function ProfileImageUpdateDialog({ open, setOpen }) {
   const { user } = useSelector((state) => state.note);
@@ -103,14 +104,7 @@ export default function ProfileImageUpdateDialog({ open, setOpen }) {
             disabled={!imagePreview || loading}
             onClick={uploadProfileImage}
           >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                Loading...
-              </div>
-            ) : (
-              'Upload file'
-            )}
+            <ButtonLoader loading={loading} label="Upload file" />
           </Button>
         </DialogFooter>
       </DialogContent>

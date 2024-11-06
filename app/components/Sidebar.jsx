@@ -8,9 +8,9 @@ import {
   setTrashInterval,
   setUser,
 } from '@/app/redux/slices/noteSlice';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import DesktopSidebar from './DesktopSidebar';
 import MobileSidebar from './MobileSidebar';
 import axios from 'axios';
@@ -20,14 +20,39 @@ import { useRouter } from 'next/navigation';
 import { doc, onSnapshot } from 'firebase/firestore';
 
 const Menubar = () => {
-  const isDesktop = useMediaQuery('(min-width: 640px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [mount, setMount] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
   const { user } = useSelector((state) => state.note);
 
-  useEffect(() => {
-    setMount(true);
+  useEffect(() => setMount(true), []);
+
+  const processNotesData = useMemo(() => {
+    return (notes) => {
+      const updatedNotes = [];
+      const deletedNotes = [];
+      const tagsData = {};
+
+      notes?.forEach((note) => {
+        if (!note.isTrash) {
+          // Only include non-trash notes in updatedNotes
+          if (note.isPinned) updatedNotes.unshift(note);
+          else updatedNotes.push(note);
+
+          // Process tags data
+          note.tagsList?.forEach((tag) => {
+            if (!tagsData[tag]) tagsData[tag] = [];
+            tagsData[tag].push(note);
+          });
+        } else {
+          // Include trash notes only in deletedNotes
+          deletedNotes.push(note);
+        }
+      });
+
+      return { updatedNotes, deletedNotes, tagsData };
+    };
   }, []);
 
   useEffect(() => {
@@ -50,52 +75,25 @@ const Menubar = () => {
       const unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
           const { notes, notebooks, autoNotes, trashInterval } = doc.data();
+          const { updatedNotes, deletedNotes, tagsData } =
+            processNotesData(notes);
 
-          // Processing notes
-          let updatedNotes = [];
-          let tagsData = {};
-          let deletedNotes = [];
-
-          notes?.forEach((note) => {
-            if (!note.isTrash && !note.isLocked) {
-              if (note.isPinned) {
-                updatedNotes.unshift(note);
-              } else {
-                updatedNotes.push(note);
-              }
-
-              // Process tags data
-              note.tagsList?.forEach((tag) => {
-                if (tagsData[tag]) {
-                  tagsData[tag].push(note);
-                } else {
-                  tagsData[tag] = [note];
-                }
-              });
-            }
-            if (note.isTrash) {
-              deletedNotes.push(note);
-            }
-          });
-
-          // Dispatch Redux actions
+          // Dispatch Redux actions with separated notes
           dispatch(setTrashInterval(trashInterval));
-          dispatch(setNotes(updatedNotes));
+          dispatch(setNotes(updatedNotes)); // Only non-trash notes here
+          dispatch(setDeletedNotes(deletedNotes)); // Only trash notes here
           dispatch(setTagsData(tagsData));
-          dispatch(setDeletedNotes(deletedNotes));
 
           // Process notebooks
-          let Notebooks = {};
-          notebooks?.forEach((notebook) => {
-            Notebooks[notebook.notebookID] = {
+          const Notebooks = notebooks.reduce((acc, notebook) => {
+            acc[notebook.notebookID] = {
               notebookName: notebook.notebookName,
               usedInTemplate: notebook.usedInTemplate,
             };
-          });
+            return acc;
+          }, {});
           dispatch(setNoteBooks(Notebooks));
           dispatch(setAutoNotes(autoNotes));
-
-          console.log('Fetched data from notes snapshot...');
         }
       });
 
@@ -108,7 +106,6 @@ const Menubar = () => {
         if (doc.exists()) {
           const userData = doc.data();
           dispatch(setUser({ userData, userID }));
-          console.log('Fetched data from user snapshot...');
         }
       });
       return unSubscribe;
@@ -118,11 +115,8 @@ const Menubar = () => {
       if (!User) {
         router.push('/login');
       } else if (mount && user && Object.keys(user).length === 0) {
-        // Fetch user data and set up listeners
         fetchUserData(User.uid).then((response) => {
           const notesDocID = response.userData.notesDocID;
-
-          // Set up listeners for both notes and user data
           const unsubscribeNotes = listenToNotes(notesDocID);
           const unsubscribeUser = listenToUser(response.userID);
 
@@ -133,14 +127,9 @@ const Menubar = () => {
         });
       }
     });
-  }, [dispatch, mount, router, user]);
+  }, [dispatch, mount, processNotesData, router, user]);
 
-  // Render DesktopSidebar or MobileSidebar based on screen size
-  if (isDesktop) {
-    return <DesktopSidebar />;
-  }
-
-  return <MobileSidebar />;
+  return isDesktop ? <DesktopSidebar /> : <MobileSidebar />;
 };
 
 export default Menubar;

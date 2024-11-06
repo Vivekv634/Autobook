@@ -12,15 +12,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [autoNoteName, setAutoNoteName] = useState('');
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
   const [alsoDeleteNotebook, setAlsoDeleteNotebook] = useState(false);
@@ -150,14 +150,7 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
                 loading || autoNoteNameError || autoNoteName.trim() === ''
               }
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Delete AutoNote'
-              )}
+              <ButtonLoader loading={loading} label="Delete AutoNote" />
             </Button>
           </DialogFooter>
         </form>

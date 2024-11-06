@@ -12,15 +12,15 @@ import { Label } from '@/components/ui/label';
 import { auth } from '@/firebase.config';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
 import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
 
 const NewNotebookDialog = ({ open, setOpen }) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [newNotebookName, setNewNotebookName] = useState('');
@@ -95,14 +95,7 @@ const NewNotebookDialog = ({ open, setOpen }) => {
               disabled={error || loading}
               type="submit"
             >
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Create Notebook'
-              )}
+              <ButtonLoader loading={loading} label="Create Notebook" />
             </Button>
           </DialogFooter>
         </form>

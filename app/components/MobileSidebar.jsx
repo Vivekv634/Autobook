@@ -64,7 +64,7 @@ const MobileSidebar = () => {
   };
 
   return (
-    <nav className="border-b flex justify-between p-2 px-4">
+    <nav className="border-b flex justify-between p-2 px-4 fixed top-0 left-0 z-10 w-full">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" className="px-4" aria-label="sidemenu">

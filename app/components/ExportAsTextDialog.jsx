@@ -13,11 +13,11 @@ import { convert } from 'html-to-text';
 import { Download } from 'lucide-react';
 import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 
 export default function ExportAsTextDialog({ html, noteTitle, open, setOpen }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const formattedHTML = pretty(html, { ocd: true });
   const Text = convert(formattedHTML);
   const toast = useCustomToast();

@@ -2,19 +2,19 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import EditorJS from '@editorjs/editorjs';
-import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '@/app/utils/editorConfig';
 import axios from 'axios';
 import { useCustomToast } from '@/app/components/SendToast';
 import hotkeys from 'hotkeys-js';
+import ButtonLoader from '@/app/components/ButtonLoader';
 
 const EditAutoNoteTemplate = ({ params }) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { autoNotes, user } = useSelector((state) => state.note);
   const [data, setData] = useState();
   const editorInstance = useRef(null);
@@ -104,14 +104,7 @@ const EditAutoNoteTemplate = ({ params }) => {
             className="disabled:cursor-not-allowed font-semibold"
             onClick={handleSave}
           >
-            {loading ? (
-              <div className="flex items-center">
-                <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />
-                Loading...
-              </div>
-            ) : (
-              'Save changes'
-            )}
+            <ButtonLoader loading={loading} label="Save changes" />
           </Button>
         </div>
         <Separator className="my-2" />

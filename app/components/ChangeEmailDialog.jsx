@@ -17,9 +17,9 @@ import {
   verifyBeforeUpdateEmail,
 } from 'firebase/auth';
 import { auth } from '@/firebase.config';
-import { Loader2 } from 'lucide-react';
 import { useCustomToast } from './SendToast';
 import { useSelector } from 'react-redux';
+import ButtonLoader from './ButtonLoader';
 
 export default function ChangeEmailDialog({ open, setOpen }) {
   const { user } = useSelector((state) => state.note);
@@ -97,14 +97,7 @@ export default function ChangeEmailDialog({ open, setOpen }) {
               Cancel
             </DialogClose>
             <Button type="submit">
-              {loading ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-[18px] mr-1 my-auto animate-spin" />{' '}
-                  Loading...
-                </div>
-              ) : (
-                'Send Verification Email'
-              )}
+              <ButtonLoader loading={loading} label="Send Verification Email" />
             </Button>
           </DialogFooter>
         </form>

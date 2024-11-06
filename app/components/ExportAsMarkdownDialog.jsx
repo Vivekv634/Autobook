@@ -14,7 +14,7 @@ import pretty from 'pretty';
 import { CodeBlock, dracula } from 'react-code-blocks';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';
-import { useMediaQuery } from 'usehooks-ts';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 
 export default function ExportAsMarkdownDialog({
@@ -23,7 +23,7 @@ export default function ExportAsMarkdownDialog({
   open,
   setOpen,
 }) {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const isDesktop = useMediaHook({screenWidth: 768});
   const formattedHTML = pretty(html, { ocd: true });
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
