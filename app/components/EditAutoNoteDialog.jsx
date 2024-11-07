@@ -31,7 +31,13 @@ import { useSelector } from 'react-redux';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
 
-const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
+const EditAutoNoteDialog = ({
+  notebooks,
+  autoNote,
+  open,
+  setOpen,
+  isContextOpen,
+}) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [autoNoteName, setAutoNoteName] = useState(autoNote.autoNoteName);
   const [titleFormat, setTitleFormat] = useState(autoNote.titleFormat);
@@ -164,7 +170,17 @@ const EditAutoNoteDialog = ({ notebooks, autoNote, open, setOpen }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open && !isContextOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Auto Note</DialogTitle>

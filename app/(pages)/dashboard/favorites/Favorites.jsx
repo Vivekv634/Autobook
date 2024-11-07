@@ -11,8 +11,8 @@ const FavoriteComponent = () => {
 
   return (
     <>
-      <section className="p-2 flex flex-col">
-        {favoriteNotes.length > 0 &&
+      <section className="p-2 flex gap-4 flex-col">
+        {favoriteNotes.length != 0 &&
           favoriteNotes.map((note, index) => {
             return (
               <Note

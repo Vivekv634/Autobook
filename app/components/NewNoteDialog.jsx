@@ -1,6 +1,5 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -28,7 +27,7 @@ import VerifyEmailTemplate from './VerifyEmailTemplate';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
 
-export default function NewNoteDialog({ open, setOpen }) {
+export default function NewNoteDialog() {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [noteTitle, setNoteTitle] = useState('');
   const [tags, setTags] = useState('');
@@ -113,7 +112,6 @@ export default function NewNoteDialog({ open, setOpen }) {
       });
       setNewNotebookName('');
       setLoading(false);
-      setOpen((open) => !open);
       toast({
         description: 'Note Created successfully!',
         color: user?.userData?.theme,
@@ -131,116 +129,112 @@ export default function NewNoteDialog({ open, setOpen }) {
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create Note</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={(e) => handleCreateNote(e)}>
-          <div>
-            <Label htmlFor="noteTitle">
-              Note Title{' '}
-              <span className="text-muted-foreground text-[.8rem]">
-                (Required)
-              </span>
-            </Label>
-            <Input
-              value={noteTitle}
-              onChange={(e) => setNoteTitle(e.target.value)}
-              id="noteTitle"
-              required
-            />
-          </div>
-          <div className="my-2">
-            <Label htmlFor="tags">
-              Tags{' '}
-              <span className="text-muted-foreground text-[.8rem]">
-                (Multiple with spaces)
-              </span>
-            </Label>
-            <Input
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              id="tags"
-              placeholder="tag1 tag2 ..."
-            />
-            <Label
-              className={cn(
-                tags.trim() == '' && 'hidden',
-                'text-muted-foreground',
-              )}
-            >
-              Preview: {tagsPreview}
-            </Label>
-          </div>
-          <div className={cn(newNotebookFlag && 'hidden')}>
-            <Label>Select Notebook</Label>
-            <Select
-              value={Notebook}
-              onValueChange={(e) => setNotebook(e)}
-              disabled={newNotebookFlag}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
-                <SelectItem value="none" key="none" className="text-red-400">
-                  Select Notebook
-                </SelectItem>
-                {Object.keys(notebooks).map((notebook_id, index) => {
-                  return (
-                    <SelectItem value={notebook_id} key={index}>
-                      {notebooks[notebook_id].notebookName}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className={cn(!newNotebookFlag && 'hidden')}>
-            <Label>New Notebook Name</Label>
-            <Input
-              placeholder="Enter New Notebook Name..."
-              value={newNotebookName}
-              onChange={(e) => setNewNotebookName(e.target.value)}
-              disabled={!newNotebookFlag}
-            />
-            <Label
-              className={cn(
-                (newNotebookName.trim() == '' || newNotebookName == '') &&
-                  'hidden',
-                'text-muted-foreground block mt-1',
-              )}
-            >
-              Preview: {notebookNamePreview}
-            </Label>
-            <Label className="text-red-400">{error}</Label>
-          </div>
-          <div className="flex items-center gap-1 my-2">
-            <Checkbox
-              checked={newNotebookFlag}
-              onCheckedChange={setNewNotebookFlag}
-              id="newNotebook"
-              disabled={Object.keys(notebooks).length == 0}
-            />
-            <Label htmlFor="newNotebook">Create a new Notebook</Label>
-          </div>
-          <DialogFooter>
-            <DialogClose
-              className={cn(buttonVariants({ variant: 'secondary' }))}
-            >
-              Cancel
-            </DialogClose>
-            <Button
-              className={cn(!isDesktop && 'my-2', 'font-semibold')}
-              disabled={loading || error}
-              type="submit"
-            >
-              <ButtonLoader loading={loading} label="Create Note" />
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Create Note</DialogTitle>
+      </DialogHeader>
+      <form onSubmit={(e) => handleCreateNote(e)}>
+        <div>
+          <Label htmlFor="noteTitle">
+            Note Title{' '}
+            <span className="text-muted-foreground text-[.8rem]">
+              (Required)
+            </span>
+          </Label>
+          <Input
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value)}
+            id="noteTitle"
+            required
+          />
+        </div>
+        <div className="my-2">
+          <Label htmlFor="tags">
+            Tags{' '}
+            <span className="text-muted-foreground text-[.8rem]">
+              (Multiple with spaces)
+            </span>
+          </Label>
+          <Input
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            id="tags"
+            placeholder="tag1 tag2 ..."
+          />
+          <Label
+            className={cn(
+              tags.trim() == '' && 'hidden',
+              'text-muted-foreground',
+            )}
+          >
+            Preview: {tagsPreview}
+          </Label>
+        </div>
+        <div className={cn(newNotebookFlag && 'hidden')}>
+          <Label>Select Notebook</Label>
+          <Select
+            value={Notebook}
+            onValueChange={(e) => setNotebook(e)}
+            disabled={newNotebookFlag}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper" side="top" align="end">
+              <SelectItem value="none" key="none" className="text-red-400">
+                Select Notebook
+              </SelectItem>
+              {Object.keys(notebooks).map((notebook_id, index) => {
+                return (
+                  <SelectItem value={notebook_id} key={index}>
+                    {notebooks[notebook_id].notebookName}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className={cn(!newNotebookFlag && 'hidden')}>
+          <Label>New Notebook Name</Label>
+          <Input
+            placeholder="Enter New Notebook Name..."
+            value={newNotebookName}
+            onChange={(e) => setNewNotebookName(e.target.value)}
+            disabled={!newNotebookFlag}
+          />
+          <Label
+            className={cn(
+              (newNotebookName.trim() == '' || newNotebookName == '') &&
+                'hidden',
+              'text-muted-foreground block mt-1',
+            )}
+          >
+            Preview: {notebookNamePreview}
+          </Label>
+          <Label className="text-red-400">{error}</Label>
+        </div>
+        <div className="flex items-center gap-1 my-2">
+          <Checkbox
+            checked={newNotebookFlag}
+            onCheckedChange={setNewNotebookFlag}
+            id="newNotebook"
+            disabled={Object.keys(notebooks).length == 0}
+          />
+          <Label htmlFor="newNotebook">Create a new Notebook</Label>
+        </div>
+        <DialogFooter>
+          <DialogClose className={cn(buttonVariants({ variant: 'secondary' }))}>
+            Cancel
+          </DialogClose>
+          <Button
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
+            disabled={loading || error}
+            type="submit"
+          >
+            <ButtonLoader loading={loading} label="Create Note" />
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
   );
 }

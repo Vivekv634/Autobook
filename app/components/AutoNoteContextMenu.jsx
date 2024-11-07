@@ -7,7 +7,6 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { Dialog } from '@/components/ui/dialog';
 import {
   PenLine,
   SquareArrowOutUpRight,
@@ -28,6 +27,7 @@ import { useCustomToast } from './SendToast';
 const AutoNoteContextMenu = ({ autoNote, children }) => {
   const [deleteDialogOpen, setDeteleDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const { user, notebooks } = useSelector((state) => state.note);
   const toast = useCustomToast();
   const router = useRouter();
@@ -99,72 +99,72 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
   };
 
   return (
-    <Dialog>
-      <ContextMenu>
-        <ContextMenuTrigger>{children}</ContextMenuTrigger>
-        <ContextMenuContent className="w-48">
-          <ContextMenuItem
-            onClick={() => setEditDialogOpen(true)}
-            className="flex justify-between items-center"
-          >
-            Edit
-            <PenLine className="h-4 w-5" />
-          </ContextMenuItem>
-          <ContextMenuItem
-            onClick={() =>
-              router.push(
-                `/dashboard/${user?.userData?.notesDocID}/auto-note/${autoNote.autoNoteID}/edit-template`,
-              )
-            }
-            className="flex justify-between items-center"
-          >
-            Edit template
-            <SquareArrowOutUpRight className="h-4 w-5" />
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuRadioGroup value={autoNote.state}>
-            {state.map((State, index) => {
-              return (
-                <ContextMenuRadioItem
-                  key={index}
-                  value={State.value}
-                  onClick={() => {
-                    handleAutoNoteStateChange(State.value);
-                  }}
-                >
-                  {State.label}
-                </ContextMenuRadioItem>
-              );
-            })}
-          </ContextMenuRadioGroup>
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            onClick={handleCreateNote}
-            className="flex justify-between items-center"
-          >
-            Create note now <SquarePlus className="h-4 w-5" />
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            onClick={() => setDeteleDialogOpen(true)}
-            className="flex justify-between items-center text-red-400"
-          >
-            Delete <Trash2 className="h-4 w-5" />
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
+    <ContextMenu onOpenChange={setContextMenuOpen}>
+      <ContextMenuTrigger>{children}</ContextMenuTrigger>
+      <ContextMenuContent className="w-48">
+        <ContextMenuItem
+          onClick={() => setEditDialogOpen(true)}
+          className="flex justify-between items-center"
+        >
+          Edit
+          <PenLine className="h-4 w-5" />
+        </ContextMenuItem>
+        <ContextMenuItem
+          onClick={() =>
+            router.push(
+              `/dashboard/${user?.userData?.notesDocID}/auto-note/${autoNote.autoNoteID}/edit-template`,
+            )
+          }
+          className="flex justify-between items-center"
+        >
+          Edit template
+          <SquareArrowOutUpRight className="h-4 w-5" />
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuRadioGroup value={autoNote.state}>
+          {state.map((State, index) => {
+            return (
+              <ContextMenuRadioItem
+                key={index}
+                value={State.value}
+                onClick={() => {
+                  handleAutoNoteStateChange(State.value);
+                }}
+              >
+                {State.label}
+              </ContextMenuRadioItem>
+            );
+          })}
+        </ContextMenuRadioGroup>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={handleCreateNote}
+          className="flex justify-between items-center"
+        >
+          Create note now <SquarePlus className="h-4 w-5" />
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          onClick={() => setDeteleDialogOpen(true)}
+          className="flex justify-between items-center text-red-400"
+        >
+          Delete <Trash2 className="h-4 w-5" />
+        </ContextMenuItem>
+      </ContextMenuContent>
       <EditAutoNoteDialog
         notebooks={notebooks}
         autoNote={autoNote}
         open={editDialogOpen}
         setOpen={setEditDialogOpen}
+        isContextOpen={contextMenuOpen}
       />
       <DeleteAutoNoteDialog
         AutoNote={autoNote}
         open={deleteDialogOpen}
         setOpen={setDeteleDialogOpen}
+        isContextOpen={contextMenuOpen}
       />
-    </Dialog>
+    </ContextMenu>
   );
 };
 

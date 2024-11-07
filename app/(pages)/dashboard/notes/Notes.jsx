@@ -17,9 +17,10 @@ import Image from 'next/image';
 import NoteNotFoundSVG from '@/public/note-not-found.svg';
 import { Label } from '@/components/ui/label';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
-import hotkeys from 'hotkeys-js';
 import { Separator } from '@/components/ui/separator';
 import NotesMoreToolsDropDownMenu from '@/app/components/NotesMoreToolsDropDownMenu';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import hotkeys from 'hotkeys-js';
 
 const NotesComponent = () => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
@@ -27,13 +28,13 @@ const NotesComponent = () => {
     (state) => state.note,
   );
   const [searchOpen, setSearchOpen] = useState(false);
-  const [openNewNote, setOpenNewNote] = useState(false);
   const [notesViewCSS, setNotesViewCSS] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
+  const [newNoteDialog, setNewNoteDialog] = useState(false);
 
-  hotkeys('ctrl+m, window+m, command+m', (e) => {
-    e.preventDefault();
-    setOpenNewNote(true);
-  });
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     setNotesViewCSS(
@@ -42,6 +43,13 @@ const NotesComponent = () => {
         : 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 grid',
     );
   }, [notesView]);
+
+  hotkeys('ctrl+m, command+m', (e) => {
+    e.preventDefault();
+    setNewNoteDialog(true);
+  });
+
+  if (!isMounted) return null;
 
   return (
     <TooltipProvider>
@@ -63,18 +71,19 @@ const NotesComponent = () => {
               </code>
             </span>
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={() => setOpenNewNote((open) => !open)}
-                className="h-11"
-                aria-label="add note"
-              >
-                <Plus />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Add new note.(CTRL+M)</TooltipContent>
-          </Tooltip>
+          <Dialog open={newNoteDialog} onOpenChange={setNewNoteDialog}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DialogTrigger>
+                  <Button className="h-11" aria-label="add note">
+                    <Plus />
+                  </Button>
+                </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Add new note (CTRL+M)</TooltipContent>
+            </Tooltip>
+            <NewNoteDialog />
+          </Dialog>
           <NotesMoreToolsDropDownMenu>
             <Button variant="outline" className="h-11">
               <Ellipsis />
@@ -84,7 +93,7 @@ const NotesComponent = () => {
       </section>
       <Separator className="my-4 hidden md:block" />
       <div className={notesViewCSS}>
-        {notes.length > 0 &&
+        {notes.length != 0 &&
           notes.map((note, index) => {
             return (
               <Note
@@ -110,7 +119,6 @@ const NotesComponent = () => {
           </div>
         </section>
       )}
-      <NewNoteDialog open={openNewNote} setOpen={setOpenNewNote} />
       <ManualGlobalSearchDialog open={searchOpen} setOpen={setSearchOpen} />
     </TooltipProvider>
   );

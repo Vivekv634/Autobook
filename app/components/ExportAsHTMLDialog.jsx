@@ -15,8 +15,14 @@ import { CodeBlock, dracula } from 'react-code-blocks';
 import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 
-export default function ExportAsHTMLDialog({ html, noteTitle, open, setOpen }) {
-  const isDesktop = useMediaHook({screenWidth: 768});
+export default function ExportAsHTMLDialog({
+  html,
+  noteTitle,
+  open,
+  setOpen,
+  isContextOpen,
+}) {
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const formattedHTML = pretty(html, { ocd: true });
   const toast = useCustomToast();
 
@@ -34,7 +40,17 @@ export default function ExportAsHTMLDialog({ html, noteTitle, open, setOpen }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open && !isContextOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         {html ? (
           <div className="overflow-auto">

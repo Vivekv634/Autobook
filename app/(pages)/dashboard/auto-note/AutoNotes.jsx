@@ -18,71 +18,73 @@ import { useMediaHook } from '@/app/utils/mediaHook';
 import AutoNoteNotFoundSVG from '@/public/autonote-not-found.svg';
 import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 import hotkeys from 'hotkeys-js';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
 const AutoNoteComponent = () => {
-  const isDesktop = useMediaHook({screenWidth: 768});
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { autoNotes } = useSelector((state) => state.note);
-  const [newAutoNoteOpen, setNewAutoNoteOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [newAutoNoteDialog, setNewAutoNoteDialog] = useState(false);
 
   hotkeys('ctrl+m, command+m', (e) => {
     e.preventDefault();
-    setNewAutoNoteOpen(true);
+    setNewAutoNoteDialog(true);
   });
 
   return (
     <TooltipProvider>
-      <Tooltip>
-        <section className="p-2 flex flex-col">
-          <div className="flex justify-between gap-1 mb-2">
-            <div
-              onClick={() => setOpen((open) => !open)}
-              className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
-            >
-              <span className="mx-2 cursor-pointer flex justify-between">
-                Search
-                <code
-                  className={cn(
-                    !isDesktop && 'hidden',
-                    'px-1 border rounded-md text-center',
-                  )}
-                >
-                  CTRL+K
-                </code>
-              </span>
-            </div>
-            <TooltipTrigger asChild>
-              <Button className="h-11" aria-label="add autonote">
-                <Plus />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Add new note. (CTRL+M)</TooltipContent>
+      <section className="p-2 flex flex-col">
+        <div className="flex justify-between gap-1 mb-2">
+          <div
+            onClick={() => setOpen((open) => !open)}
+            className="rounded-md border px-1 py-2 text-muted-foreground w-full lg:max-w-80 lg:ml-auto"
+          >
+            <span className="mx-2 cursor-pointer flex justify-between">
+              Search
+              <code
+                className={cn(
+                  !isDesktop && 'hidden',
+                  'px-1 border rounded-md text-center',
+                )}
+              >
+                CTRL+K
+              </code>
+            </span>
           </div>
-          {autoNotes?.length > 0 &&
-            autoNotes.map((autoNote, index) => {
-              return <AutoNote key={index} autoNote={autoNote} />;
-            })}
-        </section>
-        {autoNotes?.length == 0 && (
-          <section className="flex justify-center items-center h-full">
-            <div className="flex text-center h-inherit justify-center align-center">
-              <div>
-                <Image
-                  src={AutoNoteNotFoundSVG}
-                  alt="AutoNote not created yet!"
-                  loading="lazy"
-                />
-                <Label className="text-lg">AutoNote not created yet!</Label>
-              </div>
+          <Dialog open={newAutoNoteDialog} onOpenChange={setNewAutoNoteDialog}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DialogTrigger>
+                  <Button className="h-11" aria-label="add note">
+                    <Plus />
+                  </Button>
+                </DialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Add new note (CTRL+M)</TooltipContent>
+            </Tooltip>
+            <NewAutoNoteDialog setOpen={setNewAutoNoteDialog} />
+          </Dialog>
+        </div>
+        {autoNotes?.length != 0 &&
+          autoNotes.map((autoNote, index) => {
+            return <AutoNote key={index} autoNote={autoNote} />;
+          })}
+      </section>
+      {autoNotes?.length == 0 && (
+        <section className="flex justify-center items-center h-full">
+          <div className="flex text-center h-inherit justify-center align-center">
+            <div>
+              <Image
+                src={AutoNoteNotFoundSVG}
+                alt="AutoNote not created yet!"
+                loading="lazy"
+              />
+              <Label className="text-lg">AutoNote not created yet!</Label>
             </div>
-          </section>
-        )}
-        <NewAutoNoteDialog
-          open={newAutoNoteOpen}
-          setOpen={setNewAutoNoteOpen}
-        />
-        <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
-      </Tooltip>
+          </div>
+        </section>
+      )}
+      <ManualGlobalSearchDialog open={open} setOpen={setOpen} />
     </TooltipProvider>
   );
 };

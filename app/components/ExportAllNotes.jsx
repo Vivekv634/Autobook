@@ -26,12 +26,14 @@ import { gfm } from 'turndown-plugin-gfm';
 import { convert } from 'html-to-text';
 import { useMediaHook } from '@/app/utils/mediaHook';
 import { saveAs } from 'file-saver';
+import { useCustomToast } from './SendToast';
 
 export default function ExportAllNotes({ open, setOpen }) {
   const [exporttype, setExportType] = useState('html');
   const { user, notes } = useSelector((state) => state.note);
   const zip = new JSZip();
-  const isDesktop = useMediaHook({screenWidth: 768});
+  const toast = useCustomToast();
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
 
@@ -52,15 +54,23 @@ export default function ExportAllNotes({ open, setOpen }) {
   }
 
   const exportAllNotes = () => {
-    const folderName = user?.userData?.name ?? 'Notes';
-    const userNotes = zip.folder(folderName);
-    notes?.forEach((note) => {
-      let fileName = `${note.title}.${exporttype}`;
-      userNotes.file(fileName, fileData(note, exporttype));
-    });
-    zip
-      .generateAsync({ type: 'blob' })
-      .then((blob) => saveAs(blob, `${folderName}.zip`));
+    try {
+      const folderName = user?.userData?.name ?? 'Notes';
+      const userNotes = zip.folder(folderName);
+      notes?.forEach((note) => {
+        let fileName = `${note.title}.${exporttype}`;
+        userNotes.file(fileName, fileData(note, exporttype));
+      });
+      zip
+        .generateAsync({ type: 'blob' })
+        .then((blob) => saveAs(blob, `${folderName}.zip`));
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: 'Oops! something went wrong. Try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (

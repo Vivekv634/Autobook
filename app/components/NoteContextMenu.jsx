@@ -53,6 +53,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
   const [exportAsMarkdown, setExportAsMarkdown] = useState(false);
   const [printNote, setPrintNote] = useState(false);
   const [noteConfigDialog, setNoteConfigDialog] = useState(false);
+  const [isContextOpen, setIsContextOpen] = useState(false);
 
   const setEditorNoteState = () => {
     router.push(`/dashboard/${notesDocID}/${note.noteID}`);
@@ -164,22 +165,34 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
   };
 
   const duplicateNote = async () => {
-    let body = { ...note, updation_date: new Date().toString(), noteID: uid() };
-    const duplicateResponse = await axios.post(
-      `${process.env.API}/api/notes/create`,
-      body,
-      {
-        headers: {
-          notesDocID: notesDocID,
+    try {
+      let body = {
+        ...note,
+        updation_date: new Date().toString(),
+        noteID: uid(),
+      };
+      const duplicateResponse = await axios.post(
+        `${process.env.API}/api/notes/create`,
+        body,
+        {
+          headers: {
+            notesDocID: notesDocID,
+          },
         },
-      },
-    );
-    dispatch(setNotes(duplicateResponse.data.result));
-    toast({ description: 'Note duplicated!', color: user?.userData?.theme });
+      );
+      dispatch(setNotes(duplicateResponse.data.result));
+      toast({ description: 'Note duplicated!', color: user?.userData?.theme });
+    } catch (error) {
+      console.error(error);
+      toast({
+        description: 'Oops! Something went wrong. Try again!',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
-    <ContextMenu>
+    <ContextMenu onOpenChange={setIsContextOpen}>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
       {pathName.split('/')[2] != 'trash' ? (
         <ContextMenuContent className="min-w-48">
@@ -322,21 +335,25 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={copyAsHTML}
         setOpen={setCopyAsHTML}
+        isContextOpen={isContextOpen}
       />
       <CopyAsMarkdownDialog
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={copyAsMarkdown}
         setOpen={setCopyAsMarkdown}
+        isContextOpen={isContextOpen}
       />
       <CopyAsTextDialog
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={copyAsText}
+        isContextOpen={isContextOpen}
         setOpen={setCopyAsText}
       />
       <ExportAsTextDialog
         noteTitle={note.title}
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={exportAsText}
+        isContextOpen={isContextOpen}
         setOpen={setExportAsText}
       />
       <ExportAsMarkdownDialog
@@ -344,19 +361,23 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={exportAsMarkdown}
         setOpen={setExportAsMarkdown}
+        isContextOpen={isContextOpen}
       />
       <ExportAsHTMLDialog
         noteTitle={note.title}
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={exportAsHTML}
         setOpen={setExportAsHTML}
+        isContextOpen={isContextOpen}
       />
       <NotePrintDialog
         html={editorJsToHtml(JSON.parse(note.body || '{}')?.blocks)}
         open={printNote}
+        isContextOpen={isContextOpen}
         setOpen={setPrintNote}
       />
       <NoteConfigDialog
+        isContextOpen={isContextOpen}
         note={note}
         open={noteConfigDialog}
         setOpen={setNoteConfigDialog}

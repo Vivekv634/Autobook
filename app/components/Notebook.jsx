@@ -22,6 +22,7 @@ import DeleteNotebookDialog from './DeleteNotebookAlertDialog';
 export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
   const [open, setOpen] = useState(false);
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
+  const [dropDownMenuOpen, setDropDownMenuOpen] = useState(false);
 
   return (
     <AccordionItem key={notebook_id} value={notebook_id}>
@@ -32,7 +33,7 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
         >
           {notebooks[notebook_id].notebookName}
         </AccordionTrigger>
-        <DropdownMenu>
+        <DropdownMenu onOpenChange={setDropDownMenuOpen}>
           <DropdownMenuTrigger>
             <Ellipsis className="min-h-7 min-w-9 border rounded-md" />
           </DropdownMenuTrigger>
@@ -49,7 +50,10 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
             </DropdownMenuItem>
             <DropdownMenuItem
               className="flex justify-between pr-6"
-              onClick={() => setOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(true);
+              }}
             >
               Export Notebook <ArrowDownToLine className="w-4 h-4" />
             </DropdownMenuItem>
@@ -62,12 +66,14 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
             </DropdownMenuItem>
           </DropdownMenuContent>
           <ExportNotebookDialog
+            isDropDownMenuOpen={dropDownMenuOpen}
             open={open}
             setOpen={setOpen}
             notes={notes}
             notebook_id={notebook_id}
           />
           <DeleteNotebookDialog
+            isDropDownMenuOpen={dropDownMenuOpen}
             open={alsoDeleteNotes}
             setOpen={setAlsoDeleteNotes}
             notebook_id={notebook_id}

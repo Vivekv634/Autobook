@@ -17,8 +17,13 @@ import { useMediaHook } from '@/app/utils/mediaHook';
 import { useCustomToast } from './SendToast';
 import { useSelector } from 'react-redux';
 
-export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
-  const isDesktop = useMediaHook({screenWidth: 768});
+export default function CopyAsMarkdownDialog({
+  html,
+  open,
+  setOpen,
+  isContextOpen,
+}) {
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const formattedHTML = pretty(html, { ocd: true });
   const { user } = useSelector((state) => state.note);
   const turndownServices = new TurndownService();
@@ -44,7 +49,17 @@ export default function CopyAsMarkdownDialog({ html, open, setOpen }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open && !isContextOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         {html ? (
           <div className="overflow-auto">

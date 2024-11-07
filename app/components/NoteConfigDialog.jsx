@@ -26,8 +26,14 @@ import { uid } from 'uid';
 import axios from 'axios';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
+import { document } from 'postcss';
 
-export default function NoteConfigDialog({ note, open, setOpen }) {
+export default function NoteConfigDialog({
+  note,
+  open,
+  setOpen,
+  isContextOpen,
+}) {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [tags, setTags] = useState(note?.tagsList.join(' ') || '');
@@ -136,7 +142,17 @@ export default function NoteConfigDialog({ note, open, setOpen }) {
   }
 
   return (
-    <Dialog open={open} setOpen={setOpen}>
+    <Dialog
+      open={open && !isContextOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Note</DialogTitle>

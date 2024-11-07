@@ -22,8 +22,9 @@ export default function ExportAsMarkdownDialog({
   noteTitle,
   open,
   setOpen,
+  isContextOpen,
 }) {
-  const isDesktop = useMediaHook({screenWidth: 768});
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const formattedHTML = pretty(html, { ocd: true });
   const turndownServices = new TurndownService();
   turndownServices.use(gfm);
@@ -44,7 +45,17 @@ export default function ExportAsMarkdownDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open && !isContextOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         {html ? (
           <div className="overflow-auto">

@@ -26,6 +26,7 @@ export default function DeleteNotebookDialog({
   setOpen,
   notebook_id,
   notebookName,
+  isDropDownMenuOpen,
 }) {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const { notebooks, autoNotes, notes, user } = useSelector(
@@ -112,7 +113,17 @@ export default function DeleteNotebookDialog({
   if (!mount) return null;
 
   return (
-    <Dialog open={open} setOpen={setOpen}>
+    <Dialog
+      open={open && !isDropDownMenuOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>

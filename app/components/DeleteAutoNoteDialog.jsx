@@ -19,7 +19,7 @@ import axios from 'axios';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
 
-const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
+const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [autoNoteName, setAutoNoteName] = useState('');
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
@@ -87,7 +87,17 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen }) => {
     }
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open && !isContextOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        setTimeout(() => {
+          if (!open) {
+            document.body.style.pointerEvents = '';
+          }
+        }, 100);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete AutoNote</DialogTitle>

@@ -1,6 +1,5 @@
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
@@ -19,7 +18,7 @@ import VerifyEmailTemplate from './VerifyEmailTemplate';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
 
-const NewNotebookDialog = ({ open, setOpen }) => {
+const NewNotebookDialog = ({ setOpen }) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -49,7 +48,7 @@ const NewNotebookDialog = ({ open, setOpen }) => {
       );
       setLoading(false);
       setNewNotebookName('');
-      setOpen((open) => !open);
+      setOpen(false);
       toast({
         description: (
           <span>
@@ -72,35 +71,33 @@ const NewNotebookDialog = ({ open, setOpen }) => {
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>New Notebook</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={(e) => handleCreateNewNotebook(e)}>
-          <Input
-            value={newNotebookName}
-            onChange={(e) => setNewNotebookName(e.target.value)}
-            required
-            placeholder="Notebook Name"
-            className="mb-2"
-          />
-          <Label className="text-red-400">{error}</Label>
-          <DialogFooter>
-            <DialogClose className={buttonVariants({ variant: 'secondary' })}>
-              Cancel
-            </DialogClose>
-            <Button
-              className={cn(!isDesktop && 'my-2', 'font-semibold')}
-              disabled={error || loading}
-              type="submit"
-            >
-              <ButtonLoader loading={loading} label="Create Notebook" />
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>New Notebook</DialogTitle>
+      </DialogHeader>
+      <form onSubmit={(e) => handleCreateNewNotebook(e)}>
+        <Input
+          value={newNotebookName}
+          onChange={(e) => setNewNotebookName(e.target.value)}
+          required
+          placeholder="Notebook Name"
+          className="mb-2"
+        />
+        <Label className="text-red-400">{error}</Label>
+        <DialogFooter>
+          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+            Cancel
+          </DialogClose>
+          <Button
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
+            disabled={error || loading}
+            type="submit"
+          >
+            <ButtonLoader loading={loading} label="Create Notebook" />
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
   );
 };
 
