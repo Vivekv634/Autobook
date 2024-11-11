@@ -135,7 +135,7 @@ const LoginComponent = () => {
                 {error}
               </Label>
               <Label className="flex justify-end underline hover:no-underline font-semibold my-1">
-                <DialogTrigger className="border">
+                <DialogTrigger>
                   <span>Forgot password?</span>
                 </DialogTrigger>
               </Label>

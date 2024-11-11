@@ -62,6 +62,8 @@ const Menubar = () => {
           `${process.env.API}/api/account/user/${userID}`,
         );
         if (response?.data?.result) {
+          document.body.style.fontFamily =
+            response?.data?.result?.userData?.font;
           dispatch(setUser(response?.data?.result));
           return response?.data?.result;
         }

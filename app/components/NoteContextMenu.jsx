@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { setDeletedNotes, setNotes } from '../redux/slices/noteSlice';
 import axios from 'axios';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import { usePathname } from 'next/navigation';
 import {
   ContextMenu,
@@ -169,7 +169,7 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
       let body = {
         ...note,
         updation_date: new Date().toString(),
-        noteID: uid(),
+        noteID: v4(),
       };
       const duplicateResponse = await axios.post(
         `${process.env.API}/api/notes/create`,

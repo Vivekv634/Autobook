@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { useSelector } from 'react-redux';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useMediaHook } from '@/app/utils/mediaHook';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import axios from 'axios';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
@@ -86,7 +86,7 @@ export default function NoteConfigDialog({
     e.preventDefault();
     try {
       setLoading(true);
-      const notebookID = uid();
+      const notebookID = v4();
       const TAGS = tags.split(' ').filter((tag) => tag.trim());
       let noteBody = {
           title: noteTitle,

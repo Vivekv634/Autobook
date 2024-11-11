@@ -96,7 +96,7 @@ export default function ChangeEmailDialog({ open, setOpen }) {
             >
               Cancel
             </DialogClose>
-            <Button type="submit">
+            <Button disabled={loading} type="submit">
               <ButtonLoader loading={loading} label="Send Verification Email" />
             </Button>
           </DialogFooter>

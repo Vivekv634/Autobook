@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { pages, themes } from '@/app/utils/pageData';
+import { fonts, pages, themes } from '@/app/utils/pageData';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import ImportNotesDialog from '@/app/components/ImportNotesDialog';
@@ -25,6 +25,9 @@ import ButtonLoader from '@/app/components/ButtonLoader';
 const SettingsComponent = () => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const { user } = useSelector((state) => state.note);
+  const [userFont, setUserFont] = useState(
+    user && user?.userData && user?.userData?.font,
+  );
   const [userTheme, setUserTheme] = useState(
     user && user?.userData && user?.userData?.theme,
   );
@@ -36,6 +39,7 @@ const SettingsComponent = () => {
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
   const [themeLoading, setThemeLoading] = useState(false);
+  const [fontLoading, setFontLoading] = useState(false);
   const toast = useCustomToast();
 
   const handleThemeChange = async () => {
@@ -54,6 +58,29 @@ const SettingsComponent = () => {
     } catch (error) {
       console.error(error);
       setThemeLoading(false);
+      toast({
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleFontChange = async () => {
+    try {
+      setFontLoading(true);
+      const body = { font: userFont };
+      await axios.put(
+        `${process.env.API}/api/account/update/${user.userID}`,
+        body,
+      );
+      setFontLoading(false);
+      toast({
+        description: 'Font updated!',
+        color: userTheme,
+      });
+    } catch (error) {
+      console.error(error);
+      setFontLoading(false);
       toast({
         description: 'Oops! something went wrong. Try again later!',
         variant: 'destructive',
@@ -122,8 +149,47 @@ const SettingsComponent = () => {
             <Button
               className={cn(user?.userData?.theme === userTheme && 'hidden')}
               onClick={handleThemeChange}
+              disabled={themeLoading}
             >
               <ButtonLoader loading={themeLoading} label="Save" />
+            </Button>
+          </div>
+        </div>
+        <Separator className="my-2" />
+        <div className="flex justify-between items-start">
+          <div>
+            <Label className="block font-bold">Font</Label>
+            <Label className="text-muted-foreground">
+              Set your prefered font
+            </Label>
+          </div>
+          <div className="flex flex-col items-end gap-2">
+            <Select
+              value={userFont}
+              onValueChange={(e) => {
+                setUserFont(e);
+                document.body.style.fontFamily = e;
+              }}
+            >
+              <SelectTrigger className="w-fit gap-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.keys(fonts).map((font) => {
+                  return (
+                    <SelectItem value={font} key={font}>
+                      {fonts[font]}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+            <Button
+              className={cn(user?.userData?.font === userFont && 'hidden')}
+              onClick={handleFontChange}
+              disabled={fontLoading}
+            >
+              <ButtonLoader loading={fontLoading} label="Save" />
             </Button>
           </div>
         </div>

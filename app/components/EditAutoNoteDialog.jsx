@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 import { useMediaHook } from '@/app/utils/mediaHook';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useCustomToast } from './SendToast';
@@ -91,7 +91,7 @@ const EditAutoNoteDialog = ({
         updatedNotebooks = { ...notebooks };
 
       if (newNotebookFlag) {
-        const notebookID = uid();
+        const notebookID = v4();
         autoNoteBody['autoNoteNotebookID'] = notebookID;
         Object.keys(updatedNotebooks).forEach((notebook_id) => {
           if (notebook_id === autoNote.autoNoteNotebookID) {

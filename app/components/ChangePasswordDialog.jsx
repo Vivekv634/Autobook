@@ -74,6 +74,7 @@ export default function ChangePasswordDialog({ open, setOpen }) {
             <Button
               type="submit"
               className={cn(!isDesktop && 'my-2', 'font-semibold')}
+              disabled={loading}
             >
               <ButtonLoader loading={loading} label="Send Verification Email" />
             </Button>

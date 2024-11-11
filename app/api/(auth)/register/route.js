@@ -33,7 +33,6 @@ const registerUser = async (name, email, password) => {
     authID: response.user.uid,
     notesDocID: notesResponse.id,
   };
-  console.log(userData);
   await addDoc(userDB, userData);
   return response;
 };

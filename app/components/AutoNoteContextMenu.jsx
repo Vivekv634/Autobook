@@ -21,7 +21,7 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { titleFormatter } from '../utils/titleFormatter';
 import { useRouter } from 'next/navigation';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import { useCustomToast } from './SendToast';
 
 const AutoNoteContextMenu = ({ autoNote, children }) => {
@@ -72,7 +72,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       );
       const newNoteBody = {
         ...notes,
-        noteID: uid(),
+        noteID: v4(),
         title: noteTitle,
         notebook_ref_id: autoNote.autoNoteNotebookID,
         body: autoNote.template || '{}',

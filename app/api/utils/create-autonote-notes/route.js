@@ -4,7 +4,7 @@ import { titleFormatter } from '@/app/utils/titleFormatter';
 import { db } from '@/firebase.config';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import nodemailer from 'nodemailer';
 import { emailTemplate } from '@/app/utils/emailTemplate';
 
@@ -50,7 +50,7 @@ export async function PATCH(request) {
           if (lastNoteGenerationTime <= currentTime) {
             newNoteBody = {
               ...Notes,
-              noteID: uid(),
+              noteID: v4(),
               title: titleFormatter(
                 autoNote.titleFormat,
                 autoNote.noteGenerated,

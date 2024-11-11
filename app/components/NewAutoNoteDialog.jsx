@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select';
 import { autoNote, generationPeriod, state } from '../utils/schema';
 import { Separator } from '@/components/ui/separator';
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 import { Checkbox } from '@/components/ui/checkbox';
 import { auth } from '@/firebase.config';
 import VerifyEmailTemplate from './VerifyEmailTemplate';
@@ -112,7 +112,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
       setLoading(true);
       let newAutoNoteBody = {
           ...autoNote,
-          autoNoteID: uid(),
+          autoNoteID: v4(),
           autoNoteName: autoNoteName,
           titleFormat: titleFormat,
           state: autoNoteState,
@@ -122,7 +122,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
         updatedNotebookArray = [],
         updatedNotebooks = { ...notebooks };
       if (Object.keys(notebooks).length == 0 || newNotebookFlag) {
-        const notebookID = uid();
+        const notebookID = v4();
         newAutoNoteBody['autoNoteNotebookID'] = notebookID;
         newNotebookBody = {
           notebookID: notebookID,

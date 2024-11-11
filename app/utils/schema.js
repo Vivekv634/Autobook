@@ -1,7 +1,6 @@
-import { uid } from 'uid';
+import { v4 } from 'uuid';
 
 export const notes = {
-  noteID: uid(),
   updation_date: new Date().toString(),
   notebook_ref_id: null,
   tagsList: [],
@@ -15,13 +14,13 @@ export const notes = {
 };
 
 export const notebooks = {
-  notebookID: uid(),
+  notebookID: v4(),
   notebookName: '',
   usedInTemplate: false,
 };
 
 export const autoNote = {
-  autoNoteID: uid(),
+  autoNoteID: v4(),
   autoNoteName: '',
   titleFormat: '',
   state: 'running',
@@ -64,7 +63,7 @@ export const userSchema = {
   email: '',
   authID: null,
   notesDocID: null,
-  defaultFontFamily: 'poppins',
+  font: 'poppins',
   defaultHomePage: 'notes',
   theme: 'dark',
   trashInterval: '30',

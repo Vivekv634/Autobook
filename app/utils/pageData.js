@@ -488,8 +488,13 @@ export const whyChooseUsCards = [
     src: 'https://plus.unsplash.com/premium_photo-1719933739393-6086c1bfa4cc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
   {
-    title:
-      'Fast and Lightweight: Optimized as a PWA for quick loading and offline access.',
+    title: 'Fast and Lightweight: Optimized as a PWA for quick loading.',
     src: 'https://plus.unsplash.com/premium_photo-1673460448921-9126847f12b8?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   },
 ];
+export const fonts = {
+  'sans-serif': 'Sans Serif',
+  sans: 'Sans',
+  poppins: 'Poppins',
+  ubuntu: 'Ubuntu',
+};
