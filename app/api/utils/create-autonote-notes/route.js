@@ -14,6 +14,10 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL,
     pass: process.env.PASSWORD,
   },
+  secure: true,
+  tls: {
+    rejectUnauthorized: true,
+  },
 });
 
 //eslint-disable-next-line
@@ -88,6 +92,7 @@ export async function PATCH(request) {
                   subject: 'New AutoNote Created!',
                   html,
                 })
+                .then(() => console.log(`Email sent to ${userDetails.email}`))
                 .catch((error) => console.error('Error sending email:', error));
             }
             console.info({

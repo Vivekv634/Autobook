@@ -21,7 +21,7 @@ import { themeColors } from '@/app/utils/pageData';
 
 const ProfileComponent = () => {
   const { user } = useSelector((state) => state.note);
-  const isDesktop = useMediaHook({screenWidth: 768});
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const [userNameDialog, setUserNameDialog] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState(false);
   const [changeEmail, setChangeEmail] = useState(false);
