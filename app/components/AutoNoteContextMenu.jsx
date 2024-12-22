@@ -6,23 +6,25 @@ import {
   ContextMenuRadioItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from '@/components/ui/context-menu';
+} from "@/components/ui/context-menu";
 import {
   PenLine,
   SquareArrowOutUpRight,
   SquarePlus,
   Trash2,
-} from 'lucide-react';
-import React, { useState } from 'react';
-import EditAutoNoteDialog from './EditAutoNoteDialog';
-import DeleteAutoNoteDialog from './DeleteAutoNoteDialog';
-import { notes, state } from '../utils/schema';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { titleFormatter } from '../utils/titleFormatter';
-import { useRouter } from 'next/navigation';
-import { v4 } from 'uuid';
-import { useCustomToast } from './SendToast';
+} from "lucide-react";
+import React, { useState } from "react";
+import EditAutoNoteDialog from "./EditAutoNoteDialog";
+import DeleteAutoNoteDialog from "./DeleteAutoNoteDialog";
+import { notes, state } from "../utils/schema";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { titleFormatter } from "../utils/titleFormatter";
+import { useRouter } from "next/navigation";
+import { v4 } from "uuid";
+import { useCustomToast } from "./SendToast";
+import { cn } from "@/lib/utils";
+import fontClassifier from "../utils/font-classifier";
 
 const AutoNoteContextMenu = ({ autoNote, children }) => {
   const [deleteDialogOpen, setDeteleDialogOpen] = useState(false);
@@ -38,9 +40,9 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
       let updatedAutoNoteBody = {
         state: newState,
       };
-      if (newState == 'running') {
+      if (newState == "running") {
         const currentTime = new Date().getTime();
-        updatedAutoNoteBody['lastNoteGenerationTime'] = currentTime;
+        updatedAutoNoteBody["lastNoteGenerationTime"] = currentTime;
       }
       await axios.put(
         `${process.env.API}/api/auto-notes/update/${autoNote.autoNoteID}`,
@@ -58,8 +60,8 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
     } catch (error) {
       console.error(error);
       toast({
-        description: 'Oops! Something went wrong. Please try again later.',
-        variant: 'destructive',
+        description: "Oops! Something went wrong. Please try again later.",
+        variant: "destructive",
       });
     }
   };
@@ -75,7 +77,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
         noteID: v4(),
         title: noteTitle,
         notebook_ref_id: autoNote.autoNoteNotebookID,
-        body: autoNote.template || '{}',
+        body: autoNote.template || "{}",
       };
       await axios.post(`${process.env.API}/api/notes/create`, newNoteBody, {
         headers: { notesDocID: user?.userData?.notesDocID },
@@ -86,14 +88,14 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
         { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       toast({
-        description: 'New Note created successfully',
+        description: "New Note created successfully",
         color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
       toast({
-        description: 'Oops! Something went wrong. Please try again later.',
-        variant: 'destructive',
+        description: "Oops! Something went wrong. Please try again later.",
+        variant: "destructive",
       });
     }
   };
@@ -101,7 +103,9 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
   return (
     <ContextMenu onOpenChange={setContextMenuOpen}>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-48">
+      <ContextMenuContent
+        className={cn(fontClassifier(user?.userData?.font), "w-48")}
+      >
         <ContextMenuItem
           onClick={() => setEditDialogOpen(true)}
           className="flex justify-between items-center"
@@ -113,8 +117,7 @@ const AutoNoteContextMenu = ({ autoNote, children }) => {
           onClick={() =>
             router.push(
               `/dashboard/${user?.userData?.notesDocID}/auto-note/${autoNote.autoNoteID}/edit-template`,
-            )
-          }
+            )}
           className="flex justify-between items-center"
         >
           Edit template

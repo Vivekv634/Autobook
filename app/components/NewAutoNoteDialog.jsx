@@ -1,58 +1,59 @@
-import { Button, buttonVariants } from '@/components/ui/button';
-import htmlToEditorJs from '../utils/htmlToEditor';
-import { useSelector } from 'react-redux';
-import { acceptedFileType } from '../utils/schema';
+import { Button, buttonVariants } from "@/components/ui/button";
+import htmlToEditorJs from "../utils/htmlToEditor";
+import { useSelector } from "react-redux";
+import { acceptedFileType } from "../utils/schema";
 import {
   DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { CircleHelp } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import { titleFormatter } from '../utils/titleFormatter';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { CircleHelp } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import { titleFormatter } from "../utils/titleFormatter";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { autoNote, generationPeriod, state } from '../utils/schema';
-import { Separator } from '@/components/ui/separator';
-import { v4 } from 'uuid';
-import { Checkbox } from '@/components/ui/checkbox';
-import { auth } from '@/firebase.config';
-import VerifyEmailTemplate from './VerifyEmailTemplate';
-import Showdown from 'showdown';
-import axios from 'axios';
-import textToEditorJs from '../utils/textToEditorJs';
-import { useCustomToast } from './SendToast';
-import ButtonLoader from './ButtonLoader';
+} from "@/components/ui/select";
+import { autoNote, generationPeriod, state } from "../utils/schema";
+import { Separator } from "@/components/ui/separator";
+import { v4 } from "uuid";
+import { Checkbox } from "@/components/ui/checkbox";
+import { auth } from "@/firebase.config";
+import VerifyEmailTemplate from "./VerifyEmailTemplate";
+import Showdown from "showdown";
+import axios from "axios";
+import textToEditorJs from "../utils/textToEditorJs";
+import { useCustomToast } from "./SendToast";
+import ButtonLoader from "./ButtonLoader";
+import fontClassifier from "../utils/font-classifier";
 
 const NewAutoNoteDialog = ({ setOpen }) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
-  const [autoNoteName, setAutoNoteName] = useState('');
-  const [titleFormat, setTitleFormat] = useState('');
+  const [autoNoteName, setAutoNoteName] = useState("");
+  const [titleFormat, setTitleFormat] = useState("");
   const [showHelp, setShowHelp] = useState(false);
   const [error, setError] = useState(null);
-  const [period, setPeriod] = useState('1 day');
+  const [period, setPeriod] = useState("1 day");
   const [loading, setLoading] = useState(false);
-  const [autoNoteState, setAutoNoteState] = useState('running');
+  const [autoNoteState, setAutoNoteState] = useState("running");
   const { notes, notebooks, user } = useSelector((state) => state.note);
-  const [selectedtemplateNote, setSelectedTemplateNote] = useState('none');
+  const [selectedtemplateNote, setSelectedTemplateNote] = useState("none");
   const [templateNotes] = useState(notes ?? []);
   const [anNotebook, setANNotebook] = useState(
-    autoNote.autoNoteNotebookID ?? 'none',
+    autoNote.autoNoteNotebookID ?? "none",
   );
   const [newNotebookFlag, setNewNotebookFlag] = useState(true);
   const [templateFromDevice, setTemplateFromDevice] = useState(false);
-  const [newNotebookName, setNewNotebookName] = useState('');
+  const [newNotebookName, setNewNotebookName] = useState("");
   const [notebookNameError, setNotebookNameError] = useState(null);
   const [notebookNamePreview, setNotebookNamePreview] = useState(null);
   const toast = useCustomToast();
@@ -66,8 +67,8 @@ const NewAutoNoteDialog = ({ setOpen }) => {
     ) {
       setNotebookNameError(
         <span>
-          <span className="font-bold">{newNotebookName}</span> notebook already
-          exists!
+          <span className="font-bold">{newNotebookName}</span>{" "}
+          notebook already exists!
         </span>,
       );
     } else {
@@ -76,9 +77,9 @@ const NewAutoNoteDialog = ({ setOpen }) => {
 
     setNotebookNamePreview(
       newNotebookName
-        .split(' ')
+        .split(" ")
         .map((word) => word.trim())
-        .join(' '),
+        .join(" "),
     );
   }, [setNotebookNameError, newNotebookName, notebooks]);
 
@@ -93,17 +94,17 @@ const NewAutoNoteDialog = ({ setOpen }) => {
   const handleCreateAutoNote = async (e) => {
     e.preventDefault();
     try {
-      if (anNotebook === 'none' && !newNotebookFlag) {
+      if (anNotebook === "none" && !newNotebookFlag) {
         toast({
-          description: 'You must select a notebook first!',
+          description: "You must select a notebook first!",
           color: user?.userData?.theme,
         });
         setLoading(false);
         return;
       }
-      if (newNotebookName == '' && newNotebookFlag) {
+      if (newNotebookName == "" && newNotebookFlag) {
         toast({
-          description: 'Create a new notebook first!',
+          description: "Create a new notebook first!",
           color: user?.userData?.theme,
         });
         setLoading(true);
@@ -111,25 +112,25 @@ const NewAutoNoteDialog = ({ setOpen }) => {
       }
       setLoading(true);
       let newAutoNoteBody = {
-          ...autoNote,
-          autoNoteID: v4(),
-          autoNoteName: autoNoteName,
-          titleFormat: titleFormat,
-          state: autoNoteState,
-          noteGenerationPeriod: period,
-        },
+        ...autoNote,
+        autoNoteID: v4(),
+        autoNoteName: autoNoteName,
+        titleFormat: titleFormat,
+        state: autoNoteState,
+        noteGenerationPeriod: period,
+      },
         newNotebookBody = {},
         updatedNotebookArray = [],
         updatedNotebooks = { ...notebooks };
       if (Object.keys(notebooks).length == 0 || newNotebookFlag) {
         const notebookID = v4();
-        newAutoNoteBody['autoNoteNotebookID'] = notebookID;
+        newAutoNoteBody["autoNoteNotebookID"] = notebookID;
         newNotebookBody = {
           notebookID: notebookID,
           notebookName: newNotebookName
-            .split(' ')
-            .filter((word) => word !== '')
-            .join(' '),
+            .split(" ")
+            .filter((word) => word !== "")
+            .join(" "),
           usedInTemplate: true,
         };
         Object.keys(updatedNotebooks).forEach((notebook_id) => {
@@ -146,7 +147,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               <span>
                 <span className="font-bold">
                   {notebooks[anNotebook].notebookName}
-                </span>{' '}
+                </span>{" "}
                 notebook is already used in another auto note.
               </span>
             ),
@@ -154,13 +155,14 @@ const NewAutoNoteDialog = ({ setOpen }) => {
           setLoading(false);
           return;
         }
-        newAutoNoteBody['autoNoteNotebookID'] = anNotebook;
+        newAutoNoteBody["autoNoteNotebookID"] = anNotebook;
         Object.keys(updatedNotebooks).map((notebook_id) => {
-          if (notebook_id === anNotebook)
+          if (notebook_id === anNotebook) {
             updatedNotebooks[notebook_id] = {
               ...updatedNotebooks[notebook_id],
               usedInTemplate: true,
             };
+          }
 
           updatedNotebookArray.push({
             notebookID: notebook_id,
@@ -174,35 +176,35 @@ const NewAutoNoteDialog = ({ setOpen }) => {
         const fileType = file.type;
         if (acceptedFileType.includes(fileType)) {
           const reader = new FileReader();
-          reader.addEventListener('load', async (e) => {
+          reader.addEventListener("load", async (e) => {
             const fileData = e.target.result;
             switch (fileType) {
-              case 'text/markdown': {
+              case "text/markdown": {
                 let html = converter.makeHtml(fileData);
                 blocks = htmlToEditorJs(html);
                 break;
               }
-              case 'text/html':
+              case "text/html":
                 blocks = htmlToEditorJs(fileData);
                 break;
-              case 'application/json':
+              case "application/json":
                 blocks = JSON.parse(fileData);
                 break;
-              case 'text/plain':
+              case "text/plain":
                 blocks = textToEditorJs(fileData).blocks;
                 break;
               default:
-                throw new Error('Invalid file type!');
+                throw new Error("Invalid file type!");
             }
-            newAutoNoteBody['template'] = JSON.stringify(blocks);
+            newAutoNoteBody["template"] = JSON.stringify(blocks);
           });
           reader.readAsText(file);
         }
-      } else if (!templateFromDevice && selectedtemplateNote != 'none') {
+      } else if (!templateFromDevice && selectedtemplateNote != "none") {
         const selectedNote = notes?.filter(
           (note) => note.noteID === selectedtemplateNote,
         );
-        newAutoNoteBody['template'] = selectedNote[0].body;
+        newAutoNoteBody["template"] = selectedNote[0].body;
       }
       await axios.post(
         `${process.env.API}/api/auto-notes/create`,
@@ -217,22 +219,22 @@ const NewAutoNoteDialog = ({ setOpen }) => {
         { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       setLoading(false);
-      setNewNotebookName('');
-      setAutoNoteName('');
-      setTitleFormat('');
-      setPeriod('1 day');
+      setNewNotebookName("");
+      setAutoNoteName("");
+      setTitleFormat("");
+      setPeriod("1 day");
       setOpen((open) => !open);
-      setAutoNoteState('running');
+      setAutoNoteState("running");
       toast({
-        description: 'Auto Note Created Successfully!',
+        description: "Auto Note Created Successfully!",
         color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
       setLoading(false);
       toast({
-        description: 'Oops! something went wrong!',
-        variant: 'destructive',
+        description: "Oops! something went wrong!",
+        variant: "destructive",
       });
     }
   };
@@ -240,7 +242,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <DialogContent>
+    <DialogContent className={fontClassifier(user?.userData?.font)}>
       <DialogHeader>
         <DialogTitle>Create auto note</DialogTitle>
       </DialogHeader>
@@ -302,7 +304,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               </>
             )}
           </Label>
-          <div className={cn(newNotebookFlag && 'hidden')}>
+          <div className={cn(newNotebookFlag && "hidden")}>
             <Label className="font-semibold">
               Select Notebook
               <span className="text-muted-foreground text-[.8rem]">
@@ -317,7 +319,12 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
+              <SelectContent
+                className={fontClassifier(user?.userData?.font)}
+                position="popper"
+                side="top"
+                align="end"
+              >
                 <SelectItem value="none" key="none" className="text-red-400">
                   Select Notebook
                 </SelectItem>
@@ -331,7 +338,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               </SelectContent>
             </Select>
           </div>
-          <div className={cn(!newNotebookFlag && 'hidden')}>
+          <div className={cn(!newNotebookFlag && "hidden")}>
             <Label className="font-semibold">
               New Notebook Name
               <span className="text-muted-foreground text-[.8rem]">
@@ -345,11 +352,11 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               required={newNotebookFlag}
               disabled={!newNotebookFlag}
             />
-            <Label className={cn('text-red-400')}>{notebookNameError}</Label>
+            <Label className={cn("text-red-400")}>{notebookNameError}</Label>
             <Label
               className={cn(
-                (notebookNameError || newNotebookName.trim() == '') && 'hidden',
-                'my-1 font-semibold',
+                (notebookNameError || newNotebookName.trim() == "") && "hidden",
+                "my-1 font-semibold",
               )}
             >
               Preview: {notebookNamePreview}
@@ -363,7 +370,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
             />
             <Label htmlFor="newNotebook">Create a new Notebook</Label>
           </div>
-          <div className={cn(templateFromDevice && 'hidden')}>
+          <div className={cn(templateFromDevice && "hidden")}>
             <Label className="font-semibold">Select Template from notes</Label>
             <Select
               value={selectedtemplateNote}
@@ -372,7 +379,12 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
+              <SelectContent
+                className={fontClassifier(user?.userData?.font)}
+                position="popper"
+                side="top"
+                align="end"
+              >
                 <SelectItem value="none" key="none" className="text-red-400">
                   None
                 </SelectItem>
@@ -386,7 +398,7 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               </SelectContent>
             </Select>
           </div>
-          <div className={cn(!templateFromDevice && 'hidden')}>
+          <div className={cn(!templateFromDevice && "hidden")}>
             <Label className="font-semibold">Select Template from Device</Label>
             <Input
               type="file"
@@ -411,7 +423,12 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               <SelectTrigger className="w-fit">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
+              <SelectContent
+                className={fontClassifier(user?.userData?.font)}
+                position="popper"
+                side="top"
+                align="end"
+              >
                 {generationPeriod.map((period, index) => {
                   return (
                     <SelectItem key={index} value={period.value}>
@@ -432,7 +449,12 @@ const NewAutoNoteDialog = ({ setOpen }) => {
               <SelectTrigger className="w-fit">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
+              <SelectContent
+                className={fontClassifier(user?.userData?.font)}
+                position="popper"
+                side="top"
+                align="end"
+              >
                 {state.map((state, index) => {
                   return (
                     <SelectItem key={index} value={state.value}>
@@ -445,11 +467,11 @@ const NewAutoNoteDialog = ({ setOpen }) => {
           </div>
         </div>
         <DialogFooter>
-          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+          <DialogClose className={buttonVariants({ variant: "secondary" })}>
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
+            className={cn(!isDesktop && "my-2", "font-semibold")}
             disabled={error != null || loading || notebookNameError}
             type="submit"
           >

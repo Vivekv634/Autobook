@@ -1,26 +1,30 @@
-'use client';
-import Note from '@/app/components/Note';
+"use client";
+import Note from "@/app/components/Note";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion';
+} from "@/components/ui/accordion";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { AccordionHeader } from '@radix-ui/react-accordion';
-import { ArrowDownToLine, Ellipsis, Pen, Trash2 } from 'lucide-react';
-import EditNotebookNameAlertDialog from './EditNotebookNameAlertDialog';
-import ExportNotebookDialog from './ExportNotebookDialog';
-import { useState } from 'react';
-import DeleteNotebookDialog from './DeleteNotebookAlertDialog';
+} from "@/components/ui/dropdown-menu";
+import { AccordionHeader } from "@radix-ui/react-accordion";
+import { ArrowDownToLine, Ellipsis, Pen, Trash2 } from "lucide-react";
+import EditNotebookNameAlertDialog from "./EditNotebookNameAlertDialog";
+import ExportNotebookDialog from "./ExportNotebookDialog";
+import { useState } from "react";
+import DeleteNotebookDialog from "./DeleteNotebookAlertDialog";
+import { cn } from "@/lib/utils";
+import fontClassifier from "../utils/font-classifier";
+import { useSelector } from "react-redux";
 
 export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
   const [open, setOpen] = useState(false);
+  const { user } = useSelector((state) => state.note);
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
   const [dropDownMenuOpen, setDropDownMenuOpen] = useState(false);
 
@@ -37,7 +41,9 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
           <DropdownMenuTrigger>
             <Ellipsis className="min-h-7 min-w-9 border rounded-md" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="mr-7">
+          <DropdownMenuContent
+            className={cn(fontClassifier(user?.userData?.font), "mr-7")}
+          >
             <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
               <EditNotebookNameAlertDialog
                 notebookName={notebooks[notebook_id].notebookName}
@@ -82,22 +88,24 @@ export function Notebook({ notebooks, notebook_id, notes, notesDocID }) {
         </DropdownMenu>
       </AccordionHeader>
       <AccordionContent>
-        {notes.length > 0 ? (
-          notes.map((note, index) => {
-            return (
-              <Note
-                key={index}
-                notesDocID={notesDocID}
-                notebook_name={notebooks[notebook_id].notebookName}
-                note={note}
-              />
-            );
-          })
-        ) : (
-          <div className="bg-neutral-800 flex align-center justify-center rounded-md px-2 py-4 text-lg">
-            Notebook is empty!
-          </div>
-        )}
+        {notes.length > 0
+          ? (
+            notes.map((note, index) => {
+              return (
+                <Note
+                  key={index}
+                  notesDocID={notesDocID}
+                  notebook_name={notebooks[notebook_id].notebookName}
+                  note={note}
+                />
+              );
+            })
+          )
+          : (
+            <div className="bg-neutral-800 flex align-center justify-center rounded-md px-2 py-4 text-lg">
+              Notebook is empty!
+            </div>
+          )}
       </AccordionContent>
     </AccordionItem>
   );

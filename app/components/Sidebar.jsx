@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   setAutoNotes,
   setDeletedNotes,
@@ -7,17 +7,17 @@ import {
   setTagsData,
   setTrashInterval,
   setUser,
-} from '@/app/redux/slices/noteSlice';
-import React, { useEffect, useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import DesktopSidebar from './DesktopSidebar';
-import MobileSidebar from './MobileSidebar';
-import axios from 'axios';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '@/firebase.config';
-import { useRouter } from 'next/navigation';
-import { doc, onSnapshot } from 'firebase/firestore';
+} from "@/app/redux/slices/noteSlice";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import DesktopSidebar from "./DesktopSidebar";
+import MobileSidebar from "./MobileSidebar";
+import axios from "axios";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "@/firebase.config";
+import { useRouter } from "next/navigation";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const Menubar = () => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
@@ -62,23 +62,24 @@ const Menubar = () => {
           `${process.env.API}/api/account/user/${userID}`,
         );
         if (response?.data?.result) {
-          document.body.style.fontFamily =
-            response?.data?.result?.userData?.font;
+          document.body.style.fontFamily = response?.data?.result?.userData
+            ?.font;
           dispatch(setUser(response?.data?.result));
           return response?.data?.result;
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       }
     };
 
     const listenToNotes = (notesDocID) => {
-      const docRef = doc(db, 'notes', notesDocID);
+      const docRef = doc(db, "notes", notesDocID);
       const unsubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
           const { notes, notebooks, autoNotes, trashInterval } = doc.data();
-          const { updatedNotes, deletedNotes, tagsData } =
-            processNotesData(notes);
+          const { updatedNotes, deletedNotes, tagsData } = processNotesData(
+            notes,
+          );
 
           // Dispatch Redux actions with separated notes
           dispatch(setTrashInterval(trashInterval));
@@ -103,7 +104,7 @@ const Menubar = () => {
     };
 
     const listenToUser = (userID) => {
-      const docRef = doc(db, 'users', userID);
+      const docRef = doc(db, "users", userID);
       const unSubscribe = onSnapshot(docRef, (doc) => {
         if (doc.exists()) {
           const userData = doc.data();
@@ -115,10 +116,10 @@ const Menubar = () => {
 
     onAuthStateChanged(auth, (User) => {
       if (!User) {
-        router.push('/login');
+        router.push("/login");
       } else if (mount && user && Object.keys(user).length === 0) {
         fetchUserData(User.uid).then((response) => {
-          const notesDocID = response.userData.notesDocID;
+          const notesDocID = response?.userData?.notesDocID;
           const unsubscribeNotes = listenToNotes(notesDocID);
           const unsubscribeUser = listenToUser(response.userID);
 

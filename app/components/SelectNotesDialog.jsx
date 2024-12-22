@@ -1,5 +1,5 @@
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -8,16 +8,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import ButtonLoader from './ButtonLoader';
-import { useCustomToast } from './SendToast';
-import axios from 'axios';
-import { themeColors } from '../utils/pageData';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import ButtonLoader from "./ButtonLoader";
+import { useCustomToast } from "./SendToast";
+import axios from "axios";
+import { themeColors } from "../utils/pageData";
+import fontClassifier from "../utils/font-classifier";
 
 export default function SelectNotesDialog({ isDropdownOpen, open, setOpen }) {
   const { notes, user } = useSelector((state) => state.note);
@@ -57,8 +58,8 @@ export default function SelectNotesDialog({ isDropdownOpen, open, setOpen }) {
       setLoading(false);
       console.error(error);
       toast({
-        description: 'Oops! something went wrong! Try again.',
-        variant: 'destructive',
+        description: "Oops! something went wrong! Try again.",
+        variant: "destructive",
       });
     }
   };
@@ -71,12 +72,12 @@ export default function SelectNotesDialog({ isDropdownOpen, open, setOpen }) {
         setTimeout(() => {
           if (!open) {
             setSelectedNotes([]);
-            document.body.style.pointerEvents = '';
+            document.body.style.pointerEvents = "";
           }
         }, 100);
       }}
     >
-      <DialogContent>
+      <DialogContent className={fontClassifier(user?.userData?.font)}>
         <DialogHeader>
           <DialogTitle>Select Notes</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>
@@ -106,7 +107,7 @@ export default function SelectNotesDialog({ isDropdownOpen, open, setOpen }) {
           </ScrollArea>
           <DialogFooter className="mt-2">
             <DialogClose
-              className={cn(buttonVariants({ variant: 'secondary' }))}
+              className={cn(buttonVariants({ variant: "secondary" }))}
             >
               Close
             </DialogClose>

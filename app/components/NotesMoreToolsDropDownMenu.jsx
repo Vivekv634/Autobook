@@ -7,13 +7,15 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useDispatch, useSelector } from 'react-redux';
-import { setNotesView } from '../redux/slices/noteSlice';
-import { Columns2, Rows2, SquareDashedMousePointer } from 'lucide-react';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import SelectNotesDialog from './SelectNotesDialog';
-import { useState } from 'react';
+} from "@/components/ui/dropdown-menu";
+import { useDispatch, useSelector } from "react-redux";
+import { setNotesView } from "../redux/slices/noteSlice";
+import { Columns2, Rows2, SquareDashedMousePointer } from "lucide-react";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import SelectNotesDialog from "./SelectNotesDialog";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import fontClassifier from "../utils/font-classifier";
 
 export default function NotesMoreToolsDropDownMenu({ children }) {
   const { notesView, notes } = useSelector((state) => state.note);
@@ -21,6 +23,7 @@ export default function NotesMoreToolsDropDownMenu({ children }) {
   const isDesktop = useMediaHook({ screenWidth: 1024 });
   const [selectNotes, setSelectNotes] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { user } = useSelector((state) => state.note);
 
   const handleNotesView = (e) => {
     dispatch(setNotesView(e));
@@ -29,7 +32,10 @@ export default function NotesMoreToolsDropDownMenu({ children }) {
     <>
       <DropdownMenu modal={true} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuContent
+          align="end"
+          className={cn(fontClassifier(user?.userData?.font), "w-52")}
+        >
           <DropdownMenuRadioGroup
             value={notesView}
             onValueChange={(e) => handleNotesView(e)}

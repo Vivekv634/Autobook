@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {
     // API: 'http://localhost:3000',
-    API: 'https://autobook1.vercel.app',
+    API: "https://autobook1.vercel.app",
     EMAIL: process.env.EMAIL,
     PASSWORD: process.env.PASSWORD,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
@@ -16,24 +16,24 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'api.dicebear.com',
+        protocol: "https",
+        hostname: "api.dicebear.com",
       },
       {
-        protocol: 'https',
-        hostname: 'plus.unsplash.com',
+        protocol: "https",
+        hostname: "plus.unsplash.com",
       },
       {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
       {
-        protocol: 'https',
-        hostname: 'assets.aceternity.com',
+        protocol: "https",
+        hostname: "assets.aceternity.com",
       },
       {
-        protocol: 'https',
-        hostname: 'firebasestorage.googleapis.com',
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
       },
     ],
   },

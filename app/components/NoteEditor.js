@@ -19,10 +19,9 @@ import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { editorConfig } from '../utils/editorConfig';
 import { useCustomToast } from './SendToast';
-import hotkeys from 'hotkeys-js';
 import ButtonLoader from './ButtonLoader';
 
-const NoteEditor = ({ params }) => {
+const NoteEditor = ({ params, readOnly, noteData }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const { notebooks, user, notes } = useSelector((state) => state.note);
   const [editorNote, setEditorNote] = useState();
@@ -35,38 +34,37 @@ const NoteEditor = ({ params }) => {
   const [notebookValue, setNotebookValue] = useState();
   const [editorInstance, setEditorInstance] = useState(null);
 
-  hotkeys('ctrl+s, command+s', (e) => {
-    e.preventDefault();
-    save();
-  });
-
   useEffect(() => {
-    notes.map((note) => {
-      if (note.noteID === noteID) {
-        setEditorNote(note);
-        setNoteTitle(editorNote?.title);
-        setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
-        setNotebookValue(
-          notebooks[editorNote?.notebook_ref_id]
-            ? editorNote?.notebook_ref_id
-            : 'none',
-        );
-      }
-    });
-  }, [
-    notes,
-    noteID,
-    editorNote?.title,
-    editorNote?.tagsList,
-    editorNote?.notebook_ref_id,
-    notebooks,
-  ]);
+    if (noteData) {
+      setEditorNote(noteData)
+      setNoteTitle(editorNote?.title);
+      setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
+      setNotebookValue(
+        notebooks[editorNote?.notebook_ref_id]
+          ? editorNote?.notebook_ref_id
+          : 'none',
+      );
+    } else {
+      notes.map((note) => {
+        if (note.noteID === noteID) {
+          setEditorNote(note || noteData);
+          setNoteTitle(editorNote?.title);
+          setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
+          setNotebookValue(
+            notebooks[editorNote?.notebook_ref_id]
+              ? editorNote?.notebook_ref_id
+              : 'none',
+          );
+        }
+      });
+    }
+  }, [notes, noteID, editorNote?.title, editorNote?.tagsList, editorNote?.notebook_ref_id, notebooks, noteData]);
 
   useEffect(() => {
     if (!editorNote?.body) return;
     const editor = new EditorJS({
       ...editorConfig,
-      readOnly: editorNote?.isReadOnly,
+      readOnly: readOnly || editorNote?.isReadOnly,
       data: JSON.parse(editorNote?.body || '{}'),
     });
     setEditorInstance(editor);
@@ -79,7 +77,7 @@ const NoteEditor = ({ params }) => {
         }
       }
     };
-  }, [editorNote?.body, editorNote?.isReadOnly]);
+  }, [editorNote?.body, editorNote?.isReadOnly, readOnly]);
 
   const save = useCallback(async () => {
     if (!editorInstance) return;
@@ -121,7 +119,7 @@ const NoteEditor = ({ params }) => {
         <div
           className={cn(
             !isDesktop &&
-              'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
+            'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
             isDesktop && 'flex justify-end gap-2 my-4 print:hidden',
           )}
         >
@@ -129,7 +127,7 @@ const NoteEditor = ({ params }) => {
             <Select
               value={notebookValue}
               onValueChange={setNotebookValue}
-              disabled={loading}
+              disabled={loading || readOnly}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -147,7 +145,7 @@ const NoteEditor = ({ params }) => {
             </Select>
           </div>
           <Button
-            disabled={loading}
+            disabled={loading || readOnly}
             className="disabled:cursor-not-allowed font-semibold"
             onClick={save}
           >
@@ -164,7 +162,7 @@ const NoteEditor = ({ params }) => {
             value={noteTitle}
             onChange={(e) => setNoteTitle(e.target.value)}
             required
-            disabled={loading}
+            disabled={loading || readOnly}
             id="noteTitle"
             className="bg-transparent px-1 outline-none border-none text-2xl font-semibold w-full truncate"
           />
@@ -196,7 +194,7 @@ const NoteEditor = ({ params }) => {
             onBlur={() => setTagsEditable(false)}
             value={noteTagsInput}
             onChange={(e) => setNoteTagsInput(e.target.value)}
-            disabled={loading || !tagsEditable}
+            disabled={loading || !tagsEditable || readOnly}
             className={cn(!tagsEditable && 'hidden')}
           />
         </div>

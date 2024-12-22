@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   Menubar,
   MenubarContent,
@@ -6,22 +6,25 @@ import {
   MenubarMenu,
   MenubarSeparator,
   MenubarTrigger,
-} from '@/components/ui/menubar';
-import React, { useEffect, useState } from 'react';
-import { Settings, UserRound, LogOut } from 'lucide-react';
-import { Label } from '@/components/ui/label';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { auth } from '@/firebase.config';
+} from "@/components/ui/menubar";
+import React, { useEffect, useState } from "react";
+import { LogOut, Settings, UserRound } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { auth } from "@/firebase.config";
 
-import { pages } from '../utils/pageData';
-import { onAuthStateChanged } from 'firebase/auth';
-import { useSelector } from 'react-redux';
-import LogOutAlertDialog from './LogOutAlertDialog';
-import setTheme from '../utils/theme';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { pages } from "../utils/pageData";
+import { onAuthStateChanged } from "firebase/auth";
+import { useSelector } from "react-redux";
+import LogOutAlertDialog from "./LogOutAlertDialog";
+import setTheme from "../utils/theme";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { poppins } from "@/public/fonts";
+import { cn } from "@/lib/utils";
+import fontClassifier from "../utils/font-classifier";
 
 const DesktopSidebar = () => {
   const router = useRouter();
@@ -37,11 +40,12 @@ const DesktopSidebar = () => {
           setProfileURL(user?.userData?.profileURL);
         } else {
           setProfileURL(
-            `https://api.dicebear.com/9.x/lorelei/webp?seed=${user?.userData?.name ?? 'default'}`,
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${user?.userData?.name ?? "default"
+            }`,
           );
         }
       } else {
-        router.push('/login');
+        router.push("/login");
       }
     });
   }, [
@@ -52,10 +56,15 @@ const DesktopSidebar = () => {
   ]);
 
   return (
-    <aside className="h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden">
+    <aside
+      className={cn(
+        "h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden",
+        poppins.className,
+      )}
+    >
       <div className="relative h-full">
         <div className="text-center mb-4 flex flex-col">
-          <Label className="text-3xl font-semibold">AutoBook</Label>
+          <Label className="text-3xl font-bold">AutoBook</Label>
           <Label className="text-[.7rem]">
             Take your notes more efficiently.
           </Label>
@@ -66,13 +75,11 @@ const DesktopSidebar = () => {
               return (
                 <Link href={page.address} key={index} className="">
                   <Button
-                    variant={
-                      page.label === 'Trash'
-                        ? 'destructive'
-                        : pathName.split('/')[2] === page.id
-                          ? 'secondary'
-                          : 'ghost'
-                    }
+                    variant={page.label === "Trash"
+                      ? "destructive"
+                      : pathName.split("/")[2] === page.id
+                        ? "secondary"
+                        : "ghost"}
                     className="w-full my-1 font-semibold"
                   >
                     <div className="w-full flex text-xl p-1">
@@ -99,7 +106,7 @@ const DesktopSidebar = () => {
                   </Label>
                 </div>
               </MenubarTrigger>
-              <MenubarContent>
+              <MenubarContent className={fontClassifier(user?.userData?.font)}>
                 <MenubarItem asChild>
                   <Link href="/account/profile">
                     <UserRound className="h-4 mx-1 my-auto" /> Profile

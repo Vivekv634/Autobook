@@ -1,17 +1,17 @@
-import React from 'react';
-import { Button, buttonVariants } from '@/components/ui/button';
-import Link from 'next/link';
-import { Separator } from '@/components/ui/separator';
+import React from "react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export default function SpotlightHome() {
   return (
     <div className="py-4 h-dvh w-full flex items-center flex-col antialiased bg-grid-white/[0.02] relative overflow-hidden">
       <nav className="flex container justify-between">
-        <Link href="/" className="text-xl my-auto font-semibold">
+        <Link href="/" className="text-xl my-auto font-bold">
           AutoBook
         </Link>
         <Link
-          className={buttonVariants({ variant: 'outline' })}
+          className={buttonVariants({ variant: "outline" })}
           href="/register"
         >
           Sign up

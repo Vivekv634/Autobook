@@ -1,4 +1,4 @@
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -7,26 +7,27 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import React, { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { useSelector } from 'react-redux';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import { v4 } from 'uuid';
-import axios from 'axios';
-import { useCustomToast } from './SendToast';
-import ButtonLoader from './ButtonLoader';
-import { document } from 'postcss';
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { useSelector } from "react-redux";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import { v4 } from "uuid";
+import axios from "axios";
+import { useCustomToast } from "./SendToast";
+import ButtonLoader from "./ButtonLoader";
+import { document } from "postcss";
+import fontClassifier from "../utils/font-classifier";
 
 export default function NoteConfigDialog({
   note,
@@ -36,38 +37,38 @@ export default function NoteConfigDialog({
 }) {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [noteTitle, setNoteTitle] = useState(note.title);
-  const [tags, setTags] = useState(note?.tagsList.join(' ') || '');
-  const [newNotebookName, setNewNotebookName] = useState('');
+  const [tags, setTags] = useState(note?.tagsList.join(" ") || "");
+  const [newNotebookName, setNewNotebookName] = useState("");
   const [newNotebookFlag, setNewNotebookFlag] = useState(false);
-  const [Notebook, setNotebook] = useState(note.notebook_ref_id ?? 'none');
-  const [tagsPreview, setTagsPreview] = useState('');
-  const [notebookNamePreview, setNotebookNamePreview] = useState('');
+  const [Notebook, setNotebook] = useState(note.notebook_ref_id ?? "none");
+  const [tagsPreview, setTagsPreview] = useState("");
+  const [notebookNamePreview, setNotebookNamePreview] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useCustomToast();
   const { notebooks, user } = useSelector((state) => state.note);
 
   useEffect(() => {
-    if (newNotebookName != '') {
+    if (newNotebookName != "") {
       setNotebookNamePreview(
         newNotebookName
-          .split(' ')
+          .split(" ")
           .filter((word) => word.trim())
-          .join(' '),
+          .join(" "),
       );
     } else {
-      setNotebookNamePreview('');
+      setNotebookNamePreview("");
     }
-    if (tags != '') {
+    if (tags != "") {
       setTagsPreview(
         tags
-          .split(' ')
+          .split(" ")
           .filter((tag) => tag.trim())
           .map((tag) => `#${tag}`)
-          .join(' '),
+          .join(" "),
       );
     } else {
-      setTagsPreview('');
+      setTagsPreview("");
     }
   }, [tags, newNotebookName]);
 
@@ -87,27 +88,27 @@ export default function NoteConfigDialog({
     try {
       setLoading(true);
       const notebookID = v4();
-      const TAGS = tags.split(' ').filter((tag) => tag.trim());
+      const TAGS = tags.split(" ").filter((tag) => tag.trim());
       let noteBody = {
-          title: noteTitle,
-          tagsList: TAGS,
-        },
+        title: noteTitle,
+        tagsList: TAGS,
+      },
         newNotebookBody;
 
-      if (newNotebookFlag && newNotebookName.trim() != '') {
-        noteBody['notebook_ref_id'] = notebookID;
+      if (newNotebookFlag && newNotebookName.trim() != "") {
+        noteBody["notebook_ref_id"] = notebookID;
         newNotebookBody = {
           notebookID,
           notebookName: newNotebookName
-            .split(' ')
+            .split(" ")
             .filter((word) => word.trim())
-            .join(' '),
+            .join(" "),
           usedInTemplate: false,
         };
-      } else if (!newNotebookFlag && Notebook != 'none') {
-        noteBody['notebook_ref_id'] = Notebook;
-      } else if (!newNotebookFlag && Notebook == 'none') {
-        noteBody['notebook_ref_id'] = null;
+      } else if (!newNotebookFlag && Notebook != "none") {
+        noteBody["notebook_ref_id"] = Notebook;
+      } else if (!newNotebookFlag && Notebook == "none") {
+        noteBody["notebook_ref_id"] = null;
       }
       if (newNotebookBody != undefined) {
         await axios.post(
@@ -123,11 +124,11 @@ export default function NoteConfigDialog({
           headers: { notesDocID: user?.userData?.notesDocID },
         },
       );
-      setNewNotebookName('');
+      setNewNotebookName("");
       setLoading(false);
       setOpen(false);
       toast({
-        description: 'Note updated successfully!',
+        description: "Note updated successfully!",
         color: user?.userData?.theme,
       });
     } catch (error) {
@@ -135,8 +136,8 @@ export default function NoteConfigDialog({
       setLoading(false);
       setOpen(false);
       toast({
-        description: 'Oops! something went wrong. Try again later!',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again later!",
+        variant: "destructive",
       });
     }
   }
@@ -148,12 +149,12 @@ export default function NoteConfigDialog({
         setOpen(open);
         setTimeout(() => {
           if (!open) {
-            document.body.style.pointerEvents = '';
+            document.body.style.pointerEvents = "";
           }
         }, 100);
       }}
     >
-      <DialogContent>
+      <DialogContent className={fontClassifier(user.userData.font)}>
         <DialogHeader>
           <DialogTitle>Edit Note</DialogTitle>
           <DialogDescription>
@@ -163,7 +164,7 @@ export default function NoteConfigDialog({
         <form onSubmit={(e) => handleUpdateNote(e)}>
           <div>
             <Label htmlFor="noteTitle">
-              Note Title{' '}
+              Note Title{" "}
               <span className="text-muted-foreground text-[.8rem]">
                 (Required)
               </span>
@@ -177,7 +178,7 @@ export default function NoteConfigDialog({
           </div>
           <div className="my-2">
             <Label htmlFor="tags">
-              Tags{' '}
+              Tags{" "}
               <span className="text-muted-foreground text-[.8rem]">
                 (Multiple with spaces)
               </span>
@@ -189,12 +190,12 @@ export default function NoteConfigDialog({
               placeholder="tag1 tag2 ..."
             />
             <Label
-              className={cn(tags == '' && 'hidden', 'text-muted-foreground')}
+              className={cn(tags == "" && "hidden", "text-muted-foreground")}
             >
               Preview: {tagsPreview}
             </Label>
           </div>
-          <div className={cn(newNotebookFlag && 'hidden')}>
+          <div className={cn(newNotebookFlag && "hidden")}>
             <Label>Select Notebook</Label>
             <Select
               value={Notebook}
@@ -204,7 +205,12 @@ export default function NoteConfigDialog({
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent position="popper" side="top" align="end">
+              <SelectContent
+                className={fontClassifier(user?.userData?.font)}
+                position="popper"
+                side="top"
+                align="end"
+              >
                 <SelectItem value="none" key="none" className="text-red-400">
                   Select Notebook
                 </SelectItem>
@@ -218,7 +224,7 @@ export default function NoteConfigDialog({
               </SelectContent>
             </Select>
           </div>
-          <div className={cn(!newNotebookFlag && 'hidden')}>
+          <div className={cn(!newNotebookFlag && "hidden")}>
             <Label>New Notebook Name</Label>
             <Input
               placeholder="Enter New Notebook Name..."
@@ -228,9 +234,9 @@ export default function NoteConfigDialog({
             />
             <Label
               className={cn(
-                (newNotebookName == '' || newNotebookName.trim() == '') &&
-                  'hidden',
-                'text-muted-foreground block mt-1',
+                (newNotebookName == "" || newNotebookName.trim() == "") &&
+                "hidden",
+                "text-muted-foreground block mt-1",
               )}
             >
               Preview: {notebookNamePreview}
@@ -249,13 +255,13 @@ export default function NoteConfigDialog({
           <DialogFooter>
             <DialogClose
               onClick={() => setOpen(false)}
-              className={cn(buttonVariants({ variant: 'secondary' }))}
+              className={cn(buttonVariants({ variant: "secondary" }))}
             >
               Cancel
             </DialogClose>
             <Button
-              className={cn(!isDesktop && 'my-2', 'font-semibold')}
-              disabled={loading || error || noteTitle == ''}
+              className={cn(!isDesktop && "my-2", "font-semibold")}
+              disabled={loading || error || noteTitle == ""}
               type="submit"
             >
               <ButtonLoader loading={loading} label="Save Changes" />

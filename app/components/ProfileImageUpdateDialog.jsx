@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,18 +6,19 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { storage } from '@/firebase.config';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { ImageUp } from 'lucide-react';
-import Image from 'next/image';
-import { useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useCustomToast } from './SendToast';
-import axios from 'axios';
-import ButtonLoader from './ButtonLoader';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { storage } from "@/firebase.config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { ImageUp } from "lucide-react";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useCustomToast } from "./SendToast";
+import axios from "axios";
+import ButtonLoader from "./ButtonLoader";
+import fontClassifier from "../utils/font-classifier";
 
 export default function ProfileImageUpdateDialog({ open, setOpen }) {
   const { user } = useSelector((state) => state.note);
@@ -51,27 +52,27 @@ export default function ProfileImageUpdateDialog({ open, setOpen }) {
             { profileURL: URL },
             { headers: { notesDocID: user?.userData?.notesDocID } },
           );
-        }),
+        })
       );
       setLoading(false);
       setOpen(false);
       toast({
-        description: 'Profile image uploaded!',
+        description: "Profile image uploaded!",
         color: user?.userData?.theme,
       });
     } catch (error) {
       setLoading(false);
       console.error(error);
       toast({
-        description: 'Oops! something went wrong. Try again.',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again.",
+        variant: "destructive",
       });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className={fontClassifier(user?.userData?.font)}>
         <DialogHeader>
           <DialogTitle>Update Profile Image</DialogTitle>
           <DialogDescription className="hidden"></DialogDescription>

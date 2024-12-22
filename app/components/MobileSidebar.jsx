@@ -1,36 +1,39 @@
-'use client';
-import { Menu, Settings, LogOutIcon, UserRound } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import { usePathname, useRouter } from 'next/navigation';
+"use client";
+import { LogOutIcon, Menu, Settings, UserRound } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetClose,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { auth } from '@/firebase.config';
-import { pages } from '../utils/pageData';
-import { useSelector } from 'react-redux';
-import { onAuthStateChanged } from 'firebase/auth';
-import setTheme from '../utils/theme';
+} from "@/components/ui/dropdown-menu";
+import { auth } from "@/firebase.config";
+import { pages } from "../utils/pageData";
+import { useSelector } from "react-redux";
+import { onAuthStateChanged } from "firebase/auth";
+import setTheme from "../utils/theme";
+import { poppins } from "@/public/fonts";
+import { cn } from "@/lib/utils";
+import fontClassifier from "../utils/font-classifier";
 
 const MobileSidebar = () => {
   const { user } = useSelector((state) => state.note);
   const [profileURL, setProfileURL] = useState();
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const pathName = usePathname();
   const router = useRouter();
 
@@ -43,11 +46,12 @@ const MobileSidebar = () => {
           setProfileURL(user?.userData?.profileURL);
         } else {
           setProfileURL(
-            `https://api.dicebear.com/9.x/lorelei/webp?seed=${name ?? 'default'}`,
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${name ?? "default"
+            }`,
           );
         }
       } else {
-        router.push('/login');
+        router.push("/login");
       }
     });
   }, [
@@ -71,7 +75,7 @@ const MobileSidebar = () => {
             <Menu />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="">
+        <SheetContent side="left" className={poppins.className}>
           <SheetHeader className="my-10">
             <SheetTitle className="text-3xl">AutoBook</SheetTitle>
             <SheetDescription>
@@ -87,13 +91,11 @@ const MobileSidebar = () => {
                       <Link href={page.address}>
                         <Button
                           className="text-xl w-full"
-                          variant={
-                            page.label === 'Trash'
-                              ? 'destructive'
-                              : pathName.split('/')[2] === page.id
-                                ? 'secondary'
-                                : 'ghost'
-                          }
+                          variant={page.label === "Trash"
+                            ? "destructive"
+                            : pathName.split("/")[2] === page.id
+                              ? "secondary"
+                              : "ghost"}
                         >
                           {page.icon} {page.label}
                         </Button>
@@ -117,7 +119,9 @@ const MobileSidebar = () => {
             />
           </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="mr-3 mt-1">
+        <DropdownMenuContent
+          className={cn("mr-3 mt-1", fontClassifier(user?.userData?.font))}
+        >
           <DropdownMenuItem>
             <Link
               className="flex justify-between text-xl w-40 items-center"

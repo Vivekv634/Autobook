@@ -7,10 +7,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { useCustomToast } from './SendToast';
+} from "@/components/ui/alert-dialog";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useCustomToast } from "./SendToast";
+import fontClassifier from "../utils/font-classifier";
 
 export default function RestoreAllTrashNotesAlertDialog({ children }) {
   const { user } = useSelector((state) => state.note);
@@ -24,14 +25,14 @@ export default function RestoreAllTrashNotesAlertDialog({ children }) {
         },
       });
       toast({
-        description: 'All notes restored!',
+        description: "All notes restored!",
         color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
       toast({
-        description: 'Something went wrong! Try again later.',
-        variant: 'destructive',
+        description: "Something went wrong! Try again later.",
+        variant: "destructive",
       });
     }
   };
@@ -40,7 +41,7 @@ export default function RestoreAllTrashNotesAlertDialog({ children }) {
       <AlertDialogTrigger onClick={(e) => e.stopPropagation()}>
         {children}
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className={fontClassifier(user?.userData?.font)}>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <div className="text-muted-foreground">
@@ -49,7 +50,7 @@ export default function RestoreAllTrashNotesAlertDialog({ children }) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={restoreAll}>
+          <AlertDialogAction onClick={restoreAll} className="font-semibold">
             Restore all
           </AlertDialogAction>
         </AlertDialogFooter>

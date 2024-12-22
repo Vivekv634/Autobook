@@ -1,46 +1,55 @@
-'use client';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import React, { useState } from 'react';
-import { useMediaHook } from '@/app/utils/mediaHook';
+"use client";
+import ExportAllNotebooks from "@/app/components/ExportAllNotebooks";
+import ExportAllNotes from "@/app/components/ExportAllNotes";
+import ImportNotesDialog from "@/app/components/ImportNotesDialog";
+import { useCustomToast } from "@/app/components/SendToast";
+import fontClassifier from "@/app/utils/font-classifier";
+import { fonts, pages, themes } from "@/app/utils/pageData";
+import { colorizer } from "@/app/utils/selectColorizer";
+import setTheme from "@/app/utils/theme";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useSelector } from 'react-redux';
-import axios from 'axios';
-import { fonts, pages, themes } from '@/app/utils/pageData';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import ImportNotesDialog from '@/app/components/ImportNotesDialog';
-import ExportAllNotes from '@/app/components/ExportAllNotes';
-import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
-import setTheme from '@/app/utils/theme';
-import { useCustomToast } from '@/app/components/SendToast';
-import ButtonLoader from '@/app/components/ButtonLoader';
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import axios from "axios";
+import { Check, Download, FileDown, Home, Palette, Upload } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const SettingsComponent = () => {
-  const isDesktop = useMediaHook({ screenWidth: 768 });
   const { user } = useSelector((state) => state.note);
-  const [userFont, setUserFont] = useState(
-    user && user?.userData && user?.userData?.font,
-  );
-  const [userTheme, setUserTheme] = useState(
-    user && user?.userData && user?.userData?.theme,
-  );
-  const [homePage] = useState(
-    user && user?.userData && user?.userData?.defaultHomePage,
-  );
-  const [interval] = useState(user?.userData?.trashInterval);
+  const [userFont, setUserFont] = useState();
+  const [userTheme, setUserTheme] = useState();
+  const [homePage, setUserHomePage] = useState();
+  const [interval, setTrashInterval] = useState();
   const [importNotes, setImportNotes] = useState(false);
   const [exportallnotes, setExportAllNotes] = useState(false);
   const [exportallnotebooks, setExportAllNotebooks] = useState(false);
   const [themeLoading, setThemeLoading] = useState(false);
   const [fontLoading, setFontLoading] = useState(false);
   const toast = useCustomToast();
+
+  useEffect(() => {
+    if (user && user.userData) {
+      setUserFont(user.userData.font);
+      setUserTheme(user.userData.theme);
+      setUserHomePage(user.userData.defaultHomePage);
+      setTrashInterval(user.userData.trashInterval);
+    }
+  }, [user]);
 
   const handleThemeChange = async () => {
     try {
@@ -52,15 +61,15 @@ const SettingsComponent = () => {
       );
       setThemeLoading(false);
       toast({
-        description: 'Theme updated!',
+        description: "Theme updated!",
         color: userTheme,
       });
     } catch (error) {
       console.error(error);
       setThemeLoading(false);
       toast({
-        description: 'Oops! something went wrong. Try again later!',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again later!",
+        variant: "destructive",
       });
     }
   };
@@ -75,15 +84,15 @@ const SettingsComponent = () => {
       );
       setFontLoading(false);
       toast({
-        description: 'Font updated!',
+        description: "Font updated!",
         color: userTheme,
       });
     } catch (error) {
       console.error(error);
       setFontLoading(false);
       toast({
-        description: 'Oops! something went wrong. Try again later!',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again later!",
+        variant: "destructive",
       });
     }
   };
@@ -93,7 +102,7 @@ const SettingsComponent = () => {
       defaultHomePage: page,
     });
     toast({
-      description: 'Default home page updated!',
+      description: "Default home page updated!",
       color: user?.userData?.theme,
     });
   };
@@ -107,203 +116,239 @@ const SettingsComponent = () => {
       { headers: { notesDocID: user?.userData?.notesDocID } },
     );
     toast({
-      description: 'Trash interval updated!',
+      description: "Trash interval updated!",
       color: user?.userData?.theme,
     });
   };
 
   return (
-    <section className={cn(isDesktop && 'container')}>
-      <div className="p-2 border rounded-md mt-2 mx-1">
-        <Label className="text-2xl font-extrabold block">Appearance</Label>
-        <Separator className="my-2" />
-        <div className="flex justify-between items-start">
-          <div>
-            <Label className="block font-bold">Default Theme</Label>
-            <Label className="text-muted-foreground">
-              Set your prefered app theme
-            </Label>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <Select
-              value={userTheme}
-              onValueChange={(e) => {
-                setUserTheme(e);
-                setTheme(e);
-              }}
-            >
-              <SelectTrigger className="w-fit gap-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(themes).map((theme) => {
-                  const color = `text-${theme}-600`;
-                  return (
-                    <SelectItem className={color} value={theme} key={theme}>
-                      {theme.toUpperCase()}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-            <Button
-              className={cn(user?.userData?.theme === userTheme && 'hidden')}
-              onClick={handleThemeChange}
-              disabled={themeLoading}
-            >
-              <ButtonLoader loading={themeLoading} label="Save" />
-            </Button>
-          </div>
-        </div>
-        <Separator className="my-2" />
-        <div className="flex justify-between items-start">
-          <div>
-            <Label className="block font-bold">Font</Label>
-            <Label className="text-muted-foreground">
-              Set your prefered font
-            </Label>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <Select
-              value={userFont}
-              onValueChange={(e) => {
-                setUserFont(e);
-                document.body.style.fontFamily = e;
-              }}
-            >
-              <SelectTrigger className="w-fit gap-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.keys(fonts).map((font) => {
-                  return (
-                    <SelectItem value={font} key={font}>
-                      {fonts[font]}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-            <Button
-              className={cn(user?.userData?.font === userFont && 'hidden')}
-              onClick={handleFontChange}
-              disabled={fontLoading}
-            >
-              <ButtonLoader loading={fontLoading} label="Save" />
-            </Button>
-          </div>
-        </div>
+    <div className="container max-w-4xl py-6 space-y-8">
+      <div className="space-y-0.5">
+        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
+        <p className="text-muted-foreground">
+          Manage your application preferences and settings.
+        </p>
       </div>
-      <div className="p-2 border rounded-md mt-2 mx-1">
-        <Label className="text-2xl font-extrabold block">Behaviour</Label>
-        <Separator className="my-2" />
-        <div className="flex justify-between items-center">
-          <div>
-            <Label className="block font-bold">Home Page</Label>
-            <Label className="text-muted-foreground">
-              Default home page on app open
-            </Label>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="w-5 h-5" />
+            Appearance
+          </CardTitle>
+          <CardDescription>
+            Customize how the application looks and feels
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Default Theme</label>
+            <div className="flex gap-2">
+              <Select
+                value={userTheme}
+                onValueChange={(e) => {
+                  setUserTheme(e);
+                  setTheme(e);
+                }}
+                className="flex-1"
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select theme" />
+                </SelectTrigger>
+                <SelectContent
+                  className={fontClassifier(
+                    user?.userData?.font,
+                  )}
+                >
+                  {Object.keys(themes).map((theme) => {
+                    let color = colorizer(theme);
+                    return (
+                      <SelectItem
+                        className={cn(
+                          color,
+                        )}
+                        value={theme}
+                        key={theme}
+                      >
+                        {theme[0].toUpperCase() + theme.slice(1)}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <Button
+                className={cn(user?.userData?.theme === userTheme && "hidden")}
+                onClick={handleThemeChange}
+                disabled={themeLoading}
+                size="icon"
+              >
+                <Check className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <Select
-            value={homePage}
-            onValueChange={(e) => {
-              handleDefaultHomePageChange(e);
-            }}
-          >
-            <SelectTrigger className="w-fit gap-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent position="popper" side="top" align="start">
-              {pages.map((page) => {
-                if (page.label == 'Trash') {
-                  return;
-                } else {
-                  return (
-                    <SelectItem key={page.label} value={page.id}>
-                      {page.label}
-                    </SelectItem>
-                  );
-                }
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator className="my-3" />
-        <div className="flex justify-between items-center">
-          <div>
-            <Label className="block font-bold">Cleanup interval</Label>
-            <Label className="text-muted-foreground">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Font</label>
+            <div className="flex gap-2">
+              <Select
+                value={userFont}
+                onValueChange={(e) => {
+                  setUserFont(e);
+                  document.body.style.fontFamily = e;
+                }}
+                className="flex-1"
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select font" />
+                </SelectTrigger>
+                <SelectContent className={fontClassifier(user?.userData?.font)}>
+                  {Object.keys(fonts).map((font) => {
+                    return (
+                      <SelectItem
+                        value={font}
+                        key={font}
+                      >
+                        {fonts[font]}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <Button
+                className={cn(user?.userData?.font === userFont && "hidden")}
+                onClick={handleFontChange}
+                disabled={fontLoading}
+                size="icon"
+              >
+                <Check className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Home className="w-5 h-5" />
+            Behaviour
+          </CardTitle>
+          <CardDescription>
+            Configure how the application behaves
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Home Page</label>
+            <div className="flex gap-2">
+              <Select
+                value={homePage}
+                onValueChange={(e) => {
+                  handleDefaultHomePageChange(e);
+                }}
+                className="flex-1"
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select default page" />
+                </SelectTrigger>
+                <SelectContent className={fontClassifier(user?.userData?.font)}>
+                  {pages.map((page) => {
+                    if (page.label == "Trash") {
+                      return;
+                    } else {
+                      return (
+                        <SelectItem key={page.label} value={page.id}>
+                          {page.label}
+                        </SelectItem>
+                      );
+                    }
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Cleanup Interval</label>
+            <div className="flex gap-2">
+              <Select
+                value={interval || "never"}
+                onValueChange={(e) => {
+                  handleDeletionIntervalChange(e);
+                }}
+                className="flex-1"
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select cleanup interval" />
+                </SelectTrigger>
+                <SelectContent className={fontClassifier(user?.userData?.font)}>
+                  <SelectItem value="never">Never</SelectItem>
+                  <SelectItem value="7">7 days</SelectItem>
+                  <SelectItem value="15">15 days</SelectItem>
+                  <SelectItem value="30">30 days</SelectItem>
+                  <SelectItem value="60">60 days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-xs text-muted-foreground">
               All the trash notes will be deleted permanently after this
               interval.
-            </Label>
+            </p>
           </div>
-          <Select
-            value={interval || 'never'}
-            onValueChange={(e) => {
-              handleDeletionIntervalChange(e);
-            }}
-          >
-            <SelectTrigger className="w-fit gap-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="never">Never</SelectItem>
-              <SelectItem value="7">7 days</SelectItem>
-              <SelectItem value="15">15 days</SelectItem>
-              <SelectItem value="30">30 days</SelectItem>
-              <SelectItem value="60">60 days</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-      <div className="p-2 border rounded-md mt-2 mx-1">
-        <Label className="text-2xl font-extrabold block">Export</Label>
-        <Separator className="my-3" />
-        <div className="flex justify-between items-center">
-          <div>
-            <Label className="block font-bold">Export Notes</Label>
-            <Label className="text-muted-foreground">Export all notes</Label>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileDown className="w-5 h-5" />
+            Data Management
+          </CardTitle>
+          <CardDescription>
+            Export and import your data
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium">Export</h4>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setExportAllNotes(true)}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export Notes
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setExportAllNotebooks(true)}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export Notebooks
+              </Button>
+            </div>
           </div>
-          <Button variant="secondary" onClick={() => setExportAllNotes(true)}>
-            Export
-          </Button>
-        </div>
-        <Separator className="my-3" />
-        <div className="flex justify-between items-center">
-          <div>
-            <Label className="block font-bold">Export Notebooks</Label>
-            <Label className="text-muted-foreground">
-              Export all notebooks and notes
-            </Label>
+          <Separator />
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium">Import</h4>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setImportNotes(true)}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Import Notes
+            </Button>
           </div>
-          <Button
-            variant="secondary"
-            onClick={() => setExportAllNotebooks(true)}
-          >
-            Export
-          </Button>
-        </div>
-      </div>
-      <div className="p-2 border rounded-md mt-2 mx-1">
-        <Label className="text-2xl font-extrabold block">Import</Label>
-        <Separator className="my-3" />
-        <div className="flex justify-between items-center">
-          <div>
-            <Label className="block font-bold">Import Notes</Label>
-            <Label className="text-muted-foreground">Import your note(s)</Label>
-          </div>
-          <Button variant="secondary" onClick={() => setImportNotes(true)}>
-            Import
-          </Button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       <ImportNotesDialog open={importNotes} setOpen={setImportNotes} />
       <ExportAllNotes open={exportallnotes} setOpen={setExportAllNotes} />
       <ExportAllNotebooks
         open={exportallnotebooks}
         setOpen={setExportAllNotebooks}
       />
-    </section>
+    </div>
   );
 };
 

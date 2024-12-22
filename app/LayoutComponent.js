@@ -1,12 +1,11 @@
 'use client';
-import { SpeedInsights } from '@vercel/speed-insights/next';
-import { Analytics } from '@vercel/analytics/react';
-import './globals.css';
-import { Provider } from 'react-redux';
-import { store } from './redux/store';
 import { ThemeProvider } from '@/app/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Provider } from 'react-redux';
+import './globals.css';
+import { store } from './redux/store';
 export default function LayoutComponent({ children }) {
   return (
     <>

@@ -1,17 +1,6 @@
 import './globals.css';
-import { Poppins, Ubuntu_Mono } from 'next/font/google';
 import LayoutComponent from './LayoutComponent';
 import { cn } from '@/lib/utils';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-});
-
-const ubuntu = Ubuntu_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-});
 
 export const metadata = {
   title: 'AutoBook',
@@ -54,7 +43,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={cn(ubuntu.className, poppins.className, 'scroll-smooth')}
+      className='scroll-smooth'
       suppressHydrationWarning
     >
       <head>
@@ -62,7 +51,7 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link rel="icon" href="/icons/favicon.ico" />
       </head>
-      <body className="selection:bg-fuchsia-300 selection:text-zinc-900">
+      <body className={cn("selection:bg-fuchsia-300 selection:text-zinc-900")}>
         <LayoutComponent>{children}</LayoutComponent>
       </body>
     </html>

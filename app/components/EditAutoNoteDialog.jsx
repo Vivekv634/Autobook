@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
@@ -7,29 +7,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { CircleHelp } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { CircleHelp } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { generationPeriod } from '../utils/schema';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { titleFormatter } from '../utils/titleFormatter';
-import { cn } from '@/lib/utils';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import { Separator } from '@/components/ui/separator';
-import { Checkbox } from '@/components/ui/checkbox';
-import { v4 } from 'uuid';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { useCustomToast } from './SendToast';
-import ButtonLoader from './ButtonLoader';
+} from "@/components/ui/select";
+import { generationPeriod } from "../utils/schema";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { titleFormatter } from "../utils/titleFormatter";
+import { cn } from "@/lib/utils";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { v4 } from "uuid";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { useCustomToast } from "./SendToast";
+import ButtonLoader from "./ButtonLoader";
+import fontClassifier from "../utils/font-classifier";
 
 const EditAutoNoteDialog = ({
   notebooks,
@@ -47,8 +48,8 @@ const EditAutoNoteDialog = ({
   const [loading, setLoading] = useState(false);
   const [anNotebook, setANNotebook] = useState(autoNote.autoNoteNotebookID);
   const [newNotebookFlag, setNewNotebookFlag] = useState(false);
-  const [newNotebookName, setNewNotebookName] = useState('');
-  const [newNotebookPreview, setNewNotebookPreview] = useState('');
+  const [newNotebookName, setNewNotebookName] = useState("");
+  const [newNotebookPreview, setNewNotebookPreview] = useState("");
   const [notebookNameError, setNotebookNameError] = useState(null);
   const toast = useCustomToast();
   const { user } = useSelector((state) => state.note);
@@ -61,8 +62,8 @@ const EditAutoNoteDialog = ({
     ) {
       setNotebookNameError(
         <span>
-          <span className="font-bold">{newNotebookName}</span> notebook already
-          exists!
+          <span className="font-bold">{newNotebookName}</span>{" "}
+          notebook already exists!
         </span>,
       );
     } else {
@@ -71,9 +72,9 @@ const EditAutoNoteDialog = ({
 
     setNewNotebookPreview(
       newNotebookName
-        .split(' ')
+        .split(" ")
         .map((word) => word.trim())
-        .join(' '),
+        .join(" "),
     );
   }, [setNotebookNameError, newNotebookName, notebooks]);
 
@@ -81,18 +82,18 @@ const EditAutoNoteDialog = ({
     try {
       setLoading(true);
       let autoNoteBody = {
-          autoNoteName: autoNoteName,
-          titleFormat: titleFormat,
-          noteGenerationPeriod: period,
-          state: autoNoteState,
-        },
+        autoNoteName: autoNoteName,
+        titleFormat: titleFormat,
+        noteGenerationPeriod: period,
+        state: autoNoteState,
+      },
         newNotebookBody = {},
         updatedNotebooksArray = [],
         updatedNotebooks = { ...notebooks };
 
       if (newNotebookFlag) {
         const notebookID = v4();
-        autoNoteBody['autoNoteNotebookID'] = notebookID;
+        autoNoteBody["autoNoteNotebookID"] = notebookID;
         Object.keys(updatedNotebooks).forEach((notebook_id) => {
           if (notebook_id === autoNote.autoNoteNotebookID) {
             updatedNotebooks[notebook_id] = {
@@ -112,7 +113,7 @@ const EditAutoNoteDialog = ({
         };
         updatedNotebooksArray.push(newNotebookBody);
       } else {
-        autoNoteBody['autoNoteNotebookID'] = anNotebook;
+        autoNoteBody["autoNoteNotebookID"] = anNotebook;
 
         Object.keys(updatedNotebooks).forEach((notebook_id) => {
           if (notebook_id === autoNote.autoNoteNotebookID) {
@@ -145,13 +146,13 @@ const EditAutoNoteDialog = ({
           headers: { notesDocID: user?.userData?.notesDocID },
         },
       );
-      setNewNotebookName('');
+      setNewNotebookName("");
       setNewNotebookFlag(false);
       setOpen(false);
       toast({
         description: (
           <span>
-            <span className="font-semibold">{autoNote.autoNoteName}</span>{' '}
+            <span className="font-semibold">{autoNote.autoNoteName}</span>{" "}
             updated!
           </span>
         ),
@@ -163,8 +164,8 @@ const EditAutoNoteDialog = ({
       console.error(error);
       setLoading(false);
       toast({
-        description: 'Oops! something went wrong. Try again!',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again!",
+        variant: "destructive",
       });
     }
   };
@@ -176,12 +177,12 @@ const EditAutoNoteDialog = ({
         setOpen(open);
         setTimeout(() => {
           if (!open) {
-            document.body.style.pointerEvents = '';
+            document.body.style.pointerEvents = "";
           }
         }, 100);
       }}
     >
-      <DialogContent>
+      <DialogContent className={fontClassifier(user?.userData?.font)}>
         <DialogHeader>
           <DialogTitle>Edit Auto Note</DialogTitle>
           <DialogDescription>Save changes when you are done.</DialogDescription>
@@ -228,7 +229,7 @@ const EditAutoNoteDialog = ({
             )}
           </Label>
         </div>
-        <div className={cn(newNotebookFlag && 'hidden')}>
+        <div className={cn(newNotebookFlag && "hidden")}>
           <Label>Select Notebook</Label>
           <Select
             value={anNotebook}
@@ -249,7 +250,7 @@ const EditAutoNoteDialog = ({
             </SelectContent>
           </Select>
         </div>
-        <div className={cn(!newNotebookFlag && 'hidden')}>
+        <div className={cn(!newNotebookFlag && "hidden")}>
           <Label>New Notebook Name</Label>
           <Input
             placeholder="Enter New Notebook Name..."
@@ -258,11 +259,11 @@ const EditAutoNoteDialog = ({
             required
             disabled={!newNotebookFlag}
           />
-          <Label className={cn('text-red-400')}>{notebookNameError}</Label>
+          <Label className={cn("text-red-400")}>{notebookNameError}</Label>
           <Label
             className={cn(
-              (notebookNameError || newNotebookName.trim() == '') && 'hidden',
-              'my-1 font-semibold',
+              (notebookNameError || newNotebookName.trim() == "") && "hidden",
+              "my-1 font-semibold",
             )}
           >
             Preview: {newNotebookPreview}
@@ -295,11 +296,11 @@ const EditAutoNoteDialog = ({
           </Select>
         </div>
         <DialogFooter>
-          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
+          <DialogClose className={buttonVariants({ variant: "secondary" })}>
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
+            className={cn(!isDesktop && "my-2", "font-semibold")}
             onClick={handleSaveChanges}
             disabled={loading || notebookNameError}
           >

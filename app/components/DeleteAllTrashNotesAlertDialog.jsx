@@ -7,12 +7,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
-import { useCustomToast } from './SendToast';
+} from "@/components/ui/alert-dialog";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { useCustomToast } from "./SendToast";
+import fontClassifier from "../utils/font-classifier";
 
 export default function DeleteAllTrashNotesAlertDialog({ children }) {
   const { user } = useSelector((state) => state.note);
@@ -26,14 +27,14 @@ export default function DeleteAllTrashNotesAlertDialog({ children }) {
         },
       });
       toast({
-        description: 'All notes deleted!',
+        description: "All notes deleted!",
         color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
       toast({
-        description: 'Something went wrong! Try again later.',
-        variant: 'destructive',
+        description: "Something went wrong! Try again later.",
+        variant: "destructive",
       });
     }
   };
@@ -42,7 +43,7 @@ export default function DeleteAllTrashNotesAlertDialog({ children }) {
       <AlertDialogTrigger onClick={(e) => e.stopPropagation()}>
         {children}
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className={fontClassifier(user?.userData?.font)}>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <div className="text-muted-foreground">
@@ -54,7 +55,7 @@ export default function DeleteAllTrashNotesAlertDialog({ children }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={deleteAll}
-            className={cn(buttonVariants({ variant: 'destructive' }))}
+            className={cn(buttonVariants({ variant: "destructive" }))}
           >
             Delete forever
           </AlertDialogAction>

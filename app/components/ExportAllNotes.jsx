@@ -5,31 +5,32 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useState } from 'react';
-import { exportType } from '../utils/schema';
-import { cn } from '@/lib/utils';
-import { Button, buttonVariants } from '@/components/ui/button';
-import JSZip from 'jszip';
-import { useSelector } from 'react-redux';
-import editorJsToHtml from '../utils/editorJSToHTML';
-import pretty from 'pretty';
-import TurndownService from 'turndown';
-import { gfm } from 'turndown-plugin-gfm';
-import { convert } from 'html-to-text';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import { saveAs } from 'file-saver';
-import { useCustomToast } from './SendToast';
+} from "@/components/ui/select";
+import { useState } from "react";
+import { exportType } from "../utils/schema";
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+import JSZip from "jszip";
+import { useSelector } from "react-redux";
+import editorJsToHtml from "../utils/editorJSToHTML";
+import pretty from "pretty";
+import TurndownService from "turndown";
+import { gfm } from "turndown-plugin-gfm";
+import { convert } from "html-to-text";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import { saveAs } from "file-saver";
+import { useCustomToast } from "./SendToast";
+import fontClassifier from "../utils/font-classifier";
 
 export default function ExportAllNotes({ open, setOpen }) {
-  const [exporttype, setExportType] = useState('html');
+  const [exporttype, setExportType] = useState("html");
   const { user, notes } = useSelector((state) => state.note);
   const zip = new JSZip();
   const toast = useCustomToast();
@@ -42,11 +43,11 @@ export default function ExportAllNotes({ open, setOpen }) {
     const html = editorJsToHtml(jsonData);
     const formattedHTML = pretty(html, { ocd: true });
     switch (fileType) {
-      case 'md':
+      case "md":
         return turndownServices.turndown(formattedHTML);
-      case 'txt':
+      case "txt":
         return convert(formattedHTML);
-      case 'json':
+      case "json":
         return JSON.stringify(jsonData);
       default:
         return formattedHTML;
@@ -55,27 +56,27 @@ export default function ExportAllNotes({ open, setOpen }) {
 
   const exportAllNotes = () => {
     try {
-      const folderName = user?.userData?.name ?? 'Notes';
+      const folderName = user?.userData?.name ?? "Notes";
       const userNotes = zip.folder(folderName);
       notes?.forEach((note) => {
         let fileName = `${note.title}.${exporttype}`;
         userNotes.file(fileName, fileData(note, exporttype));
       });
       zip
-        .generateAsync({ type: 'blob' })
+        .generateAsync({ type: "blob" })
         .then((blob) => saveAs(blob, `${folderName}.zip`));
     } catch (error) {
       console.error(error);
       toast({
-        description: 'Oops! something went wrong. Try again.',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again.",
+        variant: "destructive",
       });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className={fontClassifier(user?.userData?.font)}>
         <DialogHeader>
           <DialogTitle>Export Notes</DialogTitle>
         </DialogHeader>
@@ -96,13 +97,13 @@ export default function ExportAllNotes({ open, setOpen }) {
         <DialogFooter>
           <DialogClose
             onClick={() => setOpen(false)}
-            className={cn(buttonVariants({ variant: 'secondary' }))}
+            className={cn(buttonVariants({ variant: "secondary" }))}
           >
             Cancel
           </DialogClose>
           <Button
             onClick={exportAllNotes}
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
+            className={cn(!isDesktop && "my-2", "font-semibold")}
           >
             Export
           </Button>

@@ -493,8 +493,11 @@ export const whyChooseUsCards = [
   },
 ];
 export const fonts = {
-  'sans-serif': 'Sans Serif',
-  sans: 'Sans',
   poppins: 'Poppins',
   ubuntu: 'Ubuntu',
+  roboto: 'Roboto',
+  montserrat: 'Montserrat',
+  quicksand: 'Quicksand',
+  comicNeue: 'Comic Neue',
+  openSans: 'Open Sans'
 };

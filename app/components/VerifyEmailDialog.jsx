@@ -1,4 +1,4 @@
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,15 +8,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import { sendEmailVerification } from 'firebase/auth';
-import { auth } from '@/firebase.config';
-import { useCustomToast } from './SendToast';
-import { useSelector } from 'react-redux';
-import ButtonLoader from './ButtonLoader';
+} from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import { sendEmailVerification } from "firebase/auth";
+import { auth } from "@/firebase.config";
+import { useCustomToast } from "./SendToast";
+import { useSelector } from "react-redux";
+import ButtonLoader from "./ButtonLoader";
+import fontClassifier from "../utils/font-classifier";
 
 export default function VerifyEmailDialog({ open, setOpen }) {
   const isDesktop = useMediaHook({ screenWidth: 768 });
@@ -30,7 +31,7 @@ export default function VerifyEmailDialog({ open, setOpen }) {
       .then(() => {
         setLoading(false);
         toast({
-          description: 'Verification Email sent!',
+          description: "Verification Email sent!",
           color: user?.userData?.theme,
         });
       })
@@ -38,15 +39,15 @@ export default function VerifyEmailDialog({ open, setOpen }) {
         setLoading(false);
         console.error(error);
         toast({
-          description: 'Oops! something went wrong. Try again!',
-          variant: 'destructive',
+          description: "Oops! something went wrong. Try again!",
+          variant: "destructive",
         });
       });
   };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogContent>
+      <AlertDialogContent className={fontClassifier(user?.userData?.font)}>
         <AlertDialogHeader>
           <AlertDialogTitle>Verify Email</AlertDialogTitle>
           <AlertDialogDescription>
@@ -56,7 +57,7 @@ export default function VerifyEmailDialog({ open, setOpen }) {
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => setOpen(false)}
-            className={cn(buttonVariants({ variant: 'secondary' }))}
+            className={cn(buttonVariants({ variant: "secondary" }))}
           >
             Cancel
           </AlertDialogCancel>
@@ -64,7 +65,7 @@ export default function VerifyEmailDialog({ open, setOpen }) {
             onClick={sendVerificationEmail}
             disabled={loading}
             type="submit"
-            className={cn(!isDesktop && 'my-2', 'font-semibold')}
+            className={cn(!isDesktop && "my-2", "font-semibold")}
           >
             <ButtonLoader loading={loading} label="Send Email" />
           </AlertDialogAction>

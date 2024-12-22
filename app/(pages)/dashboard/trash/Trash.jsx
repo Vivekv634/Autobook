@@ -1,13 +1,13 @@
-'use client';
-import DeleteAllTrashNotesAlertDialog from '@/app/components/DeleteAllTrashNotesAlertDialog';
-import Note from '@/app/components/Note';
-import RestoreAllTrashNotesAlertDialog from '@/app/components/RestoreAllTrashNotesAlertDialog';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { useSelector } from 'react-redux';
-import TrashSVG from '@/public/trash.svg';
+"use client";
+import DeleteAllTrashNotesAlertDialog from "@/app/components/DeleteAllTrashNotesAlertDialog";
+import Note from "@/app/components/Note";
+import RestoreAllTrashNotesAlertDialog from "@/app/components/RestoreAllTrashNotesAlertDialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { useSelector } from "react-redux";
+import TrashSVG from "@/public/trash.svg";
 
 const TrashComponent = () => {
   const { deletedNotes, user, notebooks } = useSelector((state) => state.note);
@@ -15,15 +15,17 @@ const TrashComponent = () => {
   return (
     <section
       className={cn(
-        'p-2 flex gap-2 flex-col',
-        deletedNotes.length == 0 && 'items-center h-full justify-center',
+        "p-2 flex gap-2 flex-col",
+        deletedNotes.length == 0 && "items-center h-full justify-center",
       )}
     >
       {deletedNotes.length != 0 && (
         <>
           <div className="flex mb-2 gap-2">
             <RestoreAllTrashNotesAlertDialog>
-              <Button>Restore all</Button>
+              <Button className="font-semibold" variant="secondary">
+                Restore all
+              </Button>
             </RestoreAllTrashNotesAlertDialog>
             <DeleteAllTrashNotesAlertDialog>
               <Button variant="destructive">Delete All</Button>

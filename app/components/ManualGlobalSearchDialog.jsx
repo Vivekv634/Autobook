@@ -6,12 +6,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command';
-import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
-import { pages } from '../utils/pageData';
-import { Settings, UserRound } from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/command";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { pages } from "../utils/pageData";
+import { Settings, UserRound } from "lucide-react";
+import { cn } from "@/lib/utils";
+import fontClassifier from "../utils/font-classifier";
 
 export default function ManualGlobalSearchDialog({ open, setOpen }) {
   const { notes, notebooks, tagsData, autoNotes, user } = useSelector(
@@ -46,8 +47,11 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="search..." />
-      <CommandList>
+      <CommandInput
+        className={fontClassifier(user?.userData?.font)}
+        placeholder="search..."
+      />
+      <CommandList className={fontClassifier(user?.userData?.font)}>
         <CommandEmpty>No result found.</CommandEmpty>
         <CommandGroup heading="Go to">
           {pages.map((page, index) => {
@@ -66,7 +70,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!notes?.length && 'hidden')}
+          className={cn(!notes?.length && "hidden")}
           heading="Notes"
         >
           {notes?.map((note, index) => {
@@ -86,7 +90,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!Object.keys(notebooks).length && 'hidden')}
+          className={cn(!Object.keys(notebooks).length && "hidden")}
           heading="Notebooks"
         >
           {Object.keys(notebooks).length &&
@@ -109,7 +113,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!Object.keys(tagsData).length && 'hidden')}
+          className={cn(!Object.keys(tagsData).length && "hidden")}
           heading="Tags"
         >
           {Object.keys(tagsData).length &&
@@ -130,7 +134,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!autoNotes?.length && 'hidden')}
+          className={cn(!autoNotes?.length && "hidden")}
           heading="Auto Notes"
         >
           {autoNotes?.map((autoNote, index) => {
@@ -152,7 +156,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         <CommandGroup heading="Account">
           <CommandItem
             onSelect={() => {
-              router.push('/account/profile');
+              router.push("/account/profile");
               setOpen((open) => !open);
             }}
             asChild
@@ -164,7 +168,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              router.push('/account/settings');
+              router.push("/account/settings");
               setOpen((open) => !open);
             }}
             asChild

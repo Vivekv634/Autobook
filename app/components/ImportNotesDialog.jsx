@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -6,22 +6,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import textToEditorJs from '../utils/textToEditorJs';
-import htmlToEditorJs from '../utils/htmlToEditor';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { acceptedFileType } from '../utils/schema';
-import { useCustomToast } from './SendToast';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { useMediaHook } from "@/app/utils/mediaHook";
+import textToEditorJs from "../utils/textToEditorJs";
+import htmlToEditorJs from "../utils/htmlToEditor";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { acceptedFileType } from "../utils/schema";
+import { useCustomToast } from "./SendToast";
+import fontClassifier from "../utils/font-classifier";
 
 export default function ImportNotesDialog({ open, setOpen }) {
-  const showdown = require('showdown');
+  const showdown = require("showdown");
   const converter = new showdown.Converter();
   const { user } = useSelector((state) => state.note);
-  const isDesktop = useMediaHook({screenWidth: 768});
+  const isDesktop = useMediaHook({ screenWidth: 768 });
   const toast = useCustomToast();
 
   const importNotes = (e) => {
@@ -33,28 +34,28 @@ export default function ImportNotesDialog({ open, setOpen }) {
         const fileType = file.type;
         if (acceptedFileType.includes(fileType)) {
           const reader = new FileReader();
-          reader.addEventListener('load', async (e) => {
+          reader.addEventListener("load", async (e) => {
             const fileData = e.target.result;
             switch (fileType) {
-              case 'text/markdown': {
+              case "text/markdown": {
                 let html = converter.makeHtml(fileData);
                 blocks = htmlToEditorJs(html);
                 break;
               }
-              case 'text/html':
+              case "text/html":
                 blocks = htmlToEditorJs(fileData);
                 break;
-              case 'application/json':
+              case "application/json":
                 blocks = JSON.parse(fileData);
                 break;
-              case 'text/plain':
+              case "text/plain":
                 blocks = textToEditorJs(fileData).blocks;
                 break;
               default:
-                throw new Error('Invalid file type!');
+                throw new Error("Invalid file type!");
             }
             const noteBody = {
-              title: file.name.split('.')[0],
+              title: file.name.split(".")[0],
               body: `{"blocks" : ${JSON.stringify(blocks)}}`,
             };
             await axios.post(`${process.env.API}/api/notes/create`, noteBody, {
@@ -65,22 +66,22 @@ export default function ImportNotesDialog({ open, setOpen }) {
         }
       });
       toast({
-        description: 'Note(s) imported successfully!',
+        description: "Note(s) imported successfully!",
         color: user?.userData?.theme,
       });
       setOpen(false);
     } catch (error) {
       console.error(error);
       toast({
-        description: 'Oops! something went wrong. Try again.',
-        variant: 'destructive',
+        description: "Oops! something went wrong. Try again.",
+        variant: "destructive",
       });
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className={fontClassifier(user?.userData?.font)}>
         <DialogHeader>
           <DialogTitle>Import Notes</DialogTitle>
         </DialogHeader>
@@ -95,12 +96,12 @@ export default function ImportNotesDialog({ open, setOpen }) {
           <DialogFooter>
             <DialogClose
               onClick={() => setOpen(false)}
-              className={cn(buttonVariants({ variant: 'secondary' }))}
+              className={cn(buttonVariants({ variant: "secondary" }))}
             >
               Cancel
             </DialogClose>
             <Button
-              className={cn(!isDesktop && 'my-2', 'font-semibold')}
+              className={cn(!isDesktop && "my-2", "font-semibold")}
               type="submit"
             >
               Import
