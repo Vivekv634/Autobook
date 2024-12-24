@@ -36,7 +36,7 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
 
   useEffect(() => {
     if (noteData) {
-      setEditorNote(noteData)
+      setEditorNote(noteData);
       setNoteTitle(editorNote?.title);
       setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
       setNotebookValue(
@@ -58,7 +58,15 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
         }
       });
     }
-  }, [notes, noteID, editorNote?.title, editorNote?.tagsList, editorNote?.notebook_ref_id, notebooks, noteData]);
+  }, [
+    notes,
+    noteID,
+    editorNote?.title,
+    editorNote?.tagsList,
+    editorNote?.notebook_ref_id,
+    notebooks,
+    noteData,
+  ]);
 
   useEffect(() => {
     if (!editorNote?.body) return;
@@ -119,7 +127,7 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
         <div
           className={cn(
             !isDesktop &&
-            'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
+              'flex items-center mt-4 mb-1 mx-1 justify-between print:hidden',
             isDesktop && 'flex justify-end gap-2 my-4 print:hidden',
           )}
         >

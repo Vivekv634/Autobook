@@ -41,17 +41,17 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="en"
-      className='scroll-smooth'
-      suppressHydrationWarning
-    >
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link rel="icon" href="/icons/favicon.ico" />
       </head>
-      <body className={cn("selection:bg-fuchsia-300 selection:text-zinc-900")}>
+      <body
+        className={cn(
+          'print:hidden selection:bg-fuchsia-300 selection:text-zinc-900',
+        )}
+      >
         <LayoutComponent>{children}</LayoutComponent>
       </body>
     </html>

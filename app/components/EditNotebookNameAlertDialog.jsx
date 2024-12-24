@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,17 +9,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { useCustomToast } from "./SendToast";
-import { useSelector } from "react-redux";
-import ButtonLoader from "./ButtonLoader";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { useCustomToast } from './SendToast';
+import { useSelector } from 'react-redux';
+import ButtonLoader from './ButtonLoader';
+import fontClassifier from '../utils/font-classifier';
 
 export default function EditNotebookNameAlertDialog({
   children,
@@ -29,7 +29,7 @@ export default function EditNotebookNameAlertDialog({
   notebooks,
 }) {
   const [newNotebookName, setNewNotebookName] = useState(notebookName);
-  const [newNotebookPreview, setNewNotebookPreview] = useState("");
+  const [newNotebookPreview, setNewNotebookPreview] = useState('');
   const [notebookNameError, setNotebookNameError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.note);
@@ -37,7 +37,7 @@ export default function EditNotebookNameAlertDialog({
 
   useEffect(() => {
     if (newNotebookName.trim() === notebookName) {
-      setNotebookNameError(" ");
+      setNotebookNameError(' ');
       return;
     }
     if (
@@ -47,8 +47,8 @@ export default function EditNotebookNameAlertDialog({
     ) {
       setNotebookNameError(
         <span>
-          <span className="font-bold">{newNotebookName}</span>{" "}
-          notebook already exists!
+          <span className="font-bold">{newNotebookName}</span> notebook already
+          exists!
         </span>,
       );
     } else {
@@ -57,9 +57,9 @@ export default function EditNotebookNameAlertDialog({
 
     setNewNotebookPreview(
       newNotebookName
-        .split(" ")
+        .split(' ')
         .map((word) => word.trim())
-        .join(" "),
+        .join(' '),
     );
   }, [setNotebookNameError, newNotebookName, notebooks, notebookName]);
 
@@ -69,9 +69,9 @@ export default function EditNotebookNameAlertDialog({
       setLoading(true);
       let notebookBody = {
         notebookName: newNotebookName
-          .split(" ")
-          .filter((word) => word !== "")
-          .join(" "),
+          .split(' ')
+          .filter((word) => word !== '')
+          .join(' '),
       };
       await axios.put(
         `${process.env.API}/api/notebooks/update/${notebook_id}`,
@@ -95,16 +95,20 @@ export default function EditNotebookNameAlertDialog({
       console.error(error);
       setLoading(false);
       toast({
-        description: "Oops! something went wrong. Try again later!",
-        variant: "destructive",
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
       });
     }
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === " ") {
+    if (e.key === ' ') {
       e.stopPropagation();
     }
+  };
+
+  const resetForm = () => {
+    setNewNotebookName(notebookName);
   };
 
   return (
@@ -115,7 +119,13 @@ export default function EditNotebookNameAlertDialog({
       >
         {children}
       </AlertDialogTrigger>
-      <AlertDialogContent className={fontClassifier(user?.userData?.font)}>
+      <AlertDialogContent
+        onInteractOutside={resetForm}
+        onPointerDownOutside={resetForm}
+        onEscapeKeyDown={resetForm}
+        onCloseAutoFocus={resetForm}
+        className={fontClassifier(user?.userData?.font)}
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Edit your notebook</AlertDialogTitle>
           <AlertDialogDescription>
@@ -131,20 +141,20 @@ export default function EditNotebookNameAlertDialog({
             onKeyDown={handleKeyDown}
             className="my-2"
           />
-          <Label className={cn("text-red-400", !notebookNameError && "hidden")}>
+          <Label className={cn('text-red-400', !notebookNameError && 'hidden')}>
             {notebookNameError}
           </Label>
           <Label
             className={cn(
-              (notebookNameError || newNotebookName.trim() == "") && "hidden",
-              "my-1 font-semibold",
+              (notebookNameError || newNotebookName.trim() == '') && 'hidden',
+              'my-1 font-semibold',
             )}
           >
             Preview: {newNotebookPreview}
           </Label>
           <AlertDialogFooter>
             <AlertDialogCancel
-              className={cn(buttonVariants({ variant: "secondary" }))}
+              className={cn(buttonVariants({ variant: 'secondary' }))}
             >
               Cancel
             </AlertDialogCancel>

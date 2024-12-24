@@ -1,7 +1,10 @@
 import { useToast } from '@/components/ui/use-toast';
+import fontClassifier from '../utils/font-classifier';
+import { useSelector } from 'react-redux';
 
 export function useCustomToast() {
   const { toast } = useToast();
+  const { user } = useSelector((state) => state.note);
 
   return function showToast({ title, color, description, variant }) {
     let className = '';
@@ -44,7 +47,7 @@ export function useCustomToast() {
       title,
       description,
       variant,
-      className,
+      className: `${className} ${fontClassifier(user?.userData?.font)}`,
     });
   };
 }

@@ -46,9 +46,18 @@ export default function ChangePasswordDialog({ open, setOpen }) {
       });
   };
 
+  const resetForm = () => {
+    setNewPassword('');
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent
+        onInteractOutside={resetForm}
+        onPointerDownOutside={resetForm}
+        onEscapeKeyDown={resetForm}
+        onCloseAutoFocus={resetForm}
+      >
         <DialogHeader>
           <DialogTitle>Change your email</DialogTitle>
           <DialogDescription>

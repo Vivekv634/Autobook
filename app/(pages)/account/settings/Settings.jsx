@@ -1,33 +1,33 @@
-"use client";
-import ExportAllNotebooks from "@/app/components/ExportAllNotebooks";
-import ExportAllNotes from "@/app/components/ExportAllNotes";
-import ImportNotesDialog from "@/app/components/ImportNotesDialog";
-import { useCustomToast } from "@/app/components/SendToast";
-import fontClassifier from "@/app/utils/font-classifier";
-import { fonts, pages, themes } from "@/app/utils/pageData";
-import { colorizer } from "@/app/utils/selectColorizer";
-import setTheme from "@/app/utils/theme";
-import { Button } from "@/components/ui/button";
+'use client';
+import ExportAllNotebooks from '@/app/components/ExportAllNotebooks';
+import ExportAllNotes from '@/app/components/ExportAllNotes';
+import ImportNotesDialog from '@/app/components/ImportNotesDialog';
+import { useCustomToast } from '@/app/components/SendToast';
+import fontClassifier from '@/app/utils/font-classifier';
+import { fonts, pages, themes } from '@/app/utils/pageData';
+import { colorizer } from '@/app/utils/selectColorizer';
+import setTheme from '@/app/utils/theme';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import axios from "axios";
-import { Check, Download, FileDown, Home, Palette, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import axios from 'axios';
+import { Check, Download, FileDown, Home, Palette, Upload } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const SettingsComponent = () => {
   const { user } = useSelector((state) => state.note);
@@ -61,15 +61,15 @@ const SettingsComponent = () => {
       );
       setThemeLoading(false);
       toast({
-        description: "Theme updated!",
+        description: 'Theme updated!',
         color: userTheme,
       });
     } catch (error) {
       console.error(error);
       setThemeLoading(false);
       toast({
-        description: "Oops! something went wrong. Try again later!",
-        variant: "destructive",
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
       });
     }
   };
@@ -84,15 +84,15 @@ const SettingsComponent = () => {
       );
       setFontLoading(false);
       toast({
-        description: "Font updated!",
+        description: 'Font updated!',
         color: userTheme,
       });
     } catch (error) {
       console.error(error);
       setFontLoading(false);
       toast({
-        description: "Oops! something went wrong. Try again later!",
-        variant: "destructive",
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
       });
     }
   };
@@ -102,7 +102,7 @@ const SettingsComponent = () => {
       defaultHomePage: page,
     });
     toast({
-      description: "Default home page updated!",
+      description: 'Default home page updated!',
       color: user?.userData?.theme,
     });
   };
@@ -116,7 +116,7 @@ const SettingsComponent = () => {
       { headers: { notesDocID: user?.userData?.notesDocID } },
     );
     toast({
-      description: "Trash interval updated!",
+      description: 'Trash interval updated!',
       color: user?.userData?.theme,
     });
   };
@@ -155,18 +155,12 @@ const SettingsComponent = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select theme" />
                 </SelectTrigger>
-                <SelectContent
-                  className={fontClassifier(
-                    user?.userData?.font,
-                  )}
-                >
+                <SelectContent className={fontClassifier(user?.userData?.font)}>
                   {Object.keys(themes).map((theme) => {
                     let color = colorizer(theme);
                     return (
                       <SelectItem
-                        className={cn(
-                          color,
-                        )}
+                        className={cn(color)}
                         value={theme}
                         key={theme}
                       >
@@ -177,7 +171,7 @@ const SettingsComponent = () => {
                 </SelectContent>
               </Select>
               <Button
-                className={cn(user?.userData?.theme === userTheme && "hidden")}
+                className={cn(user?.userData?.theme === userTheme && 'hidden')}
                 onClick={handleThemeChange}
                 disabled={themeLoading}
                 size="icon"
@@ -203,10 +197,7 @@ const SettingsComponent = () => {
                 <SelectContent className={fontClassifier(user?.userData?.font)}>
                   {Object.keys(fonts).map((font) => {
                     return (
-                      <SelectItem
-                        value={font}
-                        key={font}
-                      >
+                      <SelectItem value={font} key={font}>
                         {fonts[font]}
                       </SelectItem>
                     );
@@ -214,7 +205,7 @@ const SettingsComponent = () => {
                 </SelectContent>
               </Select>
               <Button
-                className={cn(user?.userData?.font === userFont && "hidden")}
+                className={cn(user?.userData?.font === userFont && 'hidden')}
                 onClick={handleFontChange}
                 disabled={fontLoading}
                 size="icon"
@@ -252,7 +243,7 @@ const SettingsComponent = () => {
                 </SelectTrigger>
                 <SelectContent className={fontClassifier(user?.userData?.font)}>
                   {pages.map((page) => {
-                    if (page.label == "Trash") {
+                    if (page.label == 'Trash') {
                       return;
                     } else {
                       return (
@@ -270,7 +261,7 @@ const SettingsComponent = () => {
             <label className="text-sm font-medium">Cleanup Interval</label>
             <div className="flex gap-2">
               <Select
-                value={interval || "never"}
+                value={interval || 'never'}
                 onValueChange={(e) => {
                   handleDeletionIntervalChange(e);
                 }}
@@ -302,9 +293,7 @@ const SettingsComponent = () => {
             <FileDown className="w-5 h-5" />
             Data Management
           </CardTitle>
-          <CardDescription>
-            Export and import your data
-          </CardDescription>
+          <CardDescription>Export and import your data</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
@@ -315,7 +304,7 @@ const SettingsComponent = () => {
                 className="w-full"
                 onClick={() => setExportAllNotes(true)}
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="w-4 h-4" />
                 Export Notes
               </Button>
               <Button
@@ -323,7 +312,7 @@ const SettingsComponent = () => {
                 className="w-full"
                 onClick={() => setExportAllNotebooks(true)}
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="w-4 h-4" />
                 Export Notebooks
               </Button>
             </div>
@@ -336,7 +325,7 @@ const SettingsComponent = () => {
               className="w-full"
               onClick={() => setImportNotes(true)}
             >
-              <Upload className="w-4 h-4 mr-2" />
+              <Upload className="w-4 h-4" />
               Import Notes
             </Button>
           </div>

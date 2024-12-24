@@ -1,10 +1,10 @@
-"use client";
-import { LogOutIcon, Menu, Settings, UserRound } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { usePathname, useRouter } from "next/navigation";
+'use client';
+import { LogOutIcon, Menu, Settings, UserRound } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sheet,
   SheetClose,
@@ -13,27 +13,27 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { auth } from "@/firebase.config";
-import { pages } from "../utils/pageData";
-import { useSelector } from "react-redux";
-import { onAuthStateChanged } from "firebase/auth";
-import setTheme from "../utils/theme";
-import { poppins } from "@/public/fonts";
-import { cn } from "@/lib/utils";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/dropdown-menu';
+import { auth } from '@/firebase.config';
+import { bgThemeColors, pages } from '../utils/pageData';
+import { useSelector } from 'react-redux';
+import { onAuthStateChanged } from 'firebase/auth';
+import setTheme from '../utils/theme';
+import { poppins } from '@/public/fonts';
+import { cn } from '@/lib/utils';
+import fontClassifier from '../utils/font-classifier';
 
 const MobileSidebar = () => {
   const { user } = useSelector((state) => state.note);
   const [profileURL, setProfileURL] = useState();
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const pathName = usePathname();
   const router = useRouter();
 
@@ -46,12 +46,13 @@ const MobileSidebar = () => {
           setProfileURL(user?.userData?.profileURL);
         } else {
           setProfileURL(
-            `https://api.dicebear.com/9.x/lorelei/webp?seed=${name ?? "default"
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${
+              name ?? 'default'
             }`,
           );
         }
       } else {
-        router.push("/login");
+        router.push('/login');
       }
     });
   }, [
@@ -68,7 +69,12 @@ const MobileSidebar = () => {
   };
 
   return (
-    <nav className="border-b flex justify-between p-2 px-4 fixed top-0 left-0 z-10 w-full">
+    <nav
+      className={cn(
+        bgThemeColors[user?.userData?.theme],
+        'border-b flex justify-between p-2 px-4 fixed top-0 left-0 z-10 w-full',
+      )}
+    >
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" className="px-4" aria-label="sidemenu">
@@ -91,11 +97,13 @@ const MobileSidebar = () => {
                       <Link href={page.address}>
                         <Button
                           className="text-xl w-full"
-                          variant={page.label === "Trash"
-                            ? "destructive"
-                            : pathName.split("/")[2] === page.id
-                              ? "secondary"
-                              : "ghost"}
+                          variant={
+                            page.label === 'Trash'
+                              ? 'destructive'
+                              : pathName.split('/')[2] === page.id
+                                ? 'secondary'
+                                : 'ghost'
+                          }
                         >
                           {page.icon} {page.label}
                         </Button>
@@ -120,7 +128,7 @@ const MobileSidebar = () => {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className={cn("mr-3 mt-1", fontClassifier(user?.userData?.font))}
+          className={cn('mr-3 mt-1', fontClassifier(user?.userData?.font))}
         >
           <DropdownMenuItem>
             <Link

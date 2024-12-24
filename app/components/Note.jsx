@@ -4,22 +4,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import React from 'react';
-import { formatDistanceToNowStrict } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
-import { Book, PenOff, PinIcon, Star } from 'lucide-react';
-import Link from 'next/link';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
-import NoteContextMenu from './NoteContextMenu';
+} from "@/components/ui/card";
+import React from "react";
+import { formatDistanceToNowStrict } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { Book, PenOff, PinIcon, Star } from "lucide-react";
+import Link from "next/link";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import NoteContextMenu from "./NoteContextMenu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
 const Note = ({ note, notesDocID, notebook_name }) => {
   const timeAgo = formatDistanceToNowStrict(note.updation_date, {
@@ -63,9 +63,8 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                     </Tooltip>
                   </>
                 )}
-                {note.isPinned && (
-                  <PinIcon className="h-4 w-5 text-green-500" />
-                )}
+                {note.isPinned &&
+                  <PinIcon className="h-4 w-5 text-green-500" />}
                 {note.isReadOnly && (
                   <PenOff className="h-4 w-5 text-orange-500" />
                 )}
@@ -75,8 +74,8 @@ const Note = ({ note, notesDocID, notebook_name }) => {
             </div>
             <CardFooter
               className={cn(
-                'flex flex-col items-start p-0 pt-1',
-                note?.tagsList?.length > 0 ? 'block' : 'hidden',
+                "flex flex-col items-start p-0 pt-1",
+                note?.tagsList?.length > 0 ? "block" : "hidden",
               )}
             >
               <Separator />
@@ -88,7 +87,9 @@ const Note = ({ note, notesDocID, notebook_name }) => {
                         className="pr-1 transition-all underline text-sm hover:text-green-500"
                         key={index}
                         href={`/dashboard/tags#${tag}`}
-                      >{`#${tag}`}</Link>
+                      >
+                        {`#${tag}`}
+                      </Link>
                     );
                   })}
               </div>

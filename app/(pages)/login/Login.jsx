@@ -98,6 +98,10 @@ const LoginComponent = () => {
     }
   };
 
+  const resetForm = () => {
+    setResetEmail('');
+  };
+
   return (
     <main className="grid place-items-center h-screen">
       <Dialog>
@@ -157,7 +161,12 @@ const LoginComponent = () => {
             </Label>
           </CardFooter>
         </Card>
-        <DialogContent>
+        <DialogContent
+          onInteractOutside={resetForm}
+          onPointerDownOutside={resetForm}
+          onEscapeKeyDown={resetForm}
+          onCloseAutoFocus={resetForm}
+        >
           <DialogHeader>
             <DialogTitle>Reset password</DialogTitle>
             <DialogDescription className="hidden"></DialogDescription>
@@ -165,6 +174,7 @@ const LoginComponent = () => {
           <Input
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
+            autoComplete="off"
             placeholder="Email address"
           />
           <DialogFooter>
@@ -174,7 +184,7 @@ const LoginComponent = () => {
             <Button
               disabled={resetLoading || resetEmail.trim() === ''}
               onClick={handleResetPassword}
-              className="flex items-center"
+              className="flex font-semibold items-center"
             >
               <ButtonLoader loading={resetLoading} label="Reset Password" />
             </Button>

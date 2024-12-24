@@ -1,29 +1,29 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { auth } from "@/firebase.config";
-import { cn } from "@/lib/utils";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useMediaHook } from "@/app/utils/mediaHook";
-import VerifyEmailTemplate from "./VerifyEmailTemplate";
-import { useCustomToast } from "./SendToast";
-import ButtonLoader from "./ButtonLoader";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { auth } from '@/firebase.config';
+import { cn } from '@/lib/utils';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useMediaHook } from '@/app/utils/mediaHook';
+import VerifyEmailTemplate from './VerifyEmailTemplate';
+import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
+import fontClassifier from '../utils/font-classifier';
 
 const NewNotebookDialog = ({ setOpen }) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [newNotebookName, setNewNotebookName] = useState("");
+  const [newNotebookName, setNewNotebookName] = useState('');
   const { notebooks, user } = useSelector((state) => state.note);
   const toast = useCustomToast();
 
@@ -48,13 +48,13 @@ const NewNotebookDialog = ({ setOpen }) => {
         { headers: { notesDocID: user?.userData?.notesDocID } },
       );
       setLoading(false);
-      setNewNotebookName("");
+      setNewNotebookName('');
       setOpen(false);
       toast({
         description: (
           <span>
-            <span className="font-bold">{newNotebookName}</span>{" "}
-            notebook created successfully!
+            <span className="font-bold">{newNotebookName}</span> notebook
+            created successfully!
           </span>
         ),
         color: user?.userData?.theme,
@@ -63,16 +63,26 @@ const NewNotebookDialog = ({ setOpen }) => {
       console.error(error);
       setLoading(false);
       toast({
-        description: "Oops! something went wrong. Try again later!",
-        variant: "destructive",
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
       });
     }
+  };
+
+  const resetForm = () => {
+    setNewNotebookName('');
   };
 
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <DialogContent className={fontClassifier(user?.userData?.font)}>
+    <DialogContent
+      onInteractOutside={resetForm}
+      onPointerDownOutside={resetForm}
+      onEscapeKeyDown={resetForm}
+      onCloseAutoFocus={resetForm}
+      className={fontClassifier(user?.userData?.font)}
+    >
       <DialogHeader>
         <DialogTitle>New Notebook</DialogTitle>
       </DialogHeader>
@@ -86,11 +96,11 @@ const NewNotebookDialog = ({ setOpen }) => {
         />
         <Label className="text-red-400">{error}</Label>
         <DialogFooter>
-          <DialogClose className={buttonVariants({ variant: "secondary" })}>
+          <DialogClose className={buttonVariants({ variant: 'secondary' })}>
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && "my-2", "font-semibold")}
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
             disabled={error || loading}
             type="submit"
           >

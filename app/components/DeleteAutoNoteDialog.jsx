@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogClose,
@@ -7,22 +7,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useMediaHook } from "@/app/utils/mediaHook";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import { useCustomToast } from "./SendToast";
-import ButtonLoader from "./ButtonLoader";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useMediaHook } from '@/app/utils/mediaHook';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
+import fontClassifier from '../utils/font-classifier';
 
 const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
-  const [autoNoteName, setAutoNoteName] = useState("");
+  const [autoNoteName, setAutoNoteName] = useState('');
   const [alsoDeleteNotes, setAlsoDeleteNotes] = useState(false);
   const [alsoDeleteNotebook, setAlsoDeleteNotebook] = useState(false);
   const [autoNoteNameError, setAutoNoteNameError] = useState(null);
@@ -57,10 +57,10 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
             });
           }
         });
-        body["notebooks"] = Notebooks;
+        body['notebooks'] = Notebooks;
       }
       if (alsoDeleteNotes) {
-        body["notes"] = notes.filter(
+        body['notes'] = notes.filter(
           (note) => note.notebook_ref_id !== AutoNote.autoNoteNotebookID,
         );
       }
@@ -82,11 +82,18 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
       setLoading(false);
       console.error(error);
       toast({
-        description: "Oops! something went wrong. Try again later!",
-        variant: "destructive",
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
       });
     }
   };
+
+  const resetForm = () => {
+    setAutoNoteName('');
+    setAlsoDeleteNotes(false);
+    setAlsoDeleteNotebook(false);
+  };
+
   return (
     <Dialog
       open={open && !isContextOpen}
@@ -94,12 +101,18 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
         setOpen(open);
         setTimeout(() => {
           if (!open) {
-            document.body.style.pointerEvents = "";
+            document.body.style.pointerEvents = '';
           }
         }, 100);
       }}
     >
-      <DialogContent className={fontClassifier(user?.userData?.font)}>
+      <DialogContent
+        onInteractOutside={resetForm}
+        onPointerDownOutside={resetForm}
+        onEscapeKeyDown={resetForm}
+        onCloseAutoFocus={resetForm}
+        className={fontClassifier(user?.userData?.font)}
+      >
         <DialogHeader>
           <DialogTitle>Delete AutoNote</DialogTitle>
           <DialogDescription>
@@ -126,8 +139,9 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
               checked={alsoDeleteNotebook}
               onCheckedChange={setAlsoDeleteNotebook}
               id="alsoDeleteNotebook"
-              disabled={loading || autoNoteName.trim() === "" ||
-                autoNoteNameError}
+              disabled={
+                loading || autoNoteName.trim() === '' || autoNoteNameError
+              }
             />
             <Label className="pl-2" htmlFor="alsoDeleteNotebook">
               Also Delete the notebook of AutoNote.
@@ -138,8 +152,9 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
               checked={alsoDeleteNotes}
               onCheckedChange={setAlsoDeleteNotes}
               id="alsoDeleteNotes"
-              disabled={loading || autoNoteName.trim() === "" ||
-                autoNoteNameError}
+              disabled={
+                loading || autoNoteName.trim() === '' || autoNoteNameError
+              }
             />
             <Label className="pl-2" htmlFor="alsoDeleteNotes">
               Also Delete all the notes created by this AutoNote forever.
@@ -147,16 +162,17 @@ const DeleteAutoNoteDialog = ({ AutoNote, open, setOpen, isContextOpen }) => {
           </div>
           <DialogFooter>
             <DialogClose
-              className={cn(buttonVariants({ variant: "secondary" }))}
+              className={cn(buttonVariants({ variant: 'secondary' }))}
             >
               Cancel
             </DialogClose>
             <Button
-              className={cn(!isDesktop && "my-2", "font-semibold")}
+              className={cn(!isDesktop && 'my-2', 'font-semibold')}
               variant="destructive"
               type="submit"
-              disabled={loading || autoNoteNameError ||
-                autoNoteName.trim() === ""}
+              disabled={
+                loading || autoNoteNameError || autoNoteName.trim() === ''
+              }
             >
               <ButtonLoader loading={loading} label="Delete AutoNote" />
             </Button>

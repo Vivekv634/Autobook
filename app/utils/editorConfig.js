@@ -3,12 +3,11 @@ import Delimiter from '@editorjs/delimiter';
 import Embed from '@editorjs/embed';
 import Title from 'title-editorjs';
 import InlineCode from '@editorjs/inline-code';
-import Marker from '@editorjs/marker';
 import NestedList from '@editorjs/nested-list';
 import Quote from '@editorjs/quote';
 import RawTool from '@editorjs/raw';
+import ToggleBlock from 'editorjs-toggle-block';
 import Table from '@editorjs/table';
-import TextVariantTune from '@editorjs/text-variant-tune';
 import Underline from '@editorjs/underline';
 import Warning from '@editorjs/warning';
 import Strikethrough from '@sotaproject/strikethrough';
@@ -32,6 +31,10 @@ export let editorConfig = {
         captionPlaceholder: "Quote's author",
       },
     },
+    toggle: {
+      class: ToggleBlock,
+      inlineToolbar: true,
+    },
     list: {
       class: NestedList,
       inlineToolbar: true,
@@ -45,7 +48,7 @@ export let editorConfig = {
       inlineToolbar: true,
       config: {
         showLocaleOption: true,
-        locale: 'tr',
+        locale: ['tr', 'TR', 'tr-TR'],
       },
     },
     checklist: {
@@ -71,15 +74,11 @@ export let editorConfig = {
     },
     raw: {
       class: RawTool,
-      placeholder: 'Enter your code',
+      placeholder: "print('Hello world!')",
     },
     underline: {
       class: Underline,
       inlineToolbar: true,
-    },
-    textVariant: TextVariantTune,
-    Marker: {
-      class: Marker,
     },
     inlineCode: {
       class: InlineCode,
@@ -99,7 +98,7 @@ export let editorConfig = {
           'dark',
         ],
         defaultType: 'primary',
-        messagePlaceholder: 'Enter something',
+        messagePlaceholder: 'Your alert',
       },
     },
     embed: {

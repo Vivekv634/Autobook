@@ -1,68 +1,68 @@
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { useSelector } from "react-redux";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useMediaHook } from "@/app/utils/mediaHook";
-import { v4 } from "uuid";
-import axios from "axios";
-import { auth } from "@/firebase.config";
-import VerifyEmailTemplate from "./VerifyEmailTemplate";
-import { useCustomToast } from "./SendToast";
-import ButtonLoader from "./ButtonLoader";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
+import React, { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { useSelector } from 'react-redux';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { useMediaHook } from '@/app/utils/mediaHook';
+import { v4 } from 'uuid';
+import axios from 'axios';
+import { auth } from '@/firebase.config';
+import VerifyEmailTemplate from './VerifyEmailTemplate';
+import { useCustomToast } from './SendToast';
+import ButtonLoader from './ButtonLoader';
+import fontClassifier from '../utils/font-classifier';
 
 export default function NewNoteDialog() {
   const isDesktop = useMediaHook({ screenWidth: 768 });
-  const [noteTitle, setNoteTitle] = useState("");
-  const [tags, setTags] = useState("");
-  const [newNotebookName, setNewNotebookName] = useState("");
+  const [noteTitle, setNoteTitle] = useState('');
+  const [tags, setTags] = useState('');
+  const [newNotebookName, setNewNotebookName] = useState('');
   const [newNotebookFlag, setNewNotebookFlag] = useState(false);
-  const [Notebook, setNotebook] = useState("none");
-  const [tagsPreview, setTagsPreview] = useState("");
-  const [notebookNamePreview, setNotebookNamePreview] = useState("");
+  const [Notebook, setNotebook] = useState('none');
+  const [tagsPreview, setTagsPreview] = useState('');
+  const [notebookNamePreview, setNotebookNamePreview] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const toast = useCustomToast();
   const { notebooks, user } = useSelector((state) => state.note);
 
   useEffect(() => {
-    if (newNotebookName != "") {
+    if (newNotebookName != '') {
       setNotebookNamePreview(
         newNotebookName
-          .split(" ")
+          .split(' ')
           .filter((word) => word.trim())
-          .join(" "),
+          .join(' '),
       );
     } else {
-      setNotebookNamePreview("");
+      setNotebookNamePreview('');
     }
-    if (tags != "") {
+    if (tags != '') {
       setTagsPreview(
         tags
-          .split(" ")
+          .split(' ')
           .filter((tag) => tag.trim())
           .map((tag) => `#${tag}`)
-          .join(" "),
+          .join(' '),
       );
     } else {
-      setTagsPreview("");
+      setTagsPreview('');
     }
   }, [tags, newNotebookName]);
 
@@ -82,24 +82,24 @@ export default function NewNoteDialog() {
     try {
       setLoading(true);
       const notebookID = v4();
-      const TAGS = tags.split(" ").filter((tag) => tag.trim());
+      const TAGS = tags.split(' ').filter((tag) => tag.trim());
       let noteBody = {
-        tagsList: TAGS,
-        title: noteTitle,
-      },
+          tagsList: TAGS,
+          title: noteTitle,
+        },
         newNotebookBody;
-      if (newNotebookFlag && newNotebookName.trim() != "") {
-        noteBody["notebook_ref_id"] = notebookID;
+      if (newNotebookFlag && newNotebookName.trim() != '') {
+        noteBody['notebook_ref_id'] = notebookID;
         newNotebookBody = {
           notebookID,
           notebookName: newNotebookName
-            .split(" ")
+            .split(' ')
             .filter((word) => word.trim())
-            .join(" "),
+            .join(' '),
           usedInTemplate: false,
         };
-      } else if (!newNotebookFlag && Notebook != "none") {
-        noteBody["notebook_ref_id"] = Notebook;
+      } else if (!newNotebookFlag && Notebook != 'none') {
+        noteBody['notebook_ref_id'] = Notebook;
       }
       if (newNotebookBody != undefined) {
         await axios.post(
@@ -111,33 +111,47 @@ export default function NewNoteDialog() {
       await axios.post(`${process.env.API}/api/notes/create`, noteBody, {
         headers: { notesDocID: user?.userData?.notesDocID },
       });
-      setNewNotebookName("");
+      setNewNotebookName('');
       setLoading(false);
       toast({
-        description: "Note Created successfully!",
+        description: 'Note Created successfully!',
         color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
       setLoading(false);
       toast({
-        description: "Oops! something went wrong. Try again later!",
-        variant: "destructive",
+        description: 'Oops! something went wrong. Try again later!',
+        variant: 'destructive',
       });
     }
+  };
+
+  const resetForm = () => {
+    setNoteTitle('');
+    setNewNotebookFlag(false);
+    setNewNotebookName('');
+    setNotebook('none');
+    setTags('');
   };
 
   if (!auth.currentUser?.emailVerified) return <VerifyEmailTemplate />;
 
   return (
-    <DialogContent className={fontClassifier(user?.userData?.font)}>
+    <DialogContent
+      onInteractOutside={resetForm}
+      onPointerDownOutside={resetForm}
+      onEscapeKeyDown={resetForm}
+      onCloseAutoFocus={resetForm}
+      className={fontClassifier(user?.userData?.font)}
+    >
       <DialogHeader>
         <DialogTitle>Create Note</DialogTitle>
       </DialogHeader>
       <form onSubmit={(e) => handleCreateNote(e)}>
         <div>
           <Label htmlFor="noteTitle">
-            Note Title{" "}
+            Note Title{' '}
             <span className="text-muted-foreground text-[.8rem]">
               (Required)
             </span>
@@ -151,7 +165,7 @@ export default function NewNoteDialog() {
         </div>
         <div className="my-2">
           <Label htmlFor="tags">
-            Tags{" "}
+            Tags{' '}
             <span className="text-muted-foreground text-[.8rem]">
               (Multiple with spaces)
             </span>
@@ -164,14 +178,14 @@ export default function NewNoteDialog() {
           />
           <Label
             className={cn(
-              tags.trim() == "" && "hidden",
-              "text-muted-foreground",
+              tags.trim() == '' && 'hidden',
+              'text-muted-foreground',
             )}
           >
             Preview: {tagsPreview}
           </Label>
         </div>
-        <div className={cn(newNotebookFlag && "hidden")}>
+        <div className={cn(newNotebookFlag && 'hidden')}>
           <Label>Select Notebook</Label>
           <Select
             value={Notebook}
@@ -195,7 +209,7 @@ export default function NewNoteDialog() {
             </SelectContent>
           </Select>
         </div>
-        <div className={cn(!newNotebookFlag && "hidden")}>
+        <div className={cn(!newNotebookFlag && 'hidden')}>
           <Label>New Notebook Name</Label>
           <Input
             placeholder="Enter New Notebook Name..."
@@ -205,9 +219,9 @@ export default function NewNoteDialog() {
           />
           <Label
             className={cn(
-              (newNotebookName.trim() == "" || newNotebookName == "") &&
-              "hidden",
-              "text-muted-foreground block mt-1",
+              (newNotebookName.trim() == '' || newNotebookName == '') &&
+                'hidden',
+              'text-muted-foreground block mt-1',
             )}
           >
             Preview: {notebookNamePreview}
@@ -224,11 +238,11 @@ export default function NewNoteDialog() {
           <Label htmlFor="newNotebook">Create a new Notebook</Label>
         </div>
         <DialogFooter>
-          <DialogClose className={cn(buttonVariants({ variant: "secondary" }))}>
+          <DialogClose className={cn(buttonVariants({ variant: 'secondary' }))}>
             Cancel
           </DialogClose>
           <Button
-            className={cn(!isDesktop && "my-2", "font-semibold")}
+            className={cn(!isDesktop && 'my-2', 'font-semibold')}
             disabled={loading || error}
             type="submit"
           >
