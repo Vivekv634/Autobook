@@ -6,13 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-import { storage } from "@/firebase.config";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { ImageUp } from "lucide-react";
-import Image from "next/image";
-import { useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { useCustomToast } from "./SendToast";
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
