@@ -1,25 +1,37 @@
-import axios from "axios";
-import dynamic from "next/dynamic";
+'use client';
+import Editor from '@/app/components/Editor';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-const NoteEditor = dynamic(() => import("@/app/components/NoteEditor"), {
-  ssr: false,
-});
-
-export default async function ShareComponent({ params }) {
+export default function ShareComponent({ params }) {
   const { notesDocID, noteID } = params;
-  const response = await axios.get(`${process.env.API}/api/notes/${noteID}`, {
-    headers: {
-      notesDocID: notesDocID,
-    },
-  });
+  const [, setEditorInstance] = useState(null);
+  const [response, setResponse] = useState(null);
 
-  if (response.data.result) {
+  useEffect(() => {
+    const fetchData = async () => {
+      await axios
+        .get(`${process.env.API}/api/notes/${noteID}`, {
+          headers: {
+            notesDocID: notesDocID,
+          },
+        })
+        .then((res) => {
+          setResponse(res);
+        });
+    };
+    fetchData();
+  }, [noteID, notesDocID]);
+
+  if (response) {
     return (
-      <NoteEditor
-        noteData={response.data.result}
-        params={params}
-        readOnly={true}
-      />
+      <section className="container">
+        <Editor
+          editorNote={response?.data?.result}
+          readOnly={true}
+          setEditorInstance={setEditorInstance}
+        />
+      </section>
     );
   } else {
     return null;

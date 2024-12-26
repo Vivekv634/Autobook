@@ -1,117 +1,81 @@
-import Checklist from '@editorjs/checklist';
+import CodeTool from '@editorjs/code';
 import Delimiter from '@editorjs/delimiter';
-import Embed from '@editorjs/embed';
-import Title from 'title-editorjs';
+import Header from '@editorjs/header';
 import InlineCode from '@editorjs/inline-code';
-import NestedList from '@editorjs/nested-list';
+import NestedList from '@editorjs/list';
+import Marker from '@editorjs/marker';
+import Paragraph from '@editorjs/paragraph';
 import Quote from '@editorjs/quote';
-import RawTool from '@editorjs/raw';
-import ToggleBlock from 'editorjs-toggle-block';
 import Table from '@editorjs/table';
 import Underline from '@editorjs/underline';
 import Warning from '@editorjs/warning';
-import Strikethrough from '@sotaproject/strikethrough';
-import Alert from 'editorjs-alert';
-import ChangeCase from 'editorjs-change-case';
-import Paragraph from 'editorjs-paragraph-with-alignment';
 
-export let editorConfig = {
-  holder: 'editorjs',
-  tools: {
-    title: Title,
-    paragraph: {
-      class: Paragraph,
-      inlineToolbar: true,
-    },
-    quote: {
-      class: Quote,
-      inlineToolbar: true,
-      config: {
-        quotePlaceholder: 'Enter a quote',
-        captionPlaceholder: "Quote's author",
-      },
-    },
-    toggle: {
-      class: ToggleBlock,
-      inlineToolbar: true,
-    },
-    list: {
-      class: NestedList,
-      inlineToolbar: true,
-      config: {
-        defaultStyle: 'unordered',
-      },
-    },
-    strikethrough: Strikethrough,
-    changeCase: {
-      class: ChangeCase,
-      inlineToolbar: true,
-      config: {
-        showLocaleOption: true,
-        locale: ['tr', 'TR', 'tr-TR'],
-      },
-    },
-    checklist: {
-      class: Checklist,
-      inlineToolbar: true,
-    },
-    table: {
-      class: Table,
-      inlineToolbar: true,
-      config: {
-        rows: 2,
-        cols: 3,
-      },
-    },
-    delimiter: Delimiter,
-    warning: {
-      class: Warning,
-      inlineToolbar: true,
-      config: {
-        titlePlaceholder: 'Warning Title',
-        messagePlaceholder: 'Warning Message',
-      },
-    },
-    raw: {
-      class: RawTool,
-      placeholder: "print('Hello world!')",
-    },
-    underline: {
-      class: Underline,
-      inlineToolbar: true,
-    },
-    inlineCode: {
-      class: InlineCode,
-    },
-    alert: {
-      class: Alert,
-      inlineToolbar: true,
-      config: {
-        alertTypes: [
-          'primary',
-          'secondary',
-          'info',
-          'success',
-          'warning',
-          'danger',
-          'light',
-          'dark',
-        ],
-        defaultType: 'primary',
-        messagePlaceholder: 'Your alert',
-      },
-    },
-    embed: {
-      class: Embed,
-      inlineToolbar: true,
-      config: {
-        services: {
-          youtube: true,
-          coub: true,
-        },
-      },
+export const EDITOR_JS_TOOLS = {
+  header: {
+    class: Header,
+    shortcut: 'CTRL+SHIFT+H',
+    inlineToolbar: true,
+  },
+  paragraph: {
+    class: Paragraph,
+    inlineToolbar: true,
+  },
+  raw: {
+    class: CodeTool,
+    shortcut: 'CTRL+SHIFT+C',
+    inlineToolbar: true,
+  },
+  inlineCode: {
+    class: InlineCode,
+    shortcut: 'CTRL+SHIFT+I',
+    inlineToolbar: true,
+  },
+  list: {
+    class: NestedList,
+    shortcut: 'CTRL+SHIFT+L',
+    inlineToolbar: true,
+    config: {
+      placeholder: 'Enter a list item',
+      defaultType: 'unordered',
     },
   },
-  placeholder: 'Start writing your notes...',
-  tunes: ['textVariant'],
+  underline: {
+    class: Underline,
+    shortcut: 'CTRL+SHIFT+U',
+    inlineToolbar: true,
+  },
+  marker: {
+    class: Marker,
+    shortcut: 'CTRL+SHIFT+M',
+    inlineToolbar: true,
+  },
+  table: {
+    class: Table,
+    inlineToolbar: true,
+    shortcut: 'CTRL+SHIFT+W',
+    config: {
+      rows: 2,
+      cols: 2,
+      withHeadings: true,
+      stretched: true,
+    },
+  },
+  warning: {
+    class: Warning,
+    inlineToolbar: true,
+    shortcut: 'CTRL+SHIFT+.',
+    config: {
+      titlePlaceholder: 'Warning Title',
+      messagePlaceholder: 'Warning Message',
+    },
+  },
+  quote: {
+    class: Quote,
+    inlineToolbar: true,
+    config: {
+      quotePlaceholder: 'Enter a quote',
+      captionPlaceholder: "Quote's author",
+    },
+  },
+  delimiter: Delimiter,
 };

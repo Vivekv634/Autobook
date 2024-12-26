@@ -49,7 +49,7 @@ export default function RootLayout({ children }) {
       </head>
       <body
         className={cn(
-          'print:hidden selection:bg-fuchsia-300 selection:text-zinc-900',
+          'print:hidden select-none selection:bg-fuchsia-300 selection:text-zinc-900',
         )}
       >
         <LayoutComponent>{children}</LayoutComponent>

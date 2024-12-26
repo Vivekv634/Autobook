@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import EditorJS from '@editorjs/editorjs';
 import axios from 'axios';
 import { Pen } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,9 +16,9 @@ import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { editorConfig } from '../utils/editorConfig';
 import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
+import Editor from './Editor';
 
 const NoteEditor = ({ params, readOnly, noteData }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -37,27 +36,20 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
   useEffect(() => {
     if (noteData) {
       setEditorNote(noteData);
-      setNoteTitle(editorNote?.title);
-      setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
-      setNotebookValue(
-        notebooks[editorNote?.notebook_ref_id]
-          ? editorNote?.notebook_ref_id
-          : 'none',
-      );
     } else {
       notes.map((note) => {
         if (note.noteID === noteID) {
-          setEditorNote(note || noteData);
-          setNoteTitle(editorNote?.title);
-          setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
-          setNotebookValue(
-            notebooks[editorNote?.notebook_ref_id]
-              ? editorNote?.notebook_ref_id
-              : 'none',
-          );
+          setEditorNote(note);
         }
       });
     }
+    setNoteTitle(editorNote?.title);
+    setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
+    setNotebookValue(
+      notebooks[editorNote?.notebook_ref_id]
+        ? editorNote?.notebook_ref_id
+        : 'none',
+    );
   }, [
     notes,
     noteID,
@@ -67,25 +59,6 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
     notebooks,
     noteData,
   ]);
-
-  useEffect(() => {
-    if (!editorNote?.body) return;
-    const editor = new EditorJS({
-      ...editorConfig,
-      readOnly: readOnly || editorNote?.isReadOnly,
-      data: JSON.parse(editorNote?.body || '{}'),
-    });
-    setEditorInstance(editor);
-    return () => {
-      if (editor) {
-        if (typeof editor.destroy === 'function') {
-          editor.destroy();
-        } else {
-          setEditorInstance(null);
-        }
-      }
-    };
-  }, [editorNote?.body, editorNote?.isReadOnly, readOnly]);
 
   const save = useCallback(async () => {
     if (!editorInstance) return;
@@ -121,6 +94,7 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
     toast,
     user?.userData?.theme,
   ]);
+
   return (
     <section className="h-full box-border">
       <ScrollArea>
@@ -198,7 +172,7 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
             <Pen className="h-3 w-3" />
           </Label>
           <Input
-            autoFocus
+            autoFocus={tagsEditable}
             onBlur={() => setTagsEditable(false)}
             value={noteTagsInput}
             onChange={(e) => setNoteTagsInput(e.target.value)}
@@ -206,13 +180,10 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
             className={cn(!tagsEditable && 'hidden')}
           />
         </div>
-        <div
-          id="editorjs"
-          className={cn(
-            !isDesktop && 'mx-1 px-1',
-            isDesktop && 'px-10 py-4 ',
-            'border rounded-md',
-          )}
+        <Editor
+          editorNote={editorNote}
+          readOnly={readOnly || editorNote?.isReadOnly}
+          setEditorInstance={setEditorInstance}
         />
         <ScrollBar />
       </ScrollArea>

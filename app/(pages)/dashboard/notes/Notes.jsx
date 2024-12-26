@@ -53,7 +53,7 @@ const NotesComponent = () => {
 
   return (
     <TooltipProvider>
-      <section className="flex flex-col p-2">
+      <section className="flex flex-col pt-2">
         <div className="flex justify-between gap-2">
           <div
             onClick={() => setSearchOpen((open) => !open)}

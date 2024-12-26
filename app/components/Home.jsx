@@ -1,7 +1,7 @@
-import React from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
+import React from 'react';
+import { Button, buttonVariants } from '@/components/ui/button';
+import Link from 'next/link';
+import { Separator } from '@/components/ui/separator';
 
 export default function SpotlightHome() {
   return (
@@ -11,7 +11,7 @@ export default function SpotlightHome() {
           AutoBook
         </Link>
         <Link
-          className={buttonVariants({ variant: "outline" })}
+          className={buttonVariants({ variant: 'outline' })}
           href="/register"
         >
           Sign up
@@ -34,7 +34,7 @@ export default function SpotlightHome() {
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/login">Learn More</Link>
+            <Link href="#features">Learn More</Link>
           </Button>
         </div>
       </div>
