@@ -9,6 +9,7 @@ import {
   Roboto,
   Ubuntu,
 } from 'next/font/google';
+
 export const openSans = Open_Sans({
   subsets: ['latin'],
   style: ['italic', 'normal'],
@@ -53,7 +54,7 @@ export const roboto = Roboto({
 export const nunito = Nunito({
   subsets: ['latin'],
   style: ['italic', 'normal'],
-  weight: ['200', '300', '400', '600', '700', '800'],
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
 });
 
 export const play = Play({
