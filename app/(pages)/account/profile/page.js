@@ -2,7 +2,7 @@ import React from 'react';
 import ProfileComponent from './Profile';
 
 export const metadata = {
-  title: 'Profile - AutoBook',
+  title: 'Profile | AutoBook',
 };
 
 const Profile = () => {
@@ -10,4 +10,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

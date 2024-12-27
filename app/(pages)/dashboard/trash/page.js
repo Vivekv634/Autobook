@@ -2,7 +2,7 @@ import React from 'react';
 import TrashComponent from './Trash';
 
 export const metadata = {
-  title: 'Trash - AutoBook',
+  title: 'Trash | AutoBook',
 };
 
 const Trash = () => {
@@ -10,4 +10,3 @@ const Trash = () => {
 };
 
 export default Trash;
-

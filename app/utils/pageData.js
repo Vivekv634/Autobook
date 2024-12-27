@@ -1,4 +1,3 @@
-import { Hash, Star, Trash2, Clock4, StickyNote, Book } from 'lucide-react';
 import {
   IconBrandGithub,
   IconHome,
@@ -6,6 +5,7 @@ import {
   IconUsers,
   IconWand,
 } from '@tabler/icons-react';
+import { Book, Clock4, Hash, Star, StickyNote, Trash2 } from 'lucide-react';
 export const pages = [
   {
     label: 'Notes',
@@ -499,5 +499,7 @@ export const fonts = {
   montserrat: 'Montserrat',
   quicksand: 'Quicksand',
   comicNeue: 'Comic Neue',
-  openSans: 'Open Sans'
+  openSans: 'Open Sans',
+  nunito: 'Nunito',
+  play: 'Play',
 };

@@ -1,7 +1,7 @@
 import NotesComponent from './Notes';
 
 export const metadata = {
-  title: 'Notes - AutoBook',
+  title: 'Notes | AutoBook',
 };
 
 const Notes = () => {
@@ -9,4 +9,3 @@ const Notes = () => {
 };
 
 export default Notes;
-

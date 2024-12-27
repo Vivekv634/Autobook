@@ -46,7 +46,7 @@ const Dashboard = () => {
 
   return (
     <main className="flex justify-center items-center h-screen text-3xl">
-      Redirecting...
+      Loading...
     </main>
   );
 };

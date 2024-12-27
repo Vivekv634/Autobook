@@ -20,14 +20,33 @@ h5.ce-header {
 h6.ce-header {
   @apply text-lg font-semibold;
 }
-.dark .ce-popover,
-.dark
-  .ce-popover-item:not(
-    .ce-popover-item--confirmation,
-    .ce-popover-item--not-focus,
-    .ce-popover-item--not-hover,
 
-  ),
+.cdx-attaches__title,
+.cdx-attaches__file-info {
+  /* default attachment styles */
+  color: black;
+}
+.cdx-attaches__download-button {
+  color: #f0f0f0;
+  border: 1px solid #ccc;
+}
+
+.attachment--image {
+  /* styles for image attachments */
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
+}
+
+.attachment--file {
+  /* styles for file attachments */
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.dark .ce-popover,
+.dark .ce-popover-item,
 .dark .ce-popover-item__icon,
 .dark .ce-popover-items,
 .dark .ce-popover__container .dark .ce-popover-item:hover {

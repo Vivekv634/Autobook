@@ -1,7 +1,7 @@
 import NotebookComponent from './Notebooks';
 
 export const metadata = {
-  title: 'Notebooks - AutoBook',
+  title: 'Notebooks | AutoBook',
 };
 
 const Notebooks = () => {

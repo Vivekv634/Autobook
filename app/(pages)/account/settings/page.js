@@ -2,7 +2,7 @@ import React from 'react';
 import SettingsComponent from './Settings';
 
 export const metadata = {
-  title: 'Settings - AutoBook',
+  title: 'Settings | AutoBook',
 };
 
 const Settings = () => {

@@ -1,10 +1,6 @@
-import dynamic from 'next/dynamic';
 import axios from 'axios';
 import React from 'react';
-
-const NoteEditor = dynamic(() => import('@/app/components/NoteEditor'), {
-  ssr: false,
-});
+import NoteEditor from '@/app/components/NoteEditor';
 
 export async function generateMetadata({ params }) {
   const { notesDocID, noteID } = params;
@@ -16,7 +12,7 @@ export async function generateMetadata({ params }) {
   });
 
   return {
-    title: `${response.data.result.title} - AutoBook` ?? 'Title - AutoBook',
+    title: `${response.data.result.title} | AutoBook` ?? 'Title | AutoBook',
   };
 }
 

@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaHook } from '@/app/utils/mediaHook';
 import { cn } from '@/lib/utils';
@@ -14,7 +14,8 @@ import Editor from '@/app/components/Editor';
 const EditAutoNoteTemplate = ({ params }) => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
   const { autoNotes, user } = useSelector((state) => state.note);
-  const [editorInstance, setEditorInstance] = useState(null);
+  const [data, setData] = useState();
+  const editorInstance = useRef(null);
   const [loading, setLoading] = useState(false);
   const [autoNote, setAutoNote] = useState();
   const toast = useCustomToast();
@@ -23,6 +24,7 @@ const EditAutoNoteTemplate = ({ params }) => {
     autoNotes.map((autoNote) => {
       if (autoNote.autoNoteID === params.autoNoteID) {
         setAutoNote(autoNote);
+        setData(autoNote?.template ?? '{}');
       }
     });
   }, [autoNotes, params.autoNoteID]);
@@ -30,7 +32,7 @@ const EditAutoNoteTemplate = ({ params }) => {
   const handleSave = () => {
     try {
       setLoading(true);
-      editorInstance.save().then(async (outputData) => {
+      editorInstance.current.save().then(async (outputData) => {
         const templateBody = JSON.stringify(outputData);
         await axios.put(
           `${process.env.API}/api/auto-notes/update/${params.autoNoteID}`,
@@ -62,7 +64,7 @@ const EditAutoNoteTemplate = ({ params }) => {
       <ScrollArea>
         <div
           className={cn(
-            'flex justify-between items-center',
+            'flex justify-between items-center print:hidden',
             !isDesktop && 'mt-4 mb-1 mx-1',
           )}
         >
@@ -78,7 +80,7 @@ const EditAutoNoteTemplate = ({ params }) => {
           </Button>
         </div>
         <Separator className="my-2" />
-        <Editor editorNote={autoNote} setEditorInstance={setEditorInstance} />
+        <Editor data={data} editorInstance={editorInstance} />
         <ScrollBar />
       </ScrollArea>
     </section>

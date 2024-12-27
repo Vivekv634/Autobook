@@ -197,7 +197,11 @@ const SettingsComponent = () => {
                 <SelectContent className={fontClassifier(user?.userData?.font)}>
                   {Object.keys(fonts).map((font) => {
                     return (
-                      <SelectItem value={font} key={font}>
+                      <SelectItem
+                        value={font}
+                        key={font}
+                        className={fontClassifier(font)}
+                      >
                         {fonts[font]}
                       </SelectItem>
                     );
