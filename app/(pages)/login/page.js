@@ -1,7 +1,7 @@
 import LoginComponent from './Login.jsx';
 
 export const metadata = {
-  title: 'Login - AutoBook',
+  title: 'Login | AutoBook',
   description: 'Login to access features of AutoBook.',
   keywords: ['login', 'signin', 'AutoBook'],
 };

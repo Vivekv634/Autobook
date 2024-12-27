@@ -6,7 +6,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request, { params }) {
   try {
     let userData, userID;
-    const { authID } = params;
+    const { authID } = await params;
     const q = query(userDB, where('authID', '==', authID));
     const userSnap = await getDocs(q);
     if (userSnap.empty) {

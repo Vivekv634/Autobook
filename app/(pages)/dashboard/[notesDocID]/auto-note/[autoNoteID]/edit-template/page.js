@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
     }
   });
   return {
-    title: `${title} - AutoBook`,
+    title: `${title} | AutoBook`,
   };
 }
 

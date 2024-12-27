@@ -2,7 +2,7 @@ import React from 'react';
 import TagsComponent from './Tags';
 
 export const metadata = {
-  title: 'Tags - AutoBook',
+  title: 'Tags | AutoBook',
 };
 
 const Tags = () => {
@@ -10,4 +10,3 @@ const Tags = () => {
 };
 
 export default Tags;
-

@@ -1,12 +1,14 @@
 'use client';
 import Editor from '@/app/components/Editor';
+import { cn } from '@/lib/utils';
+import { poppins } from '@/public/fonts';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function ShareComponent({ params }) {
   const { notesDocID, noteID } = params;
-  const [, setEditorInstance] = useState(null);
-  const [response, setResponse] = useState(null);
+  const editorInstance = useRef(null);
+  const [response, setResponse] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,24 +18,29 @@ export default function ShareComponent({ params }) {
             notesDocID: notesDocID,
           },
         })
-        .then((res) => {
-          setResponse(res);
-        });
+        .then((res) => setResponse(res));
     };
     fetchData();
-  }, [noteID, notesDocID]);
+  });
 
-  if (response) {
+  if (response?.data?.result) {
     return (
-      <section className="container">
+      <section className={cn(poppins.className, 'container mt-5')}>
+        <h1 className="text-4xl font-bold">{response?.data?.result?.title}</h1>
         <Editor
-          editorNote={response?.data?.result}
+          data={response?.data?.result?.body}
           readOnly={true}
-          setEditorInstance={setEditorInstance}
+          editorInstance={editorInstance}
         />
       </section>
     );
   } else {
-    return null;
+    return (
+      <section className={cn(poppins.className, 'container mt-5')}>
+        <h1 className="text-center text-2xl font-bold">
+          Note not available right now!
+        </h1>
+      </section>
+    );
   }
 }

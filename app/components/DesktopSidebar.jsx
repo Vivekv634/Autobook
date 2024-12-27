@@ -1,4 +1,6 @@
-"use client";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import {
   Menubar,
   MenubarContent,
@@ -6,25 +8,23 @@ import {
   MenubarMenu,
   MenubarSeparator,
   MenubarTrigger,
-} from "@/components/ui/menubar";
-import React, { useEffect, useState } from "react";
-import { LogOut, Settings, UserRound } from "lucide-react";
-import { Label } from "@/components/ui/label";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { auth } from "@/firebase.config";
+} from '@/components/ui/menubar';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { auth } from '@/firebase.config';
+import { LogOut, Settings, UserRound } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { pages } from "../utils/pageData";
-import { onAuthStateChanged } from "firebase/auth";
-import { useSelector } from "react-redux";
-import LogOutAlertDialog from "./LogOutAlertDialog";
-import setTheme from "../utils/theme";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { poppins } from "@/public/fonts";
-import { cn } from "@/lib/utils";
-import fontClassifier from "../utils/font-classifier";
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
+import { poppins } from '@/public/fonts';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useSelector } from 'react-redux';
+import fontClassifier from '../utils/font-classifier';
+import { pages } from '../utils/pageData';
+import setTheme from '../utils/theme';
+import LogOutAlertDialog from './LogOutAlertDialog';
 
 const DesktopSidebar = () => {
   const router = useRouter();
@@ -40,12 +40,13 @@ const DesktopSidebar = () => {
           setProfileURL(user?.userData?.profileURL);
         } else {
           setProfileURL(
-            `https://api.dicebear.com/9.x/lorelei/webp?seed=${user?.userData?.name ?? "default"
+            `https://api.dicebear.com/9.x/lorelei/webp?seed=${
+              user?.userData?.name ?? 'default'
             }`,
           );
         }
       } else {
-        router.push("/login");
+        router.push('/login');
       }
     });
   }, [
@@ -58,7 +59,7 @@ const DesktopSidebar = () => {
   return (
     <aside
       className={cn(
-        "h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden",
+        'h-screen w-full max-w-52 border-r p-2 border-box sticky top-0 print:hidden',
         poppins.className,
       )}
     >
@@ -75,11 +76,13 @@ const DesktopSidebar = () => {
               return (
                 <Link href={page.address} key={index} className="">
                   <Button
-                    variant={page.label === "Trash"
-                      ? "destructive"
-                      : pathName.split("/")[2] === page.id
-                        ? "secondary"
-                        : "ghost"}
+                    variant={
+                      page.label === 'Trash'
+                        ? 'destructive'
+                        : pathName.split('/')[2] === page.id
+                          ? 'secondary'
+                          : 'ghost'
+                    }
                     className="w-full my-1 font-semibold"
                   >
                     <div className="w-full flex text-xl p-1">

@@ -1,7 +1,7 @@
 import RegisterComponent from './Register.jsx';
 
 export const metadata = {
-  title: 'Register - AutoBook',
+  title: 'Register | AutoBook',
   description: 'Register to grab access of AutoBook.',
   keywords: ['register', 'signup', 'AutoBook'],
 };

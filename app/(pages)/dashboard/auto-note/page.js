@@ -2,7 +2,7 @@ import React from 'react';
 import AutoNoteComponent from './AutoNotes';
 
 export const metadata = {
-  title: 'AutoNote - AutoBook',
+  title: 'AutoNote | AutoBook',
 };
 
 const AutoNote = () => {

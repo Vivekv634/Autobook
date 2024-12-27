@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -9,16 +10,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { Pen } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'usehooks-ts';
-import { cn } from '@/lib/utils';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { useCustomToast } from './SendToast';
 import ButtonLoader from './ButtonLoader';
 import Editor from './Editor';
+import { useCustomToast } from './SendToast';
 
 const NoteEditor = ({ params, readOnly, noteData }) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -31,25 +31,32 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
   const [noteTagsInput, setNoteTagsInput] = useState();
   const [loading, setLoading] = useState(false);
   const [notebookValue, setNotebookValue] = useState();
-  const [editorInstance, setEditorInstance] = useState(null);
+  const editorInstance = useRef(null);
 
   useEffect(() => {
     if (noteData) {
       setEditorNote(noteData);
+      setNoteTitle(editorNote?.title);
+      setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
+      setNotebookValue(
+        notebooks[editorNote?.notebook_ref_id]
+          ? editorNote?.notebook_ref_id
+          : 'none',
+      );
     } else {
       notes.map((note) => {
         if (note.noteID === noteID) {
-          setEditorNote(note);
+          setEditorNote(note || noteData);
+          setNoteTitle(editorNote?.title);
+          setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
+          setNotebookValue(
+            notebooks[editorNote?.notebook_ref_id]
+              ? editorNote?.notebook_ref_id
+              : 'none',
+          );
         }
       });
     }
-    setNoteTitle(editorNote?.title);
-    setNoteTagsInput(editorNote?.tagsList?.join(' ') || '');
-    setNotebookValue(
-      notebooks[editorNote?.notebook_ref_id]
-        ? editorNote?.notebook_ref_id
-        : 'none',
-    );
   }, [
     notes,
     noteID,
@@ -64,7 +71,7 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
     if (!editorInstance) return;
     setLoading(true);
     try {
-      const outputData = await editorInstance.save();
+      const outputData = await editorInstance.current.save();
       const body = {
         body: JSON.stringify(outputData),
         title: noteTitle,
@@ -94,7 +101,6 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
     toast,
     user?.userData?.theme,
   ]);
-
   return (
     <section className="h-full box-border">
       <ScrollArea>
@@ -172,7 +178,7 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
             <Pen className="h-3 w-3" />
           </Label>
           <Input
-            autoFocus={tagsEditable}
+            autoFocus
             onBlur={() => setTagsEditable(false)}
             value={noteTagsInput}
             onChange={(e) => setNoteTagsInput(e.target.value)}
@@ -181,9 +187,9 @@ const NoteEditor = ({ params, readOnly, noteData }) => {
           />
         </div>
         <Editor
-          editorNote={editorNote}
-          readOnly={readOnly || editorNote?.isReadOnly}
-          setEditorInstance={setEditorInstance}
+          data={editorNote?.body}
+          readOnly={editorNote?.isReadOnly}
+          editorInstance={editorInstance}
         />
         <ScrollBar />
       </ScrollArea>

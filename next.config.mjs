@@ -38,7 +38,6 @@ const nextConfig = {
     ],
   },
   reactStrictMode: false,
-  swcMinify: true,
 };
 
 export const productionBrowserSourceMaps = true;
