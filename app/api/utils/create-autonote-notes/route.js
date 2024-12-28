@@ -115,7 +115,7 @@ export async function PATCH(request) {
       });
     });
 
-    // await batch.commit();
+    await batch.commit();
 
     if (noteCreated) {
       return NextResponse.json(
