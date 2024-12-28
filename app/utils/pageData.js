@@ -5,7 +5,7 @@ import {
   IconUsers,
   IconWand,
 } from '@tabler/icons-react';
-import { Book, Clock4, Hash, Star, StickyNote, Trash2 } from 'lucide-react';
+import { Book, Clock4, Star, StickyNote, Tag, Trash2 } from 'lucide-react';
 export const pages = [
   {
     label: 'Notes',
@@ -29,7 +29,7 @@ export const pages = [
     label: 'Tags',
     id: 'tags',
     address: '/dashboard/tags',
-    icon: <Hash className="h-5 my-auto mx-1" />,
+    icon: <Tag className="h-5 my-auto mx-1" />,
   },
   {
     label: 'Auto Note',
@@ -502,4 +502,5 @@ export const fonts = {
   openSans: 'Open Sans',
   nunito: 'Nunito',
   play: 'Play',
+  sansita: 'Sansita',
 };

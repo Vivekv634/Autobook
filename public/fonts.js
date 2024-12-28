@@ -7,6 +7,7 @@ import {
   Poppins,
   Quicksand,
   Roboto,
+  Sansita,
   Ubuntu,
 } from 'next/font/google';
 
@@ -60,4 +61,9 @@ export const nunito = Nunito({
 export const play = Play({
   subsets: ['latin'],
   weight: ['400', '700'],
+});
+
+export const sansita = Sansita({
+  subsets: ['latin'],
+  weight: ['400', '700', '800', '900'],
 });

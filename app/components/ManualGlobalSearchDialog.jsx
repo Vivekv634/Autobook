@@ -6,19 +6,32 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
-import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { pages } from "../utils/pageData";
-import { Settings, UserRound } from "lucide-react";
-import { cn } from "@/lib/utils";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { Settings, UserRound } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import fontClassifier from '../utils/font-classifier';
+import { pages } from '../utils/pageData';
 
 export default function ManualGlobalSearchDialog({ open, setOpen }) {
   const { notes, notebooks, tagsData, autoNotes, user } = useSelector(
     (state) => state.note,
   );
   const router = useRouter();
+
+  useEffect(() => {
+    const down = (e) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, [setOpen]);
 
   const handleNoteOnClick = (noteData) => {
     router.push(`/dashboard/${user?.userData?.notesDocID}/${noteData.noteID}`);
@@ -60,7 +73,12 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
                 onSelect={() => handlePageRedirect(page)}
                 key={index}
               >
-                <div className="flex w-full h-full">
+                <div
+                  className={cn(
+                    'flex w-full h-full',
+                    page.label === 'Trash' && 'text-red-500',
+                  )}
+                >
                   {page.icon}
                   <span className="ml-1">{page.label}</span>
                 </div>
@@ -68,9 +86,9 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
             );
           })}
         </CommandGroup>
-        <CommandSeparator />
+        <CommandSeparator className={cn(!notes.length && 'hidden')} />
         <CommandGroup
-          className={cn(!notes?.length && "hidden")}
+          className={cn(!notes?.length && 'hidden')}
           heading="Notes"
         >
           {notes?.map((note, index) => {
@@ -88,9 +106,11 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
             );
           })}
         </CommandGroup>
-        <CommandSeparator />
+        <CommandSeparator
+          className={cn(!Object.keys(notebooks).length && 'hidden')}
+        />
         <CommandGroup
-          className={cn(!Object.keys(notebooks).length && "hidden")}
+          className={cn(!Object.keys(notebooks).length && 'hidden')}
           heading="Notebooks"
         >
           {Object.keys(notebooks).length &&
@@ -112,8 +132,11 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
             })}
         </CommandGroup>
         <CommandSeparator />
+        <CommandSeparator
+          className={cn(!Object.keys(tagsData).length && 'hidden')}
+        />
         <CommandGroup
-          className={cn(!Object.keys(tagsData).length && "hidden")}
+          className={cn(!Object.keys(tagsData).length && 'hidden')}
           heading="Tags"
         >
           {Object.keys(tagsData).length &&
@@ -132,9 +155,9 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
               );
             })}
         </CommandGroup>
-        <CommandSeparator />
+        <CommandSeparator className={cn(!autoNotes.length && 'hidden')} />
         <CommandGroup
-          className={cn(!autoNotes?.length && "hidden")}
+          className={cn(!autoNotes?.length && 'hidden')}
           heading="Auto Notes"
         >
           {autoNotes?.map((autoNote, index) => {
@@ -156,7 +179,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
         <CommandGroup heading="Account">
           <CommandItem
             onSelect={() => {
-              router.push("/account/profile");
+              router.push('/account/profile');
               setOpen((open) => !open);
             }}
             asChild
@@ -168,7 +191,7 @@ export default function ManualGlobalSearchDialog({ open, setOpen }) {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              router.push("/account/settings");
+              router.push('/account/settings');
               setOpen((open) => !open);
             }}
             asChild

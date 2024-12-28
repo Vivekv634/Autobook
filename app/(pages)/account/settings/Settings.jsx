@@ -132,7 +132,7 @@ const SettingsComponent = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-end gap-2">
             <Palette className="w-5 h-5" />
             Appearance
           </CardTitle>
@@ -223,7 +223,7 @@ const SettingsComponent = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-end gap-2">
             <Home className="w-5 h-5" />
             Behaviour
           </CardTitle>
@@ -293,7 +293,7 @@ const SettingsComponent = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-end gap-2">
             <FileDown className="w-5 h-5" />
             Data Management
           </CardTitle>

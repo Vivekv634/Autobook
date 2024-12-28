@@ -7,6 +7,7 @@ import {
   poppins,
   quicksand,
   roboto,
+  sansita,
   ubuntu,
 } from '@/public/fonts';
 
@@ -36,6 +37,9 @@ export default function fontClassifier(userFont) {
       break;
     case 'play':
       FONT = play.className;
+      break;
+    case 'sansita':
+      FONT = sansita.className;
       break;
     default:
       FONT = poppins.className;

@@ -1,4 +1,17 @@
-"use client";
+'use client';
+import {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
+import { cn } from '@/lib/utils';
+import axios from 'axios';
 import {
   Code,
   Copy,
@@ -10,38 +23,24 @@ import {
   SquareArrowOutUpRight,
   Trash2,
   Type,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { setDeletedNotes, setNotes } from "../redux/slices/noteSlice";
-import axios from "axios";
-import { v4 } from "uuid";
-import { usePathname } from "next/navigation";
-import {
-  ContextMenu,
-  ContextMenuCheckboxItem,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import editorJsToHtml from "../utils/editorJSToHTML";
-import CopyAsHTMLDialog from "./CopyAsHTMLDialog";
-import { useState } from "react";
-import CopyAsMarkdownDialog from "./CopyAsMarkdownDialog";
-import CopyAsTextDialog from "./CopyAsTextDialog";
-import ExportAsTextDialog from "./ExportAsTextDialog";
-import ExportAsHTMLDialog from "./ExportAsHTMLDialog";
-import ExportAsMarkdownDialog from "./ExportAsMarkdownDialog";
-import NotePrintDialog from "./NotePrintDialog";
-import NoteConfigDialog from "./NoteConfigDialog";
-import { useCustomToast } from "./SendToast";
-import ShareNoteDialog from "./ShareNoteDialog";
-import fontClassifier from "../utils/font-classifier";
-import { cn } from "@/lib/utils";
+} from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { v4 } from 'uuid';
+import { setDeletedNotes, setNotes } from '../redux/slices/noteSlice';
+import editorJsToHtml from '../utils/editorJSToHTML';
+import fontClassifier from '../utils/font-classifier';
+import CopyAsHTMLDialog from './CopyAsHTMLDialog';
+import CopyAsMarkdownDialog from './CopyAsMarkdownDialog';
+import CopyAsTextDialog from './CopyAsTextDialog';
+import ExportAsHTMLDialog from './ExportAsHTMLDialog';
+import ExportAsMarkdownDialog from './ExportAsMarkdownDialog';
+import ExportAsTextDialog from './ExportAsTextDialog';
+import NoteConfigDialog from './NoteConfigDialog';
+import NotePrintDialog from './NotePrintDialog';
+import { useCustomToast } from './SendToast';
+import ShareNoteDialog from './ShareNoteDialog';
 
 export default function NoteContextMenu({ children, notesDocID, note }) {
   const toast = useCustomToast();
@@ -67,30 +66,30 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
   const updateNote = async (props) => {
     let body, toastMessage;
     switch (props) {
-      case "isPinned":
+      case 'isPinned':
         body = { isPinned: !note.isPinned };
         toastMessage = {
-          description: !note.isPinned ? "Note pinned!" : "Note unpinned!",
+          description: !note.isPinned ? 'Note pinned!' : 'Note unpinned!',
         };
         break;
-      case "isReadOnly":
+      case 'isReadOnly':
         body = { isReadOnly: !note.isReadOnly };
         toastMessage = {
           description: !note.isReadOnly
-            ? "Note marked as read-only!"
-            : "Note is editable again!",
+            ? 'Note marked as read-only!'
+            : 'Note is editable again!',
         };
         break;
-      case "moveToTrash":
+      case 'moveToTrash':
         body = { isTrash: !note.isTrash };
-        toastMessage = { description: "Note moved to trash!" };
+        toastMessage = { description: 'Note moved to trash!' };
         break;
       default:
         body = { isFavorite: !note.isFavorite };
         toastMessage = {
           description: !note.isFavorite
-            ? "Note added to favorites!"
-            : "Note removed from favorites!",
+            ? 'Note added to favorites!'
+            : 'Note removed from favorites!',
         };
         break;
     }
@@ -109,8 +108,8 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
     } catch (error) {
       console.error(error);
       toast({
-        description: "Oops! Something went wrong. Try again!",
-        variant: "destructive",
+        description: 'Oops! Something went wrong. Try again!',
+        variant: 'destructive',
       });
     }
   };
@@ -132,12 +131,12 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         (note) => note.isTrash === true,
       );
       dispatch(setDeletedNotes(filterDeletedNotes));
-      toast({ description: "Note restored!", color: user?.userData?.theme });
+      toast({ description: 'Note restored!', color: user?.userData?.theme });
     } catch (error) {
       console.error(error);
       toast({
-        description: "Oops! Something went wrong. Try again!",
-        variant: "destructive",
+        description: 'Oops! Something went wrong. Try again!',
+        variant: 'destructive',
       });
     }
   };
@@ -157,14 +156,14 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
       );
       dispatch(setDeletedNotes(filterDeletedNotes));
       toast({
-        description: "Note deleted forever!",
+        description: 'Note deleted forever!',
         color: user?.userData?.theme,
       });
     } catch (error) {
       console.error(error);
       toast({
-        description: "Oops! Something went wrong. Try again!",
-        variant: "destructive",
+        description: 'Oops! Something went wrong. Try again!',
+        variant: 'destructive',
       });
     }
   };
@@ -186,12 +185,12 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
         },
       );
       dispatch(setNotes(duplicateResponse.data.result));
-      toast({ description: "Note duplicated!", color: user?.userData?.theme });
+      toast({ description: 'Note duplicated!', color: user?.userData?.theme });
     } catch (error) {
       console.error(error);
       toast({
-        description: "Oops! Something went wrong. Try again!",
-        variant: "destructive",
+        description: 'Oops! Something went wrong. Try again!',
+        variant: 'destructive',
       });
     }
   };
@@ -201,194 +200,192 @@ export default function NoteContextMenu({ children, notesDocID, note }) {
   return (
     <ContextMenu onOpenChange={setIsContextOpen}>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
-      {pathName.split("/")[2] != "trash"
-        ? (
-          <ContextMenuContent className={cn(FONT, "min-w-48")}>
-            <ContextMenuItem
-              className="flex justify-between items-center"
-              onClick={setEditorNoteState}
-            >
-              Open Note
-              <SquareArrowOutUpRight className="h-4 w-5" />
-            </ContextMenuItem>
-            <ContextMenuItem
-              className="flex justify-between items-center"
-              onClick={() => setNoteConfigDialog(true)}
-            >
-              Edit
-              <PenLine className="h-4 w-5" />
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuCheckboxItem
-              checked={note.isPinned}
-              onClick={() => updateNote("isPinned")}
-            >
-              {note.isPinned ? "Pinned" : "Pin"}
-            </ContextMenuCheckboxItem>
-            <ContextMenuCheckboxItem
-              checked={note.isReadOnly}
-              onClick={() => updateNote("isReadOnly")}
-            >
-              Read Only
-            </ContextMenuCheckboxItem>
-            <ContextMenuCheckboxItem
-              checked={note.isFavorite}
-              onClick={() => updateNote("isFavorite")}
-            >
-              Favorite
-            </ContextMenuCheckboxItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              className="flex justify-between items-center"
-              onClick={() => setPrintNote(true)}
-            >
-              Print
-              <Printer className="h-4 w-5" />
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>Export as</ContextMenuSubTrigger>
-              <ContextMenuSubContent>
-                <ContextMenuItem
-                  className="flex justify-between items-center"
-                  onClick={() => {
-                    setExportAsMarkdown(true);
-                  }}
-                >
-                  Markdown <Heading className="h-4 w-5" />
-                </ContextMenuItem>
-                <ContextMenuItem
-                  className="flex justify-between items-center"
-                  onClick={() => {
-                    setExportAsHTML(true);
-                  }}
-                >
-                  HTML <Code className="h-4 w-5" />
-                </ContextMenuItem>
-                <ContextMenuItem
-                  className="flex justify-between items-center"
-                  onClick={() => {
-                    setExportAsText(true);
-                  }}
-                >
-                  Text <Type className="h-4 w-5" />
-                </ContextMenuItem>
-              </ContextMenuSubContent>
-            </ContextMenuSub>
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>Copy as</ContextMenuSubTrigger>
-              <ContextMenuSubContent>
-                <ContextMenuItem
-                  className="flex justify-between items-center"
-                  onClick={() => {
-                    setCopyAsMarkdown(true);
-                  }}
-                >
-                  Markdown <Heading className="h-4 w-5" />
-                </ContextMenuItem>
-                <ContextMenuItem
-                  className="flex justify-between items-center"
-                  onClick={() => {
-                    setCopyAsHTML(true);
-                  }}
-                >
-                  HTML <Code className="h-4 w-5" />
-                </ContextMenuItem>
-                <ContextMenuItem
-                  className="flex justify-between items-center"
-                  onClick={() => {
-                    setCopyAsText(true);
-                  }}
-                >
-                  Text <Type className="h-4 w-5" />
-                </ContextMenuItem>
-              </ContextMenuSubContent>
-            </ContextMenuSub>
-            <ContextMenuItem
-              className="flex justify-between items-center"
-              onClick={() => setOpenShareDialog(true)}
-            >
-              Share
-              <Share className="h-4 w-5" />
-            </ContextMenuItem>
-            <ContextMenuItem
-              className="flex justify-between items-center"
-              onClick={duplicateNote}
-            >
-              Duplicate
-              <Copy className="h-4 w-5" />
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              className="flex justify-between items-center text-red-500"
-              onClick={() => updateNote("moveToTrash")}
-            >
-              Move to trash
-              <Trash2 className="h-4 w-5" />
-            </ContextMenuItem>
-          </ContextMenuContent>
-        )
-        : (
-          <ContextMenuContent>
-            <ContextMenuItem
-              className="flex justify-between items-center"
-              onClick={restoreNote}
-            >
-              Restore
-              <RotateCcw className="h-4 w-5" />
-            </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem
-              className="flex justify-between items-center text-red-500"
-              onClick={deleteNote}
-            >
-              Delete
-              <Trash2 className="h-4 w-5" />
-            </ContextMenuItem>
-          </ContextMenuContent>
-        )}
+      {pathName.split('/')[2] != 'trash' ? (
+        <ContextMenuContent className={cn(FONT, 'min-w-48')}>
+          <ContextMenuItem
+            className="flex justify-between items-center"
+            onClick={setEditorNoteState}
+          >
+            Open Note
+            <SquareArrowOutUpRight className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuItem
+            className="flex justify-between items-center"
+            onClick={() => setNoteConfigDialog(true)}
+          >
+            Edit
+            <PenLine className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem
+            checked={note.isPinned}
+            onClick={() => updateNote('isPinned')}
+          >
+            {note.isPinned ? 'Pinned' : 'Pin'}
+          </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            checked={note.isReadOnly}
+            onClick={() => updateNote('isReadOnly')}
+          >
+            Read Only
+          </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            checked={note.isFavorite}
+            onClick={() => updateNote('isFavorite')}
+          >
+            Favorite
+          </ContextMenuCheckboxItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            className="flex justify-between items-center"
+            onClick={() => setPrintNote(true)}
+          >
+            Print
+            <Printer className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Export as</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={() => {
+                  setExportAsMarkdown(true);
+                }}
+              >
+                Markdown <Heading className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={() => {
+                  setExportAsHTML(true);
+                }}
+              >
+                HTML <Code className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={() => {
+                  setExportAsText(true);
+                }}
+              >
+                Text <Type className="h-4 w-5" />
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger>Copy as</ContextMenuSubTrigger>
+            <ContextMenuSubContent>
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={() => {
+                  setCopyAsMarkdown(true);
+                }}
+              >
+                Markdown <Heading className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={() => {
+                  setCopyAsHTML(true);
+                }}
+              >
+                HTML <Code className="h-4 w-5" />
+              </ContextMenuItem>
+              <ContextMenuItem
+                className="flex justify-between items-center"
+                onClick={() => {
+                  setCopyAsText(true);
+                }}
+              >
+                Text <Type className="h-4 w-5" />
+              </ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuItem
+            className="flex justify-between items-center"
+            onClick={() => setOpenShareDialog(true)}
+          >
+            Share
+            <Share className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuItem
+            className="flex justify-between items-center"
+            onClick={duplicateNote}
+          >
+            Duplicate
+            <Copy className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            className="flex justify-between items-center text-red-500"
+            onClick={() => updateNote('moveToTrash')}
+          >
+            Move to trash
+            <Trash2 className="h-4 w-5" />
+          </ContextMenuItem>
+        </ContextMenuContent>
+      ) : (
+        <ContextMenuContent>
+          <ContextMenuItem
+            className="flex justify-between items-center"
+            onClick={restoreNote}
+          >
+            Restore
+            <RotateCcw className="h-4 w-5" />
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            className="flex justify-between items-center text-red-500"
+            onClick={deleteNote}
+          >
+            Delete
+            <Trash2 className="h-4 w-5" />
+          </ContextMenuItem>
+        </ContextMenuContent>
+      )}
       <CopyAsHTMLDialog
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
+        html={editorJsToHtml(JSON.parse(note.body))}
         open={copyAsHTML}
         setOpen={setCopyAsHTML}
         isContextOpen={isContextOpen}
       />
       <CopyAsMarkdownDialog
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
+        html={editorJsToHtml(JSON.parse(note.body))}
         open={copyAsMarkdown}
         setOpen={setCopyAsMarkdown}
         isContextOpen={isContextOpen}
       />
       <CopyAsTextDialog
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
+        html={editorJsToHtml(JSON.parse(note.body))}
         open={copyAsText}
         isContextOpen={isContextOpen}
         setOpen={setCopyAsText}
       />
       <ExportAsTextDialog
         noteTitle={note.title}
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
+        html={editorJsToHtml(JSON.parse(note.body))}
         open={exportAsText}
         isContextOpen={isContextOpen}
         setOpen={setExportAsText}
       />
       <ExportAsMarkdownDialog
         noteTitle={note.title}
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
+        html={editorJsToHtml(JSON.parse(note.body))}
         open={exportAsMarkdown}
         setOpen={setExportAsMarkdown}
         isContextOpen={isContextOpen}
       />
       <ExportAsHTMLDialog
         noteTitle={note.title}
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
+        html={editorJsToHtml(JSON.parse(note.body))}
         open={exportAsHTML}
         setOpen={setExportAsHTML}
         isContextOpen={isContextOpen}
       />
       <NotePrintDialog
-        html={editorJsToHtml(JSON.parse(note.body || "{}")?.blocks)}
         open={printNote}
+        html={editorJsToHtml(JSON.parse(note.body))}
         isContextOpen={isContextOpen}
         setOpen={setPrintNote}
       />

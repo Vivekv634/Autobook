@@ -6,14 +6,14 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { pages } from "../utils/pageData";
-import { Settings, UserRound } from "lucide-react";
-import { cn } from "@/lib/utils";
-import fontClassifier from "../utils/font-classifier";
+} from '@/components/ui/command';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { pages } from '../utils/pageData';
+import { Settings, UserRound } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import fontClassifier from '../utils/font-classifier';
 
 export default function GlobalSearchDialog() {
   const { notes, notebooks, tagsData, autoNotes, user } = useSelector(
@@ -24,14 +24,14 @@ export default function GlobalSearchDialog() {
 
   useEffect(() => {
     const down = (e) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
       }
     };
 
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
   }, []);
 
   const handleNoteOnClick = (noteData) => {
@@ -74,7 +74,12 @@ export default function GlobalSearchDialog() {
                 onSelect={() => handlePageRedirect(page)}
                 key={index}
               >
-                <div className="flex w-full h-full">
+                <div
+                  className={cn(
+                    'flex w-full h-full',
+                    page.label === 'Trash' && 'text-red-500',
+                  )}
+                >
                   {page.icon}
                   <span className="ml-1">{page.label}</span>
                 </div>
@@ -84,7 +89,7 @@ export default function GlobalSearchDialog() {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!notes?.length && "hidden")}
+          className={cn(!notes?.length && 'hidden')}
           heading="Notes"
         >
           {notes?.map((note, index) => {
@@ -104,7 +109,7 @@ export default function GlobalSearchDialog() {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!Object.keys(notebooks).length && "hidden")}
+          className={cn(!Object.keys(notebooks).length && 'hidden')}
           heading="Notebooks"
         >
           {Object.keys(notebooks).length &&
@@ -127,7 +132,7 @@ export default function GlobalSearchDialog() {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!Object.keys(tagsData).length && "hidden")}
+          className={cn(!Object.keys(tagsData).length && 'hidden')}
           heading="Tags"
         >
           {Object.keys(tagsData).length &&
@@ -148,7 +153,7 @@ export default function GlobalSearchDialog() {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup
-          className={cn(!autoNotes?.length && "hidden")}
+          className={cn(!autoNotes?.length && 'hidden')}
           heading="Auto Notes"
         >
           {autoNotes?.map((autoNote, index) => {
@@ -170,7 +175,7 @@ export default function GlobalSearchDialog() {
         <CommandGroup heading="Account">
           <CommandItem
             onSelect={() => {
-              router.push("/account/profile");
+              router.push('/account/profile');
               setOpen((open) => !open);
             }}
             asChild
@@ -182,7 +187,7 @@ export default function GlobalSearchDialog() {
           </CommandItem>
           <CommandItem
             onSelect={() => {
-              router.push("/account/settings");
+              router.push('/account/settings');
               setOpen((open) => !open);
             }}
             asChild

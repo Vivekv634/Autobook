@@ -1,26 +1,26 @@
 'use client';
+import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
 import NewNoteDialog from '@/app/components/NewNoteDialog';
 import Note from '@/app/components/Note';
+import NotesMoreToolsDropDownMenu from '@/app/components/NotesMoreToolsDropDownMenu';
+import { useMediaHook } from '@/app/utils/mediaHook';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import NoteNotFoundSVG from '@/public/note-not-found.svg';
+import hotkeys from 'hotkeys-js';
 import { Ellipsis, Plus } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useMediaHook } from '@/app/utils/mediaHook';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import NoteNotFoundSVG from '@/public/note-not-found.svg';
-import { Label } from '@/components/ui/label';
-import ManualGlobalSearchDialog from '@/app/components/ManualGlobalSearchDialog';
-import { Separator } from '@/components/ui/separator';
-import NotesMoreToolsDropDownMenu from '@/app/components/NotesMoreToolsDropDownMenu';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
-import hotkeys from 'hotkeys-js';
 
 const NotesComponent = () => {
   const isDesktop = useMediaHook({ screenWidth: 768 });
@@ -39,7 +39,7 @@ const NotesComponent = () => {
   useEffect(() => {
     setNotesViewCSS(
       notesView == 'rows'
-        ? 'gap-4 px-2 md:px-0 flex flex-col'
+        ? 'gap-3 px-2 md:px-0 flex flex-col'
         : 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 grid',
     );
   }, [notesView]);
@@ -53,7 +53,7 @@ const NotesComponent = () => {
 
   return (
     <TooltipProvider>
-      <section className="flex flex-col pt-2">
+      <section className="flex flex-col pt-2 mb-2 px-2">
         <div className="flex justify-between gap-2">
           <div
             onClick={() => setSearchOpen((open) => !open)}

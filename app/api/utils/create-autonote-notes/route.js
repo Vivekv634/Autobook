@@ -1,33 +1,52 @@
 import noteGenerationPeriodTime from '@/app/utils/noteGenerationPeriodTime';
-import { notes as Notes, autoNote as AutoNote } from '@/app/utils/schema';
+import { autoNote as AutoNote, notes as Notes } from '@/app/utils/schema';
 import { titleFormatter } from '@/app/utils/titleFormatter';
 import { db } from '@/firebase.config';
+import * as emailjs from '@emailjs/nodejs';
 import { collection, getDocs, writeBatch } from 'firebase/firestore';
 import { NextResponse } from 'next/server';
 import { v4 } from 'uuid';
-import nodemailer from 'nodemailer';
-import { emailTemplate } from '@/app/utils/emailTemplate';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL,
-    pass: process.env.PASSWORD,
-  },
-  secure: true,
-  tls: {
-    rejectUnauthorized: true,
-  },
-});
+async function sendEmail({
+  receiver_email,
+  autoNoteName,
+  receiver_name,
+  subject,
+  noteTitle,
+  visitLink,
+}) {
+  try {
+    const response = await emailjs.send(
+      process.env.EMAILJS_SERVICE_ID,
+      process.env.EMAILJS_TEMPLATE_ID,
+      {
+        receiver_email,
+        receiver_name,
+        subject,
+        noteTitle,
+        autoNoteName,
+        visitLink,
+      },
+      {
+        publicKey: process.env.EMAILJS_PUBLIC_KEY,
+        privateKey: process.env.EMAILJS_PRIVATE_KEY,
+      },
+    );
+    console.info('Email sent successfully:', response);
+    return response;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
+}
 
-//eslint-disable-next-line
+// eslint-disable-next-line no-unused-vars
 export async function PATCH(request) {
   try {
     const notesCollection = collection(db, 'notes');
     const userCollection = collection(db, 'users');
     const notesSnap = await getDocs(notesCollection);
     const userSnap = await getDocs(userCollection);
-
     let updatedAutoNoteBody,
       newNoteBody,
       noteCreated = 0;
@@ -36,7 +55,6 @@ export async function PATCH(request) {
     notesSnap.forEach((notesDoc) => {
       const notesData = notesDoc.data();
       const autoNotes = notesData?.autoNotes || [];
-
       const user = userSnap.docs.find(
         (userDoc) => userDoc.data().authID === notesData.authID,
       );
@@ -50,7 +68,6 @@ export async function PATCH(request) {
           const lastNoteGenerationTime =
             noteGenerationPeriod + autoNote.lastNoteGenerationTime;
           const currentTime = new Date().getTime();
-
           if (lastNoteGenerationTime <= currentTime) {
             newNoteBody = {
               ...Notes,
@@ -77,36 +94,28 @@ export async function PATCH(request) {
 
             if (userDetails && userDetails.email) {
               const visitLink = `${process.env.API}/dashboard/${userDetails.notesDocID}/${newNoteBody.noteID}`;
-              const to = userDetails.email;
-              const html = emailTemplate(
-                userDetails.name,
-                autoNote.autoNoteName,
-                newNoteBody.title,
-                visitLink,
-              );
 
-              transporter
-                .sendMail({
-                  from: process.env.EMAIL,
-                  to,
-                  subject: 'New AutoNote Created!',
-                  html,
-                })
-                .then(() => console.log(`Email sent to ${userDetails.email}`))
-                .catch((error) => console.error('Error sending email:', error));
+              sendEmail({
+                receiver_name: userDetails.name,
+                receiver_email: userDetails.email,
+                subject: 'New Note Generated',
+                autoNoteName: autoNote.autoNoteName,
+                noteTitle: newNoteBody.title,
+                visitLink: visitLink,
+              })
+                .then((res) => console.log(res))
+                .catch((error) => {
+                  console.error('Failed to send email:', error);
+                  return null;
+                });
             }
-            console.info({
-              from: process.env.EMAIL,
-              to: userDetails.email,
-            });
-
             batch.update(notesDoc.ref, notesData);
           }
         }
       });
     });
 
-    await batch.commit();
+    // await batch.commit();
 
     if (noteCreated) {
       return NextResponse.json(
