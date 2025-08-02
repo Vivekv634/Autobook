@@ -27,7 +27,7 @@ export default function NotePage() {
   const { uid } = useSelector((state: RootState) => state.user);
   const [editorNote, setEditorNote] = useState<NoteType | null>(null);
   const [, setLoading] = useState(false);
-  const editorRef = useRef(null);
+  const editorRef = useRef<{ save: () => Promise<string> } | null>(null);
 
   useEffect(() => {
     notes.forEach((note: NoteType) => {
