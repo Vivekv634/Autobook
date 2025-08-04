@@ -2,7 +2,7 @@ name: AutoNote api call
 
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -11,4 +11,4 @@ jobs:
 
     steps:
       - name: Make API Call
-        run: curl -X PATCH "https://autobook1.vercel.app/api/utils/create-autonote-notes"
+        run: curl -X PATCH "https://autobook1.vercel.app/api/utils/autonotes-cron-job"
