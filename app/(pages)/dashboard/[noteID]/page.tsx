@@ -14,7 +14,7 @@ import { NoteType } from "@/types/Note.type";
 import { Ellipsis, Save } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "@blocknote/core/style.css";
 import "@blocknote/shadcn/style.css";
