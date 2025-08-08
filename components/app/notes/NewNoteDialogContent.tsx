@@ -45,7 +45,7 @@ export default function NewNoteDialog({
       const note: NoteType = {
         auth_id: uid,
         title: name,
-        body: "{}",
+        body: "[{}]",
         created_at: Date.now(),
         updated_at: Date.now(),
         note_id: v4(),
