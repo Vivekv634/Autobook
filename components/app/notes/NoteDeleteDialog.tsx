@@ -39,7 +39,7 @@ export default function NoteDeleteDialog({
   async function handleNoteDelete() {
     try {
       setLoading(true);
-      toast.info("Deleting note title...");
+      toast.info("Deleting note...");
 
       const dispatchResponse = await dispatch(
         deleteNote({ note_id: note.note_id, auth_id: uid })

@@ -18,9 +18,7 @@ export const createAutoNote = createAsyncThunk<AutoNoteType, AutoNoteType>(
         );
       }
 
-      console.log("Parsed AutoNote Data:", parsedAutoNoteData.data);
-
-      const apiResponse = await apiInstance.post("api/autonotes/create", {
+      const apiResponse = await apiInstance.post("/api/autonotes/create", {
         autonote: parsedAutoNoteData.data,
       });
       return apiResponse.data.result as AutoNoteType;
@@ -40,7 +38,7 @@ export const fetchAutoNotes = createAsyncThunk<AutoNoteType[], string>(
   "autonote/fetch",
   async (uid, thunkAPI) => {
     try {
-      const apiResponse = await apiInstance.get("api/autonotes", {
+      const apiResponse = await apiInstance.get("/api/autonotes", {
         headers: { uid },
       });
       return apiResponse.data.result as AutoNoteType[];
