@@ -36,7 +36,7 @@ export default function SettingsPage() {
     toast.info("Setting theme change...");
 
     const dispatchResponse = await dispatch(
-      updateUser({ userData: { ...user, theme: selected }, uid })
+      updateUser({ userData: { ...user, theme: selected }, uid }),
     );
     if (dispatchResponse.meta.requestStatus == "fulfilled") {
       toast.success("Theme updated!");

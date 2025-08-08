@@ -24,7 +24,7 @@ export default function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const router = useRouter();
   const { loading, error, user } = useSelector(
-    (state: RootState) => state.user
+    (state: RootState) => state.user,
   );
   const dispatch = useDispatch<AppDispatch>();
 
