@@ -21,7 +21,32 @@ type InlineNode = {
 type Block = {
   id: string;
   type: string; // paragraph, heading, bulletListItem, numberedListItem, image, table, checklist, codeBlock, video, quote, divider, etc.
-  props?: Record<string, any>;
+  props?: {
+    level?: number;
+    color?: string;
+    background?: string;
+    bg?: string;
+    checked?: boolean;
+    src?: string;
+    url?: string;
+    alt?: string;
+    rounded?: boolean;
+    crossOrigin?: string;
+    caption?: string;
+    poster?: string;
+    thumbnail?: string;
+    title?: string;
+    code?: string;
+    table?: {
+      columns?: (string | { title?: string })[];
+      rows?: (string | { text?: string })[][];
+    };
+    columns?: (string | { title?: string })[];
+    rows?: (string | { text?: string })[][];
+    data?: (string | { text?: string })[][];
+    html?: string;
+    [key: string]: unknown;
+  };
   content?: InlineNode[];
   children?: Block[]; // nested blocks (for lists)
   // for images/videos/tables, props may contain src, alt, width, height, tableColumns, rows, background, etc.
@@ -43,13 +68,7 @@ export async function exportBlockNoteToPDF(
   blocks: Block[],
   opts: ExportOptions = {}
 ) {
-  const {
-    filename = "autobook-export.pdf",
-    pageSize = "a4",
-    margin = 24,
-    dpi = 2,
-    backgroundColor = "#ffffff",
-  } = opts;
+  const { margin = 24, dpi = 2, backgroundColor = "#ffffff" } = opts;
 
   // Create offscreen container
   const container = document.createElement("div");
@@ -64,9 +83,6 @@ export async function exportBlockNoteToPDF(
   container.style.fontFamily = "Inter, Roboto, Arial, sans-serif";
   container.style.lineHeight = "1.45";
   container.style.fontSize = "14px";
-  // Allow images/fonts to render
-  container.style.webkitFontSmoothing = "antialiased";
-  container.style.mozOsxFontSmoothing = "grayscale";
 
   // Helper: create inline HTML from content array, respecting inline styles
   const renderInline = (nodes?: InlineNode[]) => {
@@ -122,7 +138,7 @@ export async function exportBlockNoteToPDF(
     wrapper.style.marginBottom = "10px";
     // apply block-level background if any
     if (block.props?.background || block.props?.bg) {
-      wrapper.style.background = block.props.background || block.props.bg;
+      wrapper.style.background = block.props.background || block.props.bg || "";
       wrapper.style.padding = "8px 12px";
       wrapper.style.borderRadius = "6px";
     }
@@ -334,9 +350,12 @@ export async function exportBlockNoteToPDF(
       tbl.style.margin = "8px 0";
       const thead = document.createElement("thead");
       const headerRow = document.createElement("tr");
-      (tableSpec.columns || []).forEach((col: any) => {
+      (tableSpec.columns || []).forEach((col: string | { title?: string }) => {
         const th = document.createElement("th");
-        th.textContent = col?.title ?? col ?? "";
+        th.textContent =
+          typeof col === "object" && col !== null && "title" in col
+            ? col.title ?? ""
+            : (col as string) ?? "";
         th.style.border = "1px solid rgba(0,0,0,0.08)";
         th.style.padding = "6px 8px";
         th.style.textAlign = "left";
@@ -347,7 +366,7 @@ export async function exportBlockNoteToPDF(
       tbl.appendChild(thead);
 
       const tbody = document.createElement("tbody");
-      (tableSpec.rows || []).forEach((row: any[]) => {
+      (tableSpec.rows || []).forEach((row: (string | { text?: string })[]) => {
         const tr = document.createElement("tr");
         row.forEach((cell) => {
           const td = document.createElement("td");
@@ -355,7 +374,11 @@ export async function exportBlockNoteToPDF(
           td.style.padding = "6px 8px";
           td.style.verticalAlign = "top";
           td.textContent =
-            typeof cell === "object" && cell?.text ? cell.text : cell ?? "";
+            typeof cell === "object" && cell !== null && "text" in cell
+              ? cell.text ?? ""
+              : typeof cell === "string"
+              ? cell
+              : "";
           tr.appendChild(td);
         });
         tbody.appendChild(tr);

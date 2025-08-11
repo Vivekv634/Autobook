@@ -44,7 +44,7 @@ export default function AutoNoteComponent({}) {
   const { notes } = useSelector((state: RootState) => state.notes);
   const [autonote, setAutonote] = useState<AutoNoteType | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState<string | null>(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
+  const [, setOpenDeleteDialog] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
