@@ -100,6 +100,7 @@ export default function NewAutoNoteDialog({ loading }: NewAutoNoteDialogProps) {
       setForm({
         ...form,
         time: getNextWeekdayTimestamp(
+          new Date(),
           getNextDay(new Date().getDay(), form.days),
           Number(hours),
           Number(minutes)

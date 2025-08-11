@@ -149,6 +149,7 @@ function emailBodyFormatter(
           autonote.days
         )}</strong>,
         <strong>${getNextWeekdayTimestamp(
+          new Date(),
           getNextDay(new Date(autonote.time).getDay(), autonote.days),
           new Date(autonote.time).getHours(),
           new Date(autonote.time).getMinutes()
