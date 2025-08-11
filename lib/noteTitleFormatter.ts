@@ -13,7 +13,7 @@ export const dayNames: AutoNoteDaysType = [
 export function getNextDay(currentDay: number, days: AutoNoteDaysType) {
   // Find the next day in the week that is included in the autonote days
   for (let i = 0; i < 7; i++) {
-    const nextDay = (currentDay + i) % 7;
+    const nextDay = (currentDay + i + 1) % 7;
     if (days.includes(dayNames[nextDay])) {
       return dayNames[nextDay];
     }

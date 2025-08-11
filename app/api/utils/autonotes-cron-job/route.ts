@@ -5,7 +5,6 @@ import {
   getNextDay,
   noteTitleFormatter,
 } from "@/lib/noteTitleFormatter";
-// import { sendEmail } from "@/lib/send-email";
 import { AutoNoteType } from "@/types/AutoNote.types";
 import { NoteType } from "@/types/Note.type";
 import { UserType } from "@/types/User.type";
@@ -20,6 +19,18 @@ import {
 } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 } from "uuid";
+import { createTransport } from "nodemailer";
+import emailBodyHelper from "@/lib/emailbodyhelper";
+
+const transporter = createTransport({
+  host: "gmail",
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.NEXT_PUBLIC_FROM_EMAIL,
+    pass: process.env.NEXT_PUBLIC_APP_PASS,
+  },
+});
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(req: NextRequest) {
@@ -29,10 +40,10 @@ export async function POST(req: NextRequest) {
     const autoNotes = new Array<AutoNoteType>();
     const notesMap = new Map<string, NoteType>();
     const user_map = new Map<string, UserType>();
-    // const email_map = new Map<
-    //   string,
-    //   { note: NoteType; autonote: AutoNoteType }
-    // >();
+    const email_map = new Map<
+      string,
+      { note: NoteType; autonote: AutoNoteType }
+    >();
 
     // fetch all the active autonotes
     const activeAutoNotesQuery: Query = query(
@@ -107,7 +118,7 @@ export async function POST(req: NextRequest) {
       const note: NoteType = {
         note_id: v4(),
         title: noteTitleFormatter(autonote.noteTitleFormat),
-        body: notesMap.get(autonote.note_id)?.body || "{}",
+        body: notesMap.get(autonote.note_id)?.body || "[{}]",
         created_at: Date.now(),
         updated_at: Date.now(),
         auth_id: autonote.auth_id,
@@ -119,29 +130,34 @@ export async function POST(req: NextRequest) {
 
       // update the autonote details like updated_at
       // update time property to the next occurrence of the day with the specified hour and minute with the helper function
+      const autonoteTime = new Date(autonote.time);
 
       autonote.time = getNextWeekdayTimestamp(
-        getNextDay(new Date(autonote.time).getDay(), autonote.days),
-        new Date(autonote.time).getHours(),
-        new Date(autonote.time).getMinutes()
+        new Date(),
+        getNextDay(autonoteTime.getDay(), autonote.days),
+        autonoteTime.getHours(),
+        autonoteTime.getMinutes()
       );
       autonote.created_at = Date.now();
       autonote.updated_at = Date.now();
 
-      // const email = user_map.get(autonote.auth_id)?.email;
-      // if (email != null) email_map.set(email, { note, autonote });
+      const email = user_map.get(autonote.auth_id)?.email;
+      if (email != null) email_map.set(email, { note, autonote });
 
       batchWriter.set(doc(autoNotesDB, autonote.autonote_id), autonote);
     }
-    // send email notifications to users for the created autonotes
-    // sendEmail(
-    //   Array.from(email_map).map(([email, { note, autonote }]) => ({
-    //     email,
-    //     note,
-    //     autonote,
-    //   })),
-    //   user_map
-    // );
+    Array.from(email_map).forEach(async ([email, { note, autonote }]) => {
+      await transporter.sendMail({
+        from: process.env.NEXT_PUBLIC_FROM_EMAIL,
+        to: email,
+        subject: "New note created by Autonote",
+        html: emailBodyHelper(
+          user_map.get(note.auth_id) as UserType,
+          note,
+          autonote
+        ),
+      });
+    });
 
     // Commit the batch writer
     await batchWriter.commit();

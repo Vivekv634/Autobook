@@ -1,37 +1,29 @@
 import { DaysType } from "@/types/AutoNote.types";
+export const daysOfWeek: { [key: string]: number } = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+};
 
 export function getNextWeekdayTimestamp(
+  fromDate: Date,
   dayName: DaysType,
   hour: number,
   minute: number
 ) {
-  const daysOfWeek: { [key: string]: number } = {
-    Sunday: 0,
-    Monday: 1,
-    Tuesday: 2,
-    Wednesday: 3,
-    Thursday: 4,
-    Friday: 5,
-    Saturday: 6,
-  };
-
   const targetDay = daysOfWeek[dayName];
-  if (targetDay === undefined) {
-    throw new Error("Invalid day name");
-  }
+  if (targetDay === undefined) throw new Error("Invalid day name");
 
-  const now = new Date();
-  const currentDay = now.getDay();
-
-  const targetDate = new Date(now);
+  const targetDate = new Date(fromDate);
   targetDate.setHours(hour, minute, 0, 0);
 
-  let daysAhead = targetDay - currentDay;
-  if (daysAhead < 0 || (daysAhead === 0 && targetDate <= now)) {
-    daysAhead += 7;
-  }
+  let daysAhead = targetDay - fromDate.getDay();
+  if (daysAhead <= 0) daysAhead += 7; // Always future
 
-  targetDate.setDate(now.getDate() + daysAhead);
-
+  targetDate.setDate(fromDate.getDate() + daysAhead);
   return targetDate.getTime();
 }

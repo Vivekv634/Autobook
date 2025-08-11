@@ -98,26 +98,26 @@ export default function SidebarNotesRenderComponent({
           >
             <DropdownMenuItem
               onClick={() => setOpenRenameDialog(subItem.note_id)}
-              className="flex gap-2"
+              className="flex gap-4"
             >
               <Pen /> Rename
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setOpenPrintDialog(subItem.note_id)}
-              className="flex gap-2"
+              className="flex gap-4"
             >
               <Printer /> Print
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setOpenShareDialog(subItem.note_id)}
-              className="flex gap-2"
+              className="flex gap-4"
             >
               <Share /> Share
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => setOpenDeleteNoteDialog(subItem.note_id)}
-              className="flex gap-2"
+              className="flex gap-4"
             >
               <Trash2 /> Delete
             </DropdownMenuItem>

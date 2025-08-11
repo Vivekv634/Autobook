@@ -17,9 +17,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "@blocknote/core/style.css";
-import "@blocknote/shadcn/style.css";
+import "@blocknote/mantine/style.css";
 import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
-import { BlockNoteView } from "@blocknote/shadcn";
+import { BlockNoteView } from "@blocknote/mantine";
 import { useTheme } from "next-themes";
 import { updateNote } from "@/redux/features/notes.features";
 import { toast } from "sonner";
@@ -113,7 +113,7 @@ export default function NotePage() {
         editor={editor}
         theme={theme == "dark" ? "dark" : "light"}
         className={cn(
-          theme == "light" && "border border-gray-200 rounded-md",
+          theme == "light" && "border border-gray-200 rounded-sm",
           "mx-2"
         )}
       />

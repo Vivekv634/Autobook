@@ -40,7 +40,7 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "antialiased selection:bg-primary/50 selection:text-primary-foreground dark:selection:bg-primary/50 dark:selection:text-primary-foreground",
+          "antialiased selection:bg-primary/50 selection:text-primary-foreground dark:selection:bg-primary/50 dark:selection:text-primary-foreground print:hidden",
           jetbrains_mono.className,
           source_serif_4.className,
           roboto.className,
@@ -56,7 +56,7 @@ export default function RootLayout({
           ibm_plex_mono.className,
           outfit.className,
           open_sans.className,
-          poppins.className
+          poppins.className,
         )}
       >
         <LayoutComponent>{children}</LayoutComponent>
