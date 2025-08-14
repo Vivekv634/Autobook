@@ -53,3 +53,23 @@ export const fetchAutoNotes = createAsyncThunk<AutoNoteType[], string>(
     }
   }
 );
+
+export const deleteAutonote = createAsyncThunk<
+  AutoNoteType,
+  { user_id: string; autonote_id: string }
+>("autonote/delete", async ({ user_id, autonote_id }, thunkAPI) => {
+  try {
+    const apiResponse = await apiInstance.delete("/api/autonotes/delete", {
+      data: { user_id, autonote_id },
+    });
+    return apiResponse.data.result as AutoNoteType;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const errorMessage =
+        error.message || "Something went wrong. Try again later!";
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+    console.error(error as string);
+    return thunkAPI.rejectWithValue(error);
+  }
+});

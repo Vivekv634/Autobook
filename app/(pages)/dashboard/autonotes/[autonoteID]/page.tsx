@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import AutonoteEditDialog from "@/components/app/autonotes/AutonoteEditDialog";
+import AutonoteDeleteDialog from "@/components/app/autonotes/AutonoteDeleteDialog";
 
 export default function AutoNoteComponent({}) {
   const pathName = usePathname();
@@ -44,7 +45,7 @@ export default function AutoNoteComponent({}) {
   const { notes } = useSelector((state: RootState) => state.notes);
   const [autonote, setAutonote] = useState<AutoNoteType | null>(null);
   const [openEditDialog, setOpenEditDialog] = useState<string | null>(null);
-  const [, setOpenDeleteDialog] = useState<string | null>(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -131,6 +132,12 @@ export default function AutoNoteComponent({}) {
         </DropdownMenu>
       </div>
       <Separator className="mb-14 mt-4" />
+      <div>
+        <h3>
+          Next autonote creation in{" "}
+          <strong>{new Date(autonote.time).toLocaleDateString()}</strong>
+        </h3>
+      </div>
       <Table className="space-y-6">
         <TableCaption>List of future note creations.</TableCaption>
         <TableHeader>
@@ -163,6 +170,13 @@ export default function AutoNoteComponent({}) {
         onClose={() => setOpenEditDialog(null)}
         openAutonoteEditDialog={openEditDialog}
         setOpenAutonoteEditDialogAction={setOpenEditDialog}
+      />
+
+      <AutonoteDeleteDialog
+        autonote={autonote}
+        onClose={() => setOpenDeleteDialog(null)}
+        openAutonoteDeleteDialog={openDeleteDialog}
+        setOpenAutonoteDeleteDialogAction={setOpenDeleteDialog}
       />
     </section>
   );

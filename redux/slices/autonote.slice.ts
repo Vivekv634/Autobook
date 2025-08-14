@@ -1,6 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { AutoNoteType } from "@/types/AutoNote.types";
-import { createAutoNote, fetchAutoNotes } from "../features/autonote.features";
+import {
+  createAutoNote,
+  deleteAutonote,
+  fetchAutoNotes,
+} from "../features/autonote.features";
 
 interface AutoNoteState {
   autonotes: AutoNoteType[];
@@ -43,6 +47,21 @@ export const autoNoteSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAutoNotes.rejected, (state, action) => {
+        state.error = action.error as string;
+        state.loading = false;
+      })
+      .addCase(deleteAutonote.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteAutonote.fulfilled, (state, action) => {
+        state.autonotes = state.autonotes.filter(
+          (an) => an.autonote_id != action.payload.autonote_id
+        );
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(deleteAutonote.rejected, (state, action) => {
         state.error = action.error as string;
         state.loading = false;
       });

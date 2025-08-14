@@ -11,18 +11,37 @@ import {
 import { cn } from "@/lib/utils";
 import { AppDispatch, RootState } from "@/redux/store";
 import { NoteType } from "@/types/Note.type";
-import { Ellipsis, Save } from "lucide-react";
+import { Ellipsis, Save, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "@blocknote/core/style.css";
 import "@blocknote/mantine/style.css";
-import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useTheme } from "next-themes";
 import { updateNote } from "@/redux/features/notes.features";
 import { toast } from "sonner";
+import {
+  BlockNoteSchema,
+  defaultBlockSpecs,
+  filterSuggestionItems,
+  insertOrUpdateBlock,
+} from "@blocknote/core";
+import {
+  useCreateBlockNote,
+  SuggestionMenuController,
+  getDefaultReactSlashMenuItems,
+} from "@blocknote/react";
+import { InputActionBlock } from "@/components/editor/ai-block";
+import { Separator } from "@/components/ui/separator";
+
+const schema = BlockNoteSchema.create({
+  blockSpecs: {
+    ...defaultBlockSpecs,
+    inputAction: InputActionBlock,
+  },
+});
 
 export default function NotePage() {
   const pathName = usePathname();
@@ -30,27 +49,34 @@ export default function NotePage() {
   const { uid } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const [editorNote, setEditorNote] = useState<NoteType | null>(null);
-  const [editor, setEditor] = useState<BlockNoteEditor | null>(null);
   const { theme } = useTheme();
 
-  const isInitializedRef = useRef(false); // prevents double initialization
-
   useEffect(() => {
-    notes.forEach((note: NoteType) => {
-      if (pathName.includes(note.note_id)) {
-        setEditorNote(note);
-
-        if (!isInitializedRef.current) {
-          const blocks: PartialBlock[] = JSON.parse(note.body);
-          const newEditor = BlockNoteEditor.create({
-            initialContent: blocks,
-          });
-          setEditor(newEditor);
-          isInitializedRef.current = true;
-        }
-      }
-    });
+    const foundNote = notes.find((note: NoteType) =>
+      pathName.includes(note.note_id)
+    );
+    setEditorNote(foundNote ?? null);
   }, [notes, pathName]);
+
+  const editor = useCreateBlockNote({
+    schema,
+    initialContent: editorNote ? JSON.parse(editorNote.body) : [{}],
+  });
+
+  type editorType = typeof editor;
+
+  const insertInputActionItem = (editor: editorType) => ({
+    title: "Ask AI",
+    onItemClick: () =>
+      insertOrUpdateBlock(editor, {
+        type: "inputAction",
+        props: { value: undefined },
+      }),
+    aliases: ["ai", "generate"],
+    group: "AI",
+    subtext: "write with AI",
+    icon: <Sparkles className="h-4" />,
+  });
 
   const saveNote = async () => {
     if (!editor || !editorNote) return;
@@ -68,9 +94,7 @@ export default function NotePage() {
     }
   };
 
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
 
   if (!editorNote)
     return (
@@ -89,9 +113,17 @@ export default function NotePage() {
       </section>
     );
 
+  const getSlashMenuItems = async (query: string) =>
+    filterSuggestionItems(
+      [...getDefaultReactSlashMenuItems(editor), insertInputActionItem(editor)],
+      query
+    );
+
   return (
     <div className="m-2 h-full pt-2 container mx-auto">
-      <div className="mx-2">
+      <div className="mx-2 flex h-9 items-center mb-4">
+        <h2 className="font-bold text-3xl">{editorNote.title}</h2>
+        <Separator orientation="vertical" className="mx-3 bg-secondary/70" />
         <DropdownMenu>
           <DropdownMenuTrigger
             className={cn(buttonVariants({ variant: "outline" }))}
@@ -109,14 +141,21 @@ export default function NotePage() {
           </DropdownMenuPortal>
         </DropdownMenu>
       </div>
+
       <BlockNoteView
         editor={editor}
         theme={theme == "dark" ? "dark" : "light"}
+        slashMenu={false}
         className={cn(
           theme == "light" && "border border-gray-200 rounded-sm",
           "mx-2"
         )}
-      />
+      >
+        <SuggestionMenuController
+          triggerCharacter="/"
+          getItems={getSlashMenuItems}
+        />
+      </BlockNoteView>
     </div>
   );
 }

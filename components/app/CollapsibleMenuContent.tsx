@@ -78,7 +78,10 @@ export default function CollapsibleMenuContent({
             >
               <DialogPortal>
                 {title.includes("AutoNote") ? (
-                  <NewAutoNoteDialog loading={loading} />
+                  <NewAutoNoteDialog
+                    loading={loading}
+                    setDialogOpenAction={setDialogOpen}
+                  />
                 ) : (
                   <NewNoteDialog
                     loading={loading}

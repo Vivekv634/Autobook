@@ -53,9 +53,13 @@ const noteTitleFormatters = [
 
 interface NewAutoNoteDialogProps {
   loading: boolean;
+  setDialogOpenAction: (loading: boolean) => void;
 }
 
-export default function NewAutoNoteDialog({ loading }: NewAutoNoteDialogProps) {
+export default function NewAutoNoteDialog({
+  loading,
+  setDialogOpenAction,
+}: NewAutoNoteDialogProps) {
   const { uid } = useSelector((state: RootState) => state.user);
   const { notes } = useSelector((state: RootState) => state.notes);
   const [selectNote, setSelectNote] = useState<string>("none");
@@ -118,9 +122,10 @@ export default function NewAutoNoteDialog({ loading }: NewAutoNoteDialogProps) {
       const dispatchResponse = await dispatch(
         createAutoNote({ ...form, auth_id: uid })
       );
-      if (dispatchResponse.meta.requestStatus == "fulfilled")
+      if (dispatchResponse.meta.requestStatus == "fulfilled") {
+        setDialogOpenAction(false);
         toast.success("New autonote created successfully!");
-      else toast.error(dispatchResponse.payload as string);
+      } else toast.error(dispatchResponse.payload as string);
     } catch (error) {
       console.error("Error creating AutoNote:", error);
       toast.error("Failed to create AutoNote. Please try again.");
