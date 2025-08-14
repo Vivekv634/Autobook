@@ -58,10 +58,18 @@ export default function NotePage() {
     setEditorNote(foundNote ?? null);
   }, [notes, pathName]);
 
-  const editor = useCreateBlockNote({
-    schema,
-    initialContent: editorNote ? JSON.parse(editorNote.body) : [{}],
-  });
+  const editor = useCreateBlockNote({ schema });
+
+  useEffect(() => {
+    if (editor && editorNote?.body) {
+      try {
+        const parsed = JSON.parse(editorNote.body);
+        editor.replaceBlocks(editor.document, parsed); // overwrite entire doc
+      } catch (err) {
+        console.error("Failed to parse note body:", err);
+      }
+    }
+  }, [editor, editorNote]);
 
   type editorType = typeof editor;
 

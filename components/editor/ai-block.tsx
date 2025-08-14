@@ -47,9 +47,9 @@ export const InputActionBlock = createReactBlockSpec(
       };
 
       return (
-        <div className="container shadow-xl dark:shadow-neutral-50/5 w-10/12 p-2 rounded-sm">
+        <div className="shadow-xl dark:shadow-neutral-50/5 w-full p-2 px-8 md:py-2 rounded-md">
           <form
-            className="md:flex md:gap-1"
+            className="md:flex md:gap-2"
             onSubmit={(e) => {
               e.preventDefault();
               handleClick();
@@ -63,11 +63,16 @@ export const InputActionBlock = createReactBlockSpec(
                   props: { ...props.block.props, value: e.target.value },
                 })
               }
-              className="border-0 bg-transparent dark:bg-transparent focus:ring-0 focus:ring-offset-0"
+              className="border-0 bg-transparent dark:bg-transparent focus:ring-0 focus:ring-offset-0 my-2 md:my-0"
               placeholder="Enter prompt..."
               required={true}
             />
-            <ButtonLoader type="submit" label="Generate" loading={loading} />
+            <ButtonLoader
+              type="submit"
+              label="Generate"
+              loading={loading}
+              disabled={loading}
+            />
           </form>
         </div>
       );
