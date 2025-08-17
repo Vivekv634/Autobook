@@ -141,7 +141,6 @@ export default function RegisterPage() {
             </form>
           </CardContent>
         </Card>
-        {JSON.stringify(form)}
       </section>
     </main>
   );

@@ -19,7 +19,7 @@ export default function LayoutComponent({
       >
         {children}
       </ThemeProvider>
-      <Toaster richColors={true} position="top-center" />
+      <Toaster richColors={true} position="bottom-right" />
     </Provider>
   );
 }
