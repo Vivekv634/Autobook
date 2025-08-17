@@ -157,7 +157,12 @@ export function SidebarUserMenuComponent() {
                 signOut(auth);
                 dispatch(
                   setProfile({
-                    user: { email: "", name: "", theme: "default" },
+                    user: {
+                      email: "",
+                      name: "",
+                      theme: "default",
+                      themeScope: "editor",
+                    },
                     uid: "",
                   })
                 );
