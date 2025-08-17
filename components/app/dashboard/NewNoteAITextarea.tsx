@@ -49,7 +49,7 @@ export default function NewNoteAITextarea({}) {
       );
     }
     searchAIPrompt();
-  }, []);
+  }, [user]);
 
   async function handleAINoteGeneration(e: FormEvent<HTMLFormElement>) {
     try {
