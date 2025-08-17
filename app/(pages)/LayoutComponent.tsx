@@ -8,9 +8,10 @@ import {
 } from "@/components/ui/sidebar";
 import { auth, userDB } from "@/firebase.config";
 import { useIsMobile } from "@/hooks/use-mobile";
+import applyFont from "@/lib/apply-font";
 import { cn } from "@/lib/utils";
 import { setProfile } from "@/redux/slices/profile.slice";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 import { UserType } from "@/types/User.type";
 import { onAuthStateChanged, User } from "firebase/auth";
 import {
@@ -23,7 +24,7 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
 export function PagesLayoutComponent({
@@ -36,6 +37,7 @@ export function PagesLayoutComponent({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (User: User | null) => {
@@ -66,7 +68,11 @@ export function PagesLayoutComponent({
   }, [dispatch, router]);
 
   return (
-    <main>
+    <main
+      className={cn(
+        user != null ? user.themeScope == "app" && applyFont(user.theme) : ""
+      )}
+    >
       <SidebarProvider
         open={!isMobile && sidebarOpen}
         defaultOpen={!isMobile && sidebarOpen}

@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import ButtonLoader from "../ButtonLoader";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   openDeleteDialog: string | null;
@@ -79,11 +80,18 @@ export default function NoteDeleteDialog({
             cancel
           </DialogClose>
           <ButtonLoader
+            variant={"destructive"}
+            loadingLabel={"Deleting..."}
             className="font-semibold cursor-pointer"
             onClick={handleNoteDelete}
             disabled={loading}
             loading={loading}
-            label="Delete Note"
+            label={
+              <>
+                <Trash2 />
+                Delete note
+              </>
+            }
           />
         </DialogFooter>
       </DialogContent>

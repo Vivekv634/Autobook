@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest) {
   try {
     const headersList = await headers();
     const { userData }: { userData: UserType } = await request.json();
-    const uid = headersList.get("uid") as string;
+    const uid = headersList.get("uid");
     let updatedUserDocument: UserType,
       updatedUserData: UserType | null = null;
 

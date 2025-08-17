@@ -19,6 +19,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { deleteAutonote } from "@/redux/features/autonote.features";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   onClose: () => void;
@@ -93,11 +94,18 @@ export default function AutonoteDeleteDialog({
               cancel
             </DialogClose>
             <ButtonLoader
+              loadingLabel={"Deleting..."}
               type="submit"
               className="font-semibold"
+              variant={"destructive"}
               loading={loading}
               disabled={confirmTitle != `Delete ${autonote.title}` || loading}
-              label="Delete Autonote"
+              label={
+                <div className="flex gap-1">
+                  <Trash2 />
+                  Delete Autonote
+                </div>
+              }
             />
           </DialogFooter>
         </form>

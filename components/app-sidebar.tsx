@@ -15,7 +15,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarContent>
           <div
             className={cn(
-              "border-b flex justify-center items-center mt-4 text-xl font-semibold pb-[19px]",
+              "border-b flex justify-center items-center mt-4 text-xl font-semibold pb-[19px] select-none",
               poppins.className
             )}
           >

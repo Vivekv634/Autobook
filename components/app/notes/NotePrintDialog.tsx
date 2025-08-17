@@ -96,6 +96,7 @@ export default function NotePrintDialog({
             Cancel
           </DialogClose>
           <ButtonLoader
+            loadingLabel={"Downloading..."}
             className="font-semibold"
             loading={loading}
             disabled={loading || !pdfInstance}

@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    // const autonote = await req.json();
     const { autonote }: { autonote: AutoNoteType } = await req.json();
 
     const parsedAutoNoteData = AutoNoteSchema.safeParse(autonote);

@@ -49,6 +49,7 @@ export default function AutonoteEditDialog({
               cancel
             </DialogClose>
             <ButtonLoader
+              loadingLabel={"Saving..."}
               type="submit"
               className="font-semibold"
               loading={loading}

@@ -82,6 +82,7 @@ export default function NewNoteDialog({
             close
           </DialogClose>
           <ButtonLoader
+            loadingLabel={"Creating..."}
             type="submit"
             label="Create Note"
             disabled={loading}

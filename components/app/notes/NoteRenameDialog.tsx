@@ -89,6 +89,7 @@ export default function NoteRenameDialog({
               cancel
             </DialogClose>
             <ButtonLoader
+              loadingLabel={"Renaming..."}
               type="submit"
               className="font-semibold"
               loading={loading}

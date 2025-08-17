@@ -46,7 +46,7 @@ const schema = BlockNoteSchema.create({
 export default function NotePage() {
   const pathName = usePathname();
   const { notes } = useSelector((state: RootState) => state.notes);
-  const { uid } = useSelector((state: RootState) => state.user);
+  const { uid, user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const [editorNote, setEditorNote] = useState<NoteType | null>(null);
   const { theme } = useTheme();
@@ -64,7 +64,7 @@ export default function NotePage() {
     if (editor && editorNote?.body) {
       try {
         const parsed = JSON.parse(editorNote.body);
-        editor.replaceBlocks(editor.document, parsed); // overwrite entire doc
+        editor.replaceBlocks(editor.document, parsed);
       } catch (err) {
         console.error("Failed to parse note body:", err);
       }
@@ -102,7 +102,7 @@ export default function NotePage() {
     }
   };
 
-  if (!editor) return null;
+  if (!editor || !user) return null;
 
   if (!editorNote)
     return (

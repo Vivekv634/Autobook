@@ -48,7 +48,6 @@ const noteTitleFormatters = [
   { formatter: "{{day}}", description: "Current day of the week" },
   { formatter: "{{month}}", description: "Current month" },
   { formatter: "{{year}}", description: "Current year" },
-  { formatter: "{{note}}", description: "Current note title" },
 ];
 
 interface NewAutoNoteDialogProps {
@@ -303,8 +302,9 @@ export default function NewAutoNoteDialog({
             cancel
           </DialogClose>
           <ButtonLoader
+            loadingLabel={"Creating..."}
             type="submit"
-            disabled={loading}
+            disabled={loading || form.days.length == 0 || form.note_id == ""}
             className="cursor-pointer"
             label="Create AutoNote"
             loading={loading}

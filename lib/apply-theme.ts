@@ -1,3 +1,5 @@
+import { ThemeTypes } from "@/types/Theme.types";
+
 export const THEMES: { [key: string]: string } = {
   default: "/themes/default.css",
   "ocean-breeze": "/themes/ocean-breeze.css",
@@ -11,7 +13,7 @@ export const THEMES: { [key: string]: string } = {
   twitter: "/themes/twitter.css",
 };
 
-export function previewTheme(theme: string) {
+export function previewTheme(theme: ThemeTypes) {
   const existing = document.getElementById(
     "theme-style"
   ) as HTMLLinkElement | null;

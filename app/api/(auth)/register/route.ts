@@ -24,7 +24,12 @@ export async function POST(req: NextRequest) {
       password
     );
     const newUserRef: DocumentReference = doc(userDB, accountResponse.user.uid);
-    const newUser: UserType = { name, email, theme: "default" };
+    const newUser: UserType = {
+      name,
+      email,
+      theme: "default",
+      themeScope: "editor",
+    };
     await setDoc(newUserRef, newUser)
       .then(async () => {
         await sendEmailVerification(accountResponse.user).then(() =>
