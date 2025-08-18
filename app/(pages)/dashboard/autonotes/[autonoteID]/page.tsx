@@ -2,7 +2,7 @@
 import { getNextWeekdayTimestamp } from "@/lib/autonote-timestamp-helper";
 import { getNextDay } from "@/lib/noteTitleFormatter";
 import { RootState } from "@/redux/store";
-import { AutoNoteType, DAYS, DaysType } from "@/types/AutoNote.types";
+import { AutoNoteType, DaysType } from "@/types/AutoNote.types";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -38,6 +38,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import AutonoteEditDialog from "@/components/app/autonotes/AutonoteEditDialog";
 import AutonoteDeleteDialog from "@/components/app/autonotes/AutonoteDeleteDialog";
+import { formatDistance } from "date-fns";
 
 export default function AutoNoteComponent({}) {
   const pathName = usePathname();
@@ -105,8 +106,9 @@ export default function AutoNoteComponent({}) {
                 {notes.find((note) => note.note_id === autonote.note_id)?.title}{" "}
                 <SquareArrowOutUpRight className="h-4" />
               </span>{" "}
-              note on days <strong>{DAYS.map((d) => d.day).join(", ")}</strong>{" "}
-              at <strong>{new Date(autonote.time).toLocaleTimeString()}</strong>
+              note on days{" "}
+              <strong>{autonote.days.map((d) => d).join(", ")}</strong> at{" "}
+              <strong>{new Date(autonote.time).toLocaleTimeString()}</strong>
             </PopoverContent>
           </Popover>
         </div>
@@ -131,11 +133,11 @@ export default function AutoNoteComponent({}) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <Separator className="mb-14 mt-4" />
-      <div>
+      <Separator className="mt-4" />
+      <div className="my-10">
         <h3>
           Next autonote creation in{" "}
-          <strong>{new Date(autonote.time).toLocaleDateString()}</strong>
+          <strong>{formatDistance(Date.now(), new Date(autonote.time))}</strong>
         </h3>
       </div>
       <Table className="space-y-6">
@@ -144,8 +146,8 @@ export default function AutoNoteComponent({}) {
           <TableRow className="bg-muted/20 px-6 h-14">
             <TableHead>S. no.</TableHead>
             <TableHead>Event</TableHead>
-            <TableHead>Time</TableHead>
-            <TableHead>Day & Date</TableHead>
+            <TableHead>Date & Time</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -157,8 +159,12 @@ export default function AutoNoteComponent({}) {
               <TableRow key={i} className="h-14 even:bg-muted/20 px-6">
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>Scheduled on</TableCell>
-                <TableCell>{time.toLocaleTimeString()}</TableCell>
-                <TableCell>{time.toDateString()}</TableCell>
+                <TableCell>
+                  {time.toDateString()} {time.toLocaleTimeString()}
+                </TableCell>
+                <TableCell>
+                  in {formatDistance(Date.now(), nextDate.time)}
+                </TableCell>
               </TableRow>
             );
           })}

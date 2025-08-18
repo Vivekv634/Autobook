@@ -41,7 +41,10 @@ export default function SettingsPage() {
     toast.info("updating changes...");
 
     const dispatchResponse = await dispatch(
-      updateUser({ userData: { ...user, theme: selected }, uid })
+      updateUser({
+        userData: { ...user, theme: selected, gemini_api_key: userApi },
+        uid,
+      })
     );
     if (dispatchResponse.meta.requestStatus == "fulfilled") {
       toast.success("Changes updated!");

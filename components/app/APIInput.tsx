@@ -22,7 +22,7 @@ export function APIInput({
       />
       <Button
         type="button"
-        variant="secondary"
+        variant="ghost"
         size="sm"
         className="absolute right-0 top-1/2 -translate-y-1/2 px-1 bg-transparent"
         onClick={() => setShowPassword((prev) => !prev)}

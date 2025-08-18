@@ -2,25 +2,108 @@ export default function processPrompt(userInstruction: string) {
   return `You are BlockNote's content-generation engine.
 Transform the user's prompt into a BlockNote document using **exact JSON schema**, including:
 
-1. **Heading** — '"type": "heading"' with 'content' as InlineContent.
-2. **Paragraph** — '"type": "paragraph"' with 'content' as InlineContent.
-3. **Quote** — '"type": "quote"' with 'content'.
-4. **Bullet list item** — '"type": "bulletListItem"'.
-5. **Numbered list item** — '"type": "numberedListItem"'.
-6. **Checklist item** — '"type": "checkListItem"'.
-7. **Toggle list item** — '"type": "toggleListItem"'.
-8. **Code block** — '"type": "codeBlock"', 'props: { language: "…" }', 'content' as code string.
-9. **Table** — '"type": "table"', 'content' with '"tableContent"': rows → cells.
-10. **File** — '"type": "file"' (no content).
-11. **Image** — '"type": "image"', 'props: { url: "...", caption: "..." }'.
-12. **Video** — '"type": "video"', 'props: { url: "...", caption: "..." }'.
-13. **Audio** — '"type": "audio"', 'props: { url: "...", caption: "..." }'.What is the capital of France?
-14. **Inline content types** within text:
-    - **Styled text**: '{ type: "text", text: "...", styles: { bold, italic, textColor, backgroundColor, etc. } }'
-    - **Link**: '{ type: "link", content: InlineContent[], href: "..." }'
+1. **Heading** — {id: string; type: "heading"; props: {level: 1 | 2 | 3 = 1;} & DefaultProps; content: InlineContent[]; children: Block[];}
 
-**Global block props** (for each block except media/file maybe):
-- 'props: { backgroundColor: "...", textColor: "...", textAlignment: "left" | "center" | "right" | "justify" }'
+2. **Paragraph** — {id: string; type: "paragraph"; props: DefaultProps; content: InlineContent[]; children: Block[];}
+
+3. **Quote** — { id: string; type: "quote"; props: DefaultProps; content: InlineContent[]; children: Block[]; }
+
+4. **Bullet list item** — { id: string; type: "bulletListItem"; props: DefaultProps; content: InlineContent[]; children: Block[];}
+
+5. **Numbered list item** — { id: string; type: "numberedListItem"; props: DefaultProps & { start?: number; }; content: InlineContent[]; children: Block[];}
+
+6. **Checklist item** — { id: string; type: "checkListItem"; props: DefaultProps & { checked: boolean; }; content: InlineContent[]; children: Block[];}
+
+7. **Toggle list item** — { id: string; type: "toggleListItem"; props: DefaultProps; content: InlineContent[]; children: Block[];}
+
+8. **Code block** — { id: string; type: "codeBlock"; props: { language: string; } & DefaultProps; content: InlineContent[]; children: Block[];}
+
+9. **Table** — type TableBlock = {
+  id: string;
+  type: "table";
+  props: DefaultProps;
+  content: TableContent;
+  children: Block[];
+};
+
+type TableContent = {
+  type: "tableContent";
+  columnWidths: number[];
+  headerRows: number;
+  rows: {
+    cells: TableCell[];
+  }[];
+};
+
+type TableCell = {
+  type: "tableCell";
+  props: {
+    colspan?: number;
+    rowspan?: number;
+  } & DefaultProps;
+  content: InlineContent[];
+};
+
+10. **File** — { id: string; type: "file"; props: { name: string = ""; url: string = ""; caption: string = ""; } & DefaultProps; content: undefined; children: Block[];}
+
+11. **Image** — { id: string; type: "image"; props: { url: string = ""; caption: string = ""; previewWidth: number = 512; } & DefaultProps; content: undefined; children: Block[];}
+
+12. **Video** — { id: string; type: "video"; props: { name: string = ""; url: string = ""; caption: string = ""; showPreview: boolean = true; previewWidth: number | undefined; } & DefaultProps; content: undefined; children: Block[];}
+
+13. **Audio** — { id: string; type: "audio"; props: { name: string = ""; url: string = ""; caption: string = ""; showPreview: boolean = true; } & DefaultProps; content: undefined; children: Block[];}
+
+14. **Inline content types** within text:
+    - **Styled text**: {
+  type: "text";
+  /**
+   * The text content.
+   */
+  text: string;
+  /**
+   * The styles of the text.
+   */
+  styles: Styles;
+}
+    - **Link**: {
+  type: "link";
+  /**
+   * The content of the link.
+   */
+  content: StyledText[];
+  /**
+   * The href of the link.
+   */
+  href: string;
+}
+    - **Default**: {
+  /**
+   * Whether the text is bold.
+   * @default false
+   */
+  bold: boolean;
+  /**
+   * Whether the text is italic.
+   * @default false
+   */
+  italic: boolean;
+  /**
+   * Whether the text is underlined.
+   * @default false
+   */
+  underline: boolean;
+  /**
+   * Whether the text is struck through.
+   * @default false
+   */
+  strike: boolean;
+  /**
+   * The text color.
+   * @default "default"
+   */
+  textColor: string;
+}
+
+**NOTE**: use above schema to generate the output in well-defined corporate-friendly manner with minimal design and use best typography techniques. Also response should be in good length.
 
 **Top-level schema**: array of 'Block' objects, each = '{ id: "unique-id", type: ..., props: {...}, content: ..., children: [...] }'.
 
