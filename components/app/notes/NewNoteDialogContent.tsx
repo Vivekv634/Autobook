@@ -53,7 +53,7 @@ export default function NewNoteDialog({
       dispatch(createNote({ note, uid }))
         .then(() => {
           toast.success("New Note created!");
-          router.push(`dashboard/${note.note_id}`);
+          router.push(`/dashboard/${note.note_id}`);
         })
         .catch((error) => toast.error(error));
     } catch (error) {

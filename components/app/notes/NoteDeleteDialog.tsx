@@ -87,10 +87,10 @@ export default function NoteDeleteDialog({
             disabled={loading}
             loading={loading}
             label={
-              <>
+              <div className="flex gap-1">
                 <Trash2 />
                 Delete note
-              </>
+              </div>
             }
           />
         </DialogFooter>
