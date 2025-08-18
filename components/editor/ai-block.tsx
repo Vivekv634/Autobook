@@ -7,6 +7,7 @@ import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
 import ButtonLoader from "../app/ButtonLoader";
+import processPrompt from "@/lib/process-prompt";
 
 export const InputActionBlock = createReactBlockSpec(
   {
@@ -34,15 +35,38 @@ export const InputActionBlock = createReactBlockSpec(
 
           toast.info("Generating content...");
           try {
+            const apiKey =
+              user.gemini_api_key ||
+              process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+            if (!apiKey) {
+              toast.error("Getting error while generating content!");
+              return;
+            }
             const apiResponse = await axios.post(
-              `${process.env.NEXT_PUBLIC_API}/api/llm`,
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
               {
-                user_instruction: value,
-                userAPI: user.gemini_api_key,
+                contents: [
+                  {
+                    parts: [
+                      {
+                        text: processPrompt(value),
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                headers: {
+                  "X-goog-api-key": apiKey,
+                  "Content-Type": "application/json",
+                },
               }
             );
+            const response = apiResponse.data.candidates[0].content.parts[0]
+              .text as string;
+            const processedResponse = response.slice(8, response.length - 4);
 
-            const blocksFromLLM = JSON.parse(apiResponse.data.result);
+            const blocksFromLLM = JSON.parse(processedResponse);
 
             if (Array.isArray(blocksFromLLM)) {
               props.editor.replaceBlocks([props.block.id], blocksFromLLM);
