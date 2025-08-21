@@ -153,7 +153,6 @@ export function SidebarCollapsibleMenuContent() {
         open={searchDialogOpen}
         setOpen={setSearchDialogOpen}
       />
-      {JSON.stringify(searchDialogOpen)}
     </SidebarGroup>
   );
 }
