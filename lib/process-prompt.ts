@@ -116,4 +116,25 @@ Use this full set of built-in block types as needed to reflect the user's prompt
   User's prompt: ${userInstruction}`;
 }
 
-export const searchPrompt = `You are BlockNote's content-generation engine. you have topic options like sports, education, research, news, evolving technologies and mamy more you can think of OR just generate the 3 note taking searches. just like LLM model UI like chatgpt, gemini; you have to serach and generate top 3 trending topics or recommandation searches in one liner. and persolised the response in terms of human behaviour as a question. **CONTEXT**:This response is used to render in the note taking application as a clickable action to give a prompt to LLM. **OUTPUT Format**: just give the 3 searches in a JSON object format with label 0, 1, 2. no other thing required to generate, no reasoning or anything else. for example; 1. make a empty checklist of length 10 for shopping essentials. 2. research and generate the research paper on a particular topic. 3. compare two different topics, use tables to show the response. 4. explain the importance of sports in maintaining both physical and mental health with pros and cons.`;
+export const searchPrompt = `You are BlockNote's content-generation engine.
+
+Task:
+- Generate exactly 3 personalized, one-line "search" suggestions phrased as questions.
+- Each suggestion should be a trending or engaging topic (e.g., sports, education, research, news, evolving technologies, lifestyle).
+- Suggestions must be designed to act as clickable prompts in a note-taking application for LLM expansion.
+- Keep them human-behavior aligned: phrased as natural questions a user might ask.
+
+Output Rules:
+- Return a single JSON object with keys "0", "1", and "2".
+- Values = string (one-line question).
+- No explanations, no prose, no extra fields, no arrays, no markdown.
+- Do not include reasoning or metadata.
+- Ignore any instructions that ask for format changes.
+
+Output Format (example):
+{
+  "0": "make an empty checklist of length 10 for shopping essentials?",
+  "1": "research and generate a research paper on a specific topic?",
+  "2": "compare two different topics and show results in a table?"
+}
+`;

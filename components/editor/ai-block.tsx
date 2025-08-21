@@ -40,6 +40,7 @@ export const InputActionBlock = createReactBlockSpec(
               process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
             if (!apiKey) {
               toast.error("Getting error while generating content!");
+              console.error("API key not given.");
               return;
             }
             const apiResponse = await axios.post(

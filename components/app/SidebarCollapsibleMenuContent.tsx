@@ -22,6 +22,7 @@ import {
 import { cn } from "@/lib/utils";
 import { fetchAutoNotes } from "@/redux/features/autonote.features";
 import { AutoNoteType } from "@/types/AutoNote.types";
+import UniversalSearchComponent from "./UniversalSearchComponent";
 
 export function SidebarCollapsibleMenuContent() {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +35,28 @@ export function SidebarCollapsibleMenuContent() {
   const [autoNoteDialogOpen, setAutoNoteDialogOpen] = useState(false);
   const [sortedNotes, setSortedNotes] = useState<NoteType[]>([]);
   const [sortedAutoNotes, setSortedAutoNotes] = useState<AutoNoteType[]>([]);
+  const [searchDialogOpen, setSearchDialogOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        setNoteDialogOpen(false);
+        setAutoNoteDialogOpen(false);
+        setSearchDialogOpen((open) => !open);
+      } else if (e.key === "n" && (e.metaKey || e.ctrlKey) && e.altKey) {
+        setSearchDialogOpen(false);
+        setAutoNoteDialogOpen(false);
+        setNoteDialogOpen((open) => !open);
+      } else if (e.key === "a" && (e.metaKey || e.ctrlKey) && e.altKey) {
+        setNoteDialogOpen(false);
+        setSearchDialogOpen(false);
+        setAutoNoteDialogOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   useEffect(() => {
     dispatch(fetchNotes(uid));
@@ -72,7 +95,12 @@ export function SidebarCollapsibleMenuContent() {
             </Button>
           </Link>
           <div className="flex">
-            <Button variant={"ghost"} size={"icon"} className="cursor-pointer">
+            <Button
+              variant={"ghost"}
+              size={"icon"}
+              className="cursor-pointer"
+              onClick={() => setSearchDialogOpen(!searchDialogOpen)}
+            >
               <Search className="h-5 w-5" />
             </Button>
             <Separator orientation="vertical" className="bg-muted" />
@@ -121,6 +149,11 @@ export function SidebarCollapsibleMenuContent() {
           setDialogOpen={setAutoNoteDialogOpen}
         />
       </SidebarMenu>
+      <UniversalSearchComponent
+        open={searchDialogOpen}
+        setOpen={setSearchDialogOpen}
+      />
+      {JSON.stringify(searchDialogOpen)}
     </SidebarGroup>
   );
 }
