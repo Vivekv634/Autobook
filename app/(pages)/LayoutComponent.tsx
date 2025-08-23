@@ -55,6 +55,8 @@ export function PagesLayoutComponent({
 
         const user = docSnap.data() as UserType;
 
+        if (!document) return;
+
         const theme = user.theme ?? "default";
         const link = document.createElement("link");
         link.rel = "stylesheet";

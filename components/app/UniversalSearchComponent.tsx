@@ -7,6 +7,7 @@ import {
   CommandDialog,
   CommandSeparator,
 } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { RootState } from "@/redux/store";
 import { Command, Home, Settings, Verified } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -42,8 +43,11 @@ export default function UniversalSearchComponent({
             return (
               <CommandItem
                 key={i}
-                onClick={() => router.push(s.href)}
-                className="font-semibold ml-3"
+                onSelect={() => {
+                  setOpen(false);
+                  router.push(s.href);
+                }}
+                className="font-semibold ml-3 cursor-pointer"
               >
                 {s.icon} {s.label}
               </CommandItem>
@@ -51,15 +55,18 @@ export default function UniversalSearchComponent({
           })}
         </CommandGroup>
         <CommandSeparator />
-        <CommandGroup heading="Notes">
+        <CommandGroup
+          heading="Notes"
+          className={cn(notes.length == 0 && "hidden")}
+        >
           {notes?.map((n, i) => {
             return (
               <CommandItem
                 key={i}
-                className="ml-3 font-semibold"
-                onClick={() => {
+                className="ml-3 font-semibold cursor-pointer"
+                onSelect={() => {
+                  setOpen(false);
                   router.push(`/dashboard/${n.note_id}`);
-                  alert(n.note_id);
                 }}
               >
                 {n.title}
@@ -67,15 +74,19 @@ export default function UniversalSearchComponent({
             );
           })}
         </CommandGroup>
-        <CommandGroup heading="Autonotes">
+        <CommandGroup
+          heading="Autonotes"
+          className={cn(autonotes.length == 0 && "hidden")}
+        >
           {autonotes?.map((an, i) => {
             return (
               <CommandItem
                 key={i}
-                className="ml-3 font-semibold"
-                onClick={() =>
-                  router.push(`/dashboard/autonotes/${an.autonote_id}`)
-                }
+                className="ml-3 font-semibold cursor-pointer"
+                onSelect={() => {
+                  setOpen(false);
+                  router.push(`/dashboard/autonotes/${an.autonote_id}`);
+                }}
               >
                 {an.title}
               </CommandItem>

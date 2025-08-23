@@ -66,11 +66,12 @@ type ExportOptions = {
  */
 export async function exportBlockNoteToPDF(
   blocks: Block[],
-  opts: ExportOptions = {}
+  opts: ExportOptions = {},
 ) {
   const { margin = 24, dpi = 2, backgroundColor = "#ffffff" } = opts;
 
   // Create offscreen container
+  if (!document) return;
   const container = document.createElement("div");
   container.style.position = "fixed";
   container.style.left = "-9999px";
@@ -354,8 +355,8 @@ export async function exportBlockNoteToPDF(
         const th = document.createElement("th");
         th.textContent =
           typeof col === "object" && col !== null && "title" in col
-            ? col.title ?? ""
-            : (col as string) ?? "";
+            ? (col.title ?? "")
+            : ((col as string) ?? "");
         th.style.border = "1px solid rgba(0,0,0,0.08)";
         th.style.padding = "6px 8px";
         th.style.textAlign = "left";
@@ -375,10 +376,10 @@ export async function exportBlockNoteToPDF(
           td.style.verticalAlign = "top";
           td.textContent =
             typeof cell === "object" && cell !== null && "text" in cell
-              ? cell.text ?? ""
+              ? (cell.text ?? "")
               : typeof cell === "string"
-              ? cell
-              : "";
+                ? cell
+                : "";
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -416,7 +417,10 @@ export async function exportBlockNoteToPDF(
   header.style.marginBottom = "14px";
   // Optionally a title if present as first heading block
   const first = blocks[0];
-  if (first && (first.type === "heading" || first.type.startsWith("heading"))) {
+  if (
+    first &&
+    (first.type === "heading" || first.type?.startsWith("heading"))
+  ) {
     // don't duplicate if heading will render below; we can skip header.
   }
 
@@ -444,8 +448,8 @@ export async function exportBlockNoteToPDF(
             img.onerror = () => resolve();
             // timeout fallback
             setTimeout(resolve, 3000);
-          })
-      )
+          }),
+      ),
     );
   }
 
@@ -510,7 +514,7 @@ export async function exportBlockNoteToPDF(
         0,
         0,
         canvasWidth,
-        sliceCanvas.height
+        sliceCanvas.height,
       );
       const sliceData = sliceCanvas.toDataURL("image/png", 1.0);
       const sliceHeightPts = sliceCanvas.height / pxPerPt;

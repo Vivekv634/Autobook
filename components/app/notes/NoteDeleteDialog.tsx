@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import ButtonLoader from "../ButtonLoader";
 import { useRouter } from "next/navigation";
-import { Trash2 } from "lucide-react";
 
 interface Props {
   openDeleteDialog: string | null;
@@ -86,12 +85,7 @@ export default function NoteDeleteDialog({
             onClick={handleNoteDelete}
             disabled={loading}
             loading={loading}
-            label={
-              <div className="flex gap-1">
-                <Trash2 />
-                Delete note
-              </div>
-            }
+            label={"Delete note"}
           />
         </DialogFooter>
       </DialogContent>

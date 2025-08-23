@@ -38,27 +38,6 @@ export function SidebarCollapsibleMenuContent() {
   const [searchDialogOpen, setSearchDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      e.preventDefault();
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        setNoteDialogOpen(false);
-        setAutoNoteDialogOpen(false);
-        setSearchDialogOpen((open) => !open);
-      } else if (e.key === "n" && (e.metaKey || e.ctrlKey) && e.altKey) {
-        setSearchDialogOpen(false);
-        setAutoNoteDialogOpen(false);
-        setNoteDialogOpen((open) => !open);
-      } else if (e.key === "a" && (e.metaKey || e.ctrlKey) && e.altKey) {
-        setNoteDialogOpen(false);
-        setSearchDialogOpen(false);
-        setAutoNoteDialogOpen((open) => !open);
-      }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
-  useEffect(() => {
     dispatch(fetchNotes(uid));
     dispatch(fetchAutoNotes(uid));
     dispatch(fetchSharedNotes(uid));

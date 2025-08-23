@@ -5,29 +5,71 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import ButtonLoader from "../app/ButtonLoader";
-import processPrompt from "@/lib/process-prompt";
+import processPrompt, { improvePromptHelper } from "@/lib/process-prompt";
 
 export const InputActionBlock = createReactBlockSpec(
   {
     type: "inputAction",
-    content: "inline",
-    propSchema: {
-      value: { default: "" },
-    },
+    content: "none",
+    propSchema: {},
   },
   {
     render: (props) => {
       const BlockComponent = () => {
-        const { value } = props.block.props;
-
         const { user } = useSelector((state: RootState) => state.user);
+        const [prompt, setPrompt] = useState<string>("");
         const [loading, setLoading] = useState(false);
+        const [improveLoading, setImproveLoading] = useState(false);
 
         if (!user) return null;
 
-        const handleLLMCall = async () => {
+        const improvePrompt = async () => {
+          try {
+            setImproveLoading(true);
+            const apiKey =
+              user.gemini_api_key ||
+              process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+            if (!apiKey) {
+              toast.error("Getting error while generating content!");
+              console.error("API key not given.");
+              return;
+            }
+            const apiResponse = await axios.post(
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+              {
+                contents: [
+                  {
+                    parts: [
+                      {
+                        text: improvePromptHelper(prompt),
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                headers: {
+                  "X-goog-api-key": apiKey,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+            const response = apiResponse.data.candidates[0].content.parts[0]
+              .text as string;
+
+            setPrompt(response);
+          } catch (err) {
+            toast.error("Getting error while generating content!");
+            console.error("Error fetching LLM result:", err);
+          } finally {
+            setImproveLoading(false);
+          }
+        };
+
+        const handleLLMCall = async (e: FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
           setLoading(true);
           props.editor.updateBlock(props.block.id, {
             props: { ...props.block.props },
@@ -50,7 +92,7 @@ export const InputActionBlock = createReactBlockSpec(
                   {
                     parts: [
                       {
-                        text: processPrompt(value),
+                        text: processPrompt(prompt, user.responseType),
                       },
                     ],
                   },
@@ -68,9 +110,8 @@ export const InputActionBlock = createReactBlockSpec(
             const processedResponse = response.slice(8, response.length - 4);
 
             const blocksFromLLM = JSON.parse(processedResponse);
-
+            props.editor.replaceBlocks([props.block.id], blocksFromLLM);
             if (Array.isArray(blocksFromLLM)) {
-              props.editor.replaceBlocks([props.block.id], blocksFromLLM);
               toast.success("Content generated!");
             } else {
               console.error("LLM did not return an array of blocks");
@@ -85,34 +126,39 @@ export const InputActionBlock = createReactBlockSpec(
         };
 
         return (
-          <div
-            className="shadow-xl drop-shadow-2xl dark:shadow-neutral-50/5 w-full p-2 px-8 md:py-2 rounded-md"
-            contentEditable={"false"}
+          <form
+            className="w-full shadow-xl drop-shadow-2xl dark:shadow-neutral-50/5 rounded-md p-2 px-8 md:py-2"
+            onSubmit={(e) => handleLLMCall(e)}
           >
-            <div className="md:flex md:gap-2">
-              <Input
-                type="text"
-                value={value}
-                onChange={(e) =>
-                  props.editor.updateBlock(props.block.id, {
-                    props: { ...props.block.props, value: e.target.value },
-                  })
-                }
-                className="border-0 bg-transparent dark:bg-transparent focus-visible:ring-0 my-2 md:my-0 shadow-none"
-                placeholder="Enter prompt..."
-                autoFocus={true}
-                disabled={loading}
-                required
+            <Input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="border-0 bg-transparent dark:bg-transparent focus-visible:ring-0 my-2 md:my-0 shadow-none"
+              placeholder="Enter prompt..."
+              disabled={loading || improveLoading}
+              required
+            />
+            <div className="flex justify-end gap-3">
+              <ButtonLoader
+                loading={improveLoading}
+                label={"Improve prompt"}
+                loadingLabel={"Improving..."}
+                onClick={() => improvePrompt()}
+                type="button"
+                variant={"ghost"}
+                disabled={prompt.length == 0 || improveLoading}
               />
               <ButtonLoader
                 isIcon={true}
                 loading={loading}
+                disabled={improveLoading}
+                type="submit"
                 label={<Sparkles />}
                 loadingLabel={<Loader2 className="animate-spin" />}
-                onClick={() => handleLLMCall()}
               />
             </div>
-          </div>
+          </form>
         );
       };
 

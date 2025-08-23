@@ -37,7 +37,7 @@ export default function NewNoteDialog({
   const [name, setNameAction] = useState<string>("");
   const router = useRouter();
 
-  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       setLoadingAction(true);
@@ -50,12 +50,13 @@ export default function NewNoteDialog({
         updated_at: Date.now(),
         note_id: v4(),
       };
-      dispatch(createNote({ note, uid }))
-        .then(() => {
-          toast.success("New Note created!");
-          router.push(`/dashboard/${note.note_id}`);
-        })
-        .catch((error) => toast.error(error));
+      const dispatchResponse = await dispatch(createNote({ note, uid }));
+      if (dispatchResponse.meta.requestStatus === "fulfilled") {
+        router.push(
+          `/dashboard/${(dispatchResponse.payload as NoteType).note_id}`
+        );
+        toast.success("New Note created!");
+      } else toast.error("Something went wrong. Try again!");
     } catch (error) {
       toast.error(error as string);
     } finally {
@@ -63,6 +64,7 @@ export default function NewNoteDialog({
       setNoteDialogOpenAction(false);
     }
   };
+
   return (
     <DialogContent>
       <DialogHeader>

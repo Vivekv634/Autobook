@@ -52,7 +52,6 @@ export default function RegisterPage() {
         toast.error(res.payload as string);
         return;
       } else if (res.meta.requestStatus === "fulfilled") {
-        console.log(res.payload);
         router.push("/login");
         toast.success("Registration successful! Please login.");
       }

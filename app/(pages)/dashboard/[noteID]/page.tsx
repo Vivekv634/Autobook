@@ -64,6 +64,7 @@ export default function NotePage() {
     if (editor && editorNote?.body) {
       try {
         const parsed = JSON.parse(editorNote.body);
+        if (!editor.document) return;
         editor.replaceBlocks(editor.document, parsed);
       } catch (err) {
         console.error("Failed to parse note body:", err);
@@ -87,7 +88,7 @@ export default function NotePage() {
   });
 
   const saveNote = async () => {
-    if (!editor || !editorNote) return;
+    if (!editor || !editorNote || !editor.document) return;
     const note: NoteType = {
       ...editorNote,
       body: JSON.stringify(editor.document),
@@ -128,7 +129,7 @@ export default function NotePage() {
     );
 
   return (
-    <div className="m-2 h-full pt-2 container mx-auto">
+    <div className="m-2 h-full pt-2 container mb-20 mx-auto">
       <div className="mx-2 flex h-9 items-center mb-4">
         <h2 className="font-bold text-3xl">{editorNote.title}</h2>
         <Separator orientation="vertical" className="mx-3 bg-secondary/70" />
@@ -138,9 +139,7 @@ export default function NotePage() {
           >
             <Ellipsis />
           </DropdownMenuTrigger>
-          <DropdownMenuPortal
-            container={document.querySelector("dropdown-portal")}
-          >
+          <DropdownMenuPortal>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={saveNote}>
                 <Save /> Save
