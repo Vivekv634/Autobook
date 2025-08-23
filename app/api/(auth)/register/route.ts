@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
       email,
       theme: "default",
       themeScope: "editor",
+      responseType: "balanced",
     };
     await setDoc(newUserRef, newUser)
       .then(async () => {

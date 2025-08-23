@@ -38,6 +38,7 @@ export default function NotePrintDialog({
 
     exportBlockNoteToPDF(JSON.parse(note.body))
       .then((pdf) => {
+        if (!pdf) return null;
         setPdfInstance(pdf);
 
         // Create Blob URL for preview

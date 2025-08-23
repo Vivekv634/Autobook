@@ -162,6 +162,7 @@ export function SidebarUserMenuComponent() {
                       name: "",
                       theme: "default",
                       themeScope: "editor",
+                      responseType: "balanced",
                     },
                     uid: "",
                   })
