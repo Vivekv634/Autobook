@@ -43,6 +43,8 @@ export function PagesLayoutComponent({
     onAuthStateChanged(auth, async (User: User | null) => {
       if (!User) {
         router.push("/login");
+      } else if (User.emailVerified === false) {
+        router.push("/verify-email");
       } else {
         const uid: string = User.uid;
         const docRef: DocumentReference = doc(userDB, uid);

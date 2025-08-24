@@ -17,6 +17,10 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_FROM_EMAIL: process.env.NEXT_PUBLIC_FROM_EMAIL,
     NEXT_PUBLIC_FROM_NAME: process.env.NEXT_PUBLIC_FROM_NAME,
   },
+  images: {
+    dangerouslyAllowSVG: true,
+    remotePatterns: [new URL("https://api.dicebear.com/9.x/identicon/svg")],
+  },
 };
 
 export default nextConfig;

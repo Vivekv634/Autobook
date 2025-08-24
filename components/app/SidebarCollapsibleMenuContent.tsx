@@ -38,6 +38,7 @@ export function SidebarCollapsibleMenuContent() {
   const [searchDialogOpen, setSearchDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!uid) return;
     dispatch(fetchNotes(uid));
     dispatch(fetchAutoNotes(uid));
     dispatch(fetchSharedNotes(uid));

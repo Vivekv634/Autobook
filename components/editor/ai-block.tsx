@@ -150,11 +150,14 @@ export const InputActionBlock = createReactBlockSpec(
                 disabled={prompt.length == 0 || improveLoading}
               />
               <ButtonLoader
-                isIcon={true}
                 loading={loading}
                 disabled={improveLoading}
                 type="submit"
-                label={<Sparkles />}
+                label={
+                  <div className="flex gap-2 items-center">
+                    Generate <Sparkles />
+                  </div>
+                }
                 loadingLabel={<Loader2 className="animate-spin" />}
               />
             </div>

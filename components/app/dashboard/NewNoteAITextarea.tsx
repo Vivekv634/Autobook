@@ -20,8 +20,9 @@ export default function NewNoteAITextarea({}) {
 
   useEffect(() => {
     async function searchAIPrompt() {
+      if (!user) return;
       const apiKey =
-        user?.gemini_api_key || process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+        user.gemini_api_key || process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
       if (!apiKey) return null;
       const apiResponse = await axios.post(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
@@ -156,7 +157,7 @@ export default function NewNoteAITextarea({}) {
             {Array.from({ length: 3 }).map((_, i) => {
               return (
                 <span
-                  className="my-1 p-1 px-5 h-9 text-center rounded-lg hover:bg-accent cursor-pointer flex items-center"
+                  className="my-1 py-3 px-5 h-9 rounded-lg hover:bg-accent cursor-pointer flex items-center"
                   key={i}
                   onClick={() => setPrompt(searchRecommandations[`${i}`])}
                 >

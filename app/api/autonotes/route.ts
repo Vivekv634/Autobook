@@ -7,8 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(req: NextRequest) {
   try {
+    let autonotes: AutoNoteType[] = [];
     const headersList = await headers();
     const uid = headersList.get("uid");
+
     if (!uid) {
       return NextResponse.json(
         { error: "User ID is required" },
@@ -21,9 +23,9 @@ export async function GET(req: NextRequest) {
     );
 
     if (q.empty) {
-      return NextResponse.json({ result: [] }, { status: 200 });
+      return NextResponse.json({ result: autonotes }, { status: 200 });
     }
-    const autonotes = q.docs.map((doc) => doc.data() as AutoNoteType);
+    autonotes = q.docs.map((doc) => doc.data() as AutoNoteType);
 
     return NextResponse.json({ result: autonotes }, { status: 200 });
   } catch (error) {
