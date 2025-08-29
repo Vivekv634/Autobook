@@ -25,6 +25,48 @@ export default function processPrompt(
 **User Topic:** Generate a ${ResponseType} BlockNote JSON array for the topic: "${userInstruction}"`;
 }
 
+export const processPromptWithTitle = (
+  userInstruction: string,
+  ResponseType: responseType
+) => {
+  return `Your task is to act as a BlockNote editor and generate a stringified JSON object with the following structure:
+
+{
+  "title": "<A concise title derived from the userInstruction should be under 40 characters>",
+  "content": [ ... ]
+}
+
+### Requirements
+
+1. **Output Format**
+   - The result must be a single valid JSON object, stringified.
+   - The "title" field must be a short descriptive heading extracted from the userInstruction.
+   - The "content" field must be a stringified JSON array of BlockNote blocks.
+
+2. **Schema Compliance**
+   - Adhere strictly to the BlockNote schema.
+   - Each Block must have:
+     - "type" (e.g., "heading", "paragraph", "bulletListItem", "numberedListItem").
+     - "content" (an array of InlineContent objects).
+   - InlineContent objects must follow schema rules:
+     - For "text": include a "text" property with the actual string, and optionally a "styles" object (e.g., { "bold": true, "italic": true }).
+     - For "link": include "href" and "text".
+   - List items must be properly nested using "children" and "level" where supported.
+   - Do not include any properties not supported by the BlockNote schema.
+
+3. **Response Length Control**
+   - **Concise** → Short and minimal: a few headings and paragraphs only.
+   - **Balanced** → Moderate length: headings, paragraphs, and one simple list, with mixed formatting (bold/italic/underline).
+   - **Detailed** → Comprehensive: multiple headings, paragraphs, bullet and numbered lists (including nesting), with rich use of styles.
+
+4. **Instruction Binding**
+   - Use the provided 'userInstruction' as the document topic.
+   - Generate content based on the specified 'ResponseType' ("concise", "balanced", "detailed").
+
+### Template
+"Generate a ${ResponseType} BlockNote JSON object for the topic: '${userInstruction}'"`;
+};
+
 export const searchPrompt = `You are BlockNote's content-generation engine.
 
 Task:

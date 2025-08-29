@@ -4,10 +4,18 @@ import ButtonLoader from "../ButtonLoader";
 import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
-import { improvePromptHelper, searchPrompt } from "@/lib/process-prompt";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import {
+  improvePromptHelper,
+  processPromptWithTitle,
+  searchPrompt,
+} from "@/lib/process-prompt";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NoteSchema, NoteType } from "@/types/Note.type";
+import { v4 } from "uuid";
+import { createNote } from "@/redux/features/notes.features";
+import { useRouter } from "next/navigation";
 
 export default function NewNoteAITextarea({}) {
   const [prompt, setPrompt] = useState<string>("");
@@ -16,7 +24,9 @@ export default function NewNoteAITextarea({}) {
   const [searchRecommandations, setSearchRecommandations] = useState<{
     [key: string]: string;
   }>();
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user, uid } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   useEffect(() => {
     async function searchAIPrompt() {
@@ -57,7 +67,73 @@ export default function NewNoteAITextarea({}) {
     try {
       e.preventDefault();
       setLoading(true);
-      toast.info("Under Development, until create note manually.");
+      toast.info("Generating content....");
+      const apiKey =
+        user?.gemini_api_key || process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+      if (!apiKey || !user) {
+        toast.error("Getting error while generating content!");
+        console.error("API key not given.");
+        return;
+      }
+      const apiResponse = await axios.post(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        {
+          contents: [
+            {
+              parts: [
+                {
+                  text: processPromptWithTitle(prompt, user.responseType),
+                },
+              ],
+            },
+          ],
+        },
+        {
+          headers: {
+            "X-goog-api-key": apiKey,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const response = apiResponse.data.candidates[0].content.parts[0]
+        .text as string;
+      const processedResponse = response.slice(8, response.length - 4);
+
+      const blocksFromLLM = JSON.parse(processedResponse);
+      if (!Array.isArray(blocksFromLLM.content)) {
+        console.error("LLM did not return an array of blocks");
+        toast.error("Getting error while generating content!");
+      }
+      toast.info("Creating note...");
+
+      const nowTime = Date.now();
+      const newNote: NoteType = {
+        note_id: v4(),
+        auth_id: uid,
+        title: blocksFromLLM.title,
+        body: JSON.stringify(blocksFromLLM.content),
+        created_at: nowTime,
+        updated_at: nowTime,
+      };
+      const parsedNewNote = NoteSchema.safeParse(newNote);
+      if (!parsedNewNote.success) {
+        toast.error("Failed to create note. Try again!");
+        console.error("Note validation failed:", parsedNewNote.error);
+        return;
+      }
+
+      const dispatchResponse = await dispatch(
+        createNote({ note: parsedNewNote.data, uid })
+      );
+      if (dispatchResponse.meta.requestStatus === "rejected") {
+        toast.error("Failed to create note. Try again!");
+        console.error("Note creation failed:", dispatchResponse.meta);
+        return;
+      } else {
+        toast.success("Note created successfully!");
+        router.push(`/dashboard/${newNote.note_id}`);
+      }
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong. Try again!");
@@ -135,7 +211,7 @@ export default function NewNoteAITextarea({}) {
                 onClick={() => improvePrompt()}
                 type="button"
                 variant={"ghost"}
-                disabled={prompt.length == 0 || improveLoading}
+                disabled={prompt.length == 0 || improveLoading || loading}
               />
               <ButtonLoader
                 loading={loading}

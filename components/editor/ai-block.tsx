@@ -1,5 +1,4 @@
 import { createReactBlockSpec } from "@blocknote/react";
-import { Input } from "../ui/input";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -8,6 +7,8 @@ import { toast } from "sonner";
 import { FormEvent, useState } from "react";
 import ButtonLoader from "../app/ButtonLoader";
 import processPrompt, { improvePromptHelper } from "@/lib/process-prompt";
+import { Card } from "../ui/card";
+import { Textarea } from "../ui/textarea";
 
 export const InputActionBlock = createReactBlockSpec(
   {
@@ -27,7 +28,11 @@ export const InputActionBlock = createReactBlockSpec(
 
         const improvePrompt = async () => {
           try {
+            if (prompt.trim().length === 0) return;
+
             setImproveLoading(true);
+            toast.info("Improving prompt...");
+
             const apiKey =
               user.gemini_api_key ||
               process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
@@ -36,18 +41,11 @@ export const InputActionBlock = createReactBlockSpec(
               console.error("API key not given.");
               return;
             }
+
             const apiResponse = await axios.post(
               "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
               {
-                contents: [
-                  {
-                    parts: [
-                      {
-                        text: improvePromptHelper(prompt),
-                      },
-                    ],
-                  },
-                ],
+                contents: [{ parts: [{ text: improvePromptHelper(prompt) }] }],
               },
               {
                 headers: {
@@ -56,10 +54,26 @@ export const InputActionBlock = createReactBlockSpec(
                 },
               }
             );
-            const response = apiResponse.data.candidates[0].content.parts[0]
-              .text as string;
 
-            setPrompt(response);
+            // Defensive parsing
+            const candidate = apiResponse?.data?.candidates?.[0];
+            const part = candidate?.content?.parts?.[0];
+            const response =
+              typeof part?.text === "string" ? part.text.trim() : "";
+
+            if (response) {
+              setPrompt(response);
+              toast.success("Prompt improved!");
+            } else {
+              // Do NOT clobber the user’s prompt
+              toast.warning(
+                "LLM returned an empty improvement. Keeping your original prompt."
+              );
+              console.warn(
+                "ImprovePrompt: empty/undefined response payload:",
+                apiResponse?.data
+              );
+            }
           } catch (err) {
             toast.error("Getting error while generating content!");
             console.error("Error fetching LLM result:", err);
@@ -126,42 +140,41 @@ export const InputActionBlock = createReactBlockSpec(
         };
 
         return (
-          <form
-            className="w-full shadow-xl drop-shadow-2xl dark:shadow-neutral-50/5 rounded-md p-2 px-8 md:py-2"
-            onSubmit={(e) => handleLLMCall(e)}
-          >
-            <Input
-              type="text"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="border-0 bg-transparent dark:bg-transparent focus-visible:ring-0 my-2 md:my-0 shadow-none"
-              placeholder="Enter prompt..."
-              disabled={loading || improveLoading}
-              required
-            />
-            <div className="flex justify-end gap-3">
-              <ButtonLoader
-                loading={improveLoading}
-                label={"Improve prompt"}
-                loadingLabel={"Improving..."}
-                onClick={() => improvePrompt()}
-                type="button"
-                variant={"ghost"}
-                disabled={prompt.length == 0 || improveLoading}
+          <Card className="w-full shadow-xl focus-visible:ring-0 dark:shadow-neutral-50/5 rounded-md p-2 md:px-8 md:py-2 ring-0">
+            <form onSubmit={(e) => handleLLMCall(e)}>
+              <Textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                required
+                disabled={loading || improveLoading}
+                placeholder="Write your prompt..."
+                className="border-none dark:bg-transparent shadow-none h-14 focus-visible:border-none focus-visible:ring-0"
               />
-              <ButtonLoader
-                loading={loading}
-                disabled={improveLoading}
-                type="submit"
-                label={
-                  <div className="flex gap-2 items-center">
-                    Generate <Sparkles />
-                  </div>
-                }
-                loadingLabel={<Loader2 className="animate-spin" />}
-              />
-            </div>
-          </form>
+              <div className="flex justify-end gap-3">
+                <ButtonLoader
+                  type="button" // <-- add this
+                  loading={improveLoading}
+                  label={"Improve prompt"}
+                  loadingLabel={"Improving..."}
+                  onClick={improvePrompt}
+                  variant={"ghost"}
+                  disabled={prompt.length == 0 || improveLoading || loading}
+                />
+                <ButtonLoader
+                  loading={loading}
+                  disabled={improveLoading || prompt.length == 0 || loading}
+                  type="submit"
+                  // onClick={handleLLMCall}
+                  label={
+                    <div className="flex gap-2 items-center">
+                      Generate <Sparkles />
+                    </div>
+                  }
+                  loadingLabel={<Loader2 className="animate-spin" />}
+                />
+              </div>
+            </form>
+          </Card>
         );
       };
 
