@@ -1,5 +1,6 @@
 import { autoNotesDB, db, notesDB, userDB } from "@/firebase.config";
 import { getNextWeekdayTimestamp } from "@/lib/autonote-timestamp-helper";
+import emailBodyHelper from "@/lib/emailbodyhelper";
 import {
   dayNames,
   getNextDay,
@@ -17,20 +18,23 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
+import { google } from "googleapis";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 } from "uuid";
-import { createTransport } from "nodemailer";
-import emailBodyHelper from "@/lib/emailbodyhelper";
 
-const transporter = createTransport({
-  host: "gmail",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.NEXT_PUBLIC_FROM_EMAIL,
-    pass: process.env.NEXT_PUBLIC_APP_PASS,
+
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    client_email: process.env.NEXT_PUBLIC_GOOGLE_SHEETS_CLIENT_EMAIL,
+    private_key: process.env.NEXT_PUBLIC_GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, "\n"),
   },
+  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
+
+const sheets = google.sheets({ version: "v4", auth });
+
+const spreadsheetId = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_SPREADSHEET_ID as string;
+
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(req: NextRequest) {
@@ -146,17 +150,22 @@ export async function POST(req: NextRequest) {
 
       batchWriter.set(doc(autoNotesDB, autonote.autonote_id), autonote);
     }
-    Array.from(email_map).forEach(async ([email, { note, autonote }]) => {
-      await transporter.sendMail({
-        from: process.env.NEXT_PUBLIC_FROM_EMAIL,
-        to: email,
-        subject: "New note created by Autonote",
-        html: emailBodyHelper(
-          user_map.get(note.auth_id) as UserType,
-          note,
-          autonote
-        ),
-      });
+    const values = Array.from(email_map).map(([email, { note, autonote }]) => [
+      email,
+      emailBodyHelper(
+        user_map.get(note.auth_id) as UserType,
+        note,
+        autonote
+      ),
+    ]);
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: "email database",
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: JSON.parse(JSON.stringify(values)),
+      },
     });
 
     // Commit the batch writer
