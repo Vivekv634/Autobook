@@ -14,6 +14,7 @@
     "@blocknote/mantine": "^0.35.0",
     "@blocknote/react": "^0.35.0",
     "@blocknote/xl-ai": "^0.35.0",
+    "@google/genai": "^1.19.0",
     "@mdxeditor/editor": "^3.40.1",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-avatar": "^1.1.10",

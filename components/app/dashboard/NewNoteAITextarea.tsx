@@ -16,8 +16,9 @@ import { NoteSchema, NoteType } from "@/types/Note.type";
 import { v4 } from "uuid";
 import { createNote } from "@/redux/features/notes.features";
 import { useRouter } from "next/navigation";
+import { GoogleGenAI } from "@google/genai";
 
-export default function NewNoteAITextarea({}) {
+export default function NewNoteAITextarea() {
   const [prompt, setPrompt] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [improveLoading, setImproveLoading] = useState<boolean>(false);
@@ -33,31 +34,20 @@ export default function NewNoteAITextarea({}) {
       if (!user) return;
       const apiKey =
         user.gemini_api_key || process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
-      if (!apiKey) return null;
-      const apiResponse = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        {
-          contents: [
-            {
-              parts: [
-                {
-                  text: searchPrompt,
-                },
-              ],
-            },
-          ],
-        },
-        {
-          headers: {
-            "X-goog-api-key": apiKey,
-          },
-        }
-      );
 
-      const response = apiResponse.data.candidates[0].content.parts[0]
-        .text as string;
+      if (!apiKey) return null;
+
+      const ai = new GoogleGenAI({ apiKey: apiKey });
+
+      const apiResponse = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: searchPrompt,
+      });
+
+      if (!apiResponse.text) return;
+
       setSearchRecommandations(
-        JSON.parse(response.slice(8, response.length - 4))
+        JSON.parse(apiResponse.text.slice(8, apiResponse.text.length - 4))
       );
     }
     searchAIPrompt();
@@ -70,35 +60,26 @@ export default function NewNoteAITextarea({}) {
       toast.info("Generating content....");
       const apiKey =
         user?.gemini_api_key || process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+
       if (!apiKey || !user) {
         toast.error("Getting error while generating content!");
         console.error("API key not given.");
         return;
       }
-      const apiResponse = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        {
-          contents: [
-            {
-              parts: [
-                {
-                  text: processPromptWithTitle(prompt, user.responseType),
-                },
-              ],
-            },
-          ],
-        },
-        {
-          headers: {
-            "X-goog-api-key": apiKey,
-            "Content-Type": "application/json",
-          },
-        }
-      );
 
-      const response = apiResponse.data.candidates[0].content.parts[0]
-        .text as string;
-      const processedResponse = response.slice(8, response.length - 4);
+      const ai = new GoogleGenAI({ apiKey: apiKey });
+
+      const apiResponse = await ai.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: processPromptWithTitle(prompt, user.responseType),
+      });
+
+      if (!apiResponse.text) return;
+
+      const processedResponse = apiResponse.text.slice(
+        8,
+        apiResponse.text.length - 4
+      );
 
       const blocksFromLLM = JSON.parse(processedResponse);
       if (!Array.isArray(blocksFromLLM.content)) {

@@ -84,7 +84,7 @@ export function SidebarCollapsibleMenuContent() {
               <Search className="h-5 w-5" />
             </Button>
             <Separator orientation="vertical" className="bg-muted" />
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger
                 className={cn(
                   buttonVariants({ variant: "ghost", size: "icon" }),

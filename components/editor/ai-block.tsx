@@ -1,5 +1,6 @@
+"use client";
+
 import { createReactBlockSpec } from "@blocknote/react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Loader2, Sparkles } from "lucide-react";
@@ -9,6 +10,7 @@ import ButtonLoader from "../app/ButtonLoader";
 import processPrompt, { improvePromptHelper } from "@/lib/process-prompt";
 import { Card } from "../ui/card";
 import { Textarea } from "../ui/textarea";
+import { GoogleGenAI } from "@google/genai";
 
 export const InputActionBlock = createReactBlockSpec(
   {
@@ -21,8 +23,8 @@ export const InputActionBlock = createReactBlockSpec(
       const BlockComponent = () => {
         const { user } = useSelector((state: RootState) => state.user);
         const [prompt, setPrompt] = useState<string>("");
-        const [loading, setLoading] = useState(false);
-        const [improveLoading, setImproveLoading] = useState(false);
+        const [loading, setLoading] = useState<boolean>(false);
+        const [improveLoading, setImproveLoading] = useState<boolean>(false);
 
         if (!user) return null;
 
@@ -36,36 +38,24 @@ export const InputActionBlock = createReactBlockSpec(
             const apiKey =
               user.gemini_api_key ||
               process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+
             if (!apiKey) {
               toast.error("Getting error while generating content!");
               console.error("API key not given.");
               return;
             }
 
-            const apiResponse = await axios.post(
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-              {
-                contents: [{ parts: [{ text: improvePromptHelper(prompt) }] }],
-              },
-              {
-                headers: {
-                  "X-goog-api-key": apiKey,
-                  "Content-Type": "application/json",
-                },
-              }
-            );
+            const ai = new GoogleGenAI({ apiKey: apiKey });
 
-            // Defensive parsing
-            const candidate = apiResponse?.data?.candidates?.[0];
-            const part = candidate?.content?.parts?.[0];
-            const response =
-              typeof part?.text === "string" ? part.text.trim() : "";
+            const apiResponse = await ai.models.generateContent({
+              model: "gemini-2.0-flash",
+              contents: improvePromptHelper(prompt),
+            });
 
-            if (response) {
-              setPrompt(response);
+            if (apiResponse.text) {
+              setPrompt(apiResponse.text);
               toast.success("Prompt improved!");
             } else {
-              // Do NOT clobber the user’s prompt
               toast.warning(
                 "LLM returned an empty improvement. Keeping your original prompt."
               );
@@ -94,34 +84,28 @@ export const InputActionBlock = createReactBlockSpec(
             const apiKey =
               user.gemini_api_key ||
               process.env.NEXT_PUBLIC_FALLBACK_LLM_API_KEY;
+
             if (!apiKey) {
               toast.error("Getting error while generating content!");
               console.error("API key not given.");
               return;
             }
-            const apiResponse = await axios.post(
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-              {
-                contents: [
-                  {
-                    parts: [
-                      {
-                        text: processPrompt(prompt, user.responseType),
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                headers: {
-                  "X-goog-api-key": apiKey,
-                  "Content-Type": "application/json",
-                },
-              }
+
+            const ai = new GoogleGenAI({ apiKey: apiKey });
+
+            const apiResponse = await ai.models.generateContent({
+              model: "gemini-2.0-flash",
+              contents: processPrompt(prompt, user.responseType),
+            });
+
+            if (!apiResponse.text) {
+              toast.error("Getting error while generating content!");
+              return;
+            }
+            const processedResponse = apiResponse.text?.slice(
+              8,
+              apiResponse.text.length - 4
             );
-            const response = apiResponse.data.candidates[0].content.parts[0]
-              .text as string;
-            const processedResponse = response.slice(8, response.length - 4);
 
             const blocksFromLLM = JSON.parse(processedResponse);
             props.editor.replaceBlocks([props.block.id], blocksFromLLM);
