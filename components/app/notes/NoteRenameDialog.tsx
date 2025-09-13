@@ -71,6 +71,7 @@ export default function NoteRenameDialog({
       onOpenChange={(open) => {
         if (!open) setOpenRenameDialogAction(null);
       }}
+      modal={false}
     >
       <DialogContent>
         <DialogHeader>

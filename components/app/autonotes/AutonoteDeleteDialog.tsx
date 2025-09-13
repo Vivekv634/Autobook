@@ -63,6 +63,7 @@ export default function AutonoteDeleteDialog({
       onOpenChange={(open) => {
         if (!open) setOpenAutonoteDeleteDialogAction(null);
       }}
+      modal={false}
     >
       <DialogContent>
         <DialogHeader>

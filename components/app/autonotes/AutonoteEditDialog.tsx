@@ -35,6 +35,7 @@ export default function AutonoteEditDialog({
       onOpenChange={(open) => {
         if (!open) setOpenAutonoteEditDialogAction(null);
       }}
+      modal={false}
     >
       <DialogContent>
         <DialogHeader>

@@ -66,6 +66,7 @@ export default function NoteDeleteDialog({
       onOpenChange={(open) => {
         if (!open) setOpenDeleteDialogAction(null);
       }}
+      modal={false}
     >
       <DialogContent>
         <DialogHeader>

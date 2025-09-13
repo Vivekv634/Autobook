@@ -88,6 +88,7 @@ export default function NoteShareDialog({
       onOpenChange={(open) => {
         if (!open) setOpenShareDialogAction(null);
       }}
+      modal={false}
     >
       <DialogContent key={note.note_id}>
         <DialogHeader>

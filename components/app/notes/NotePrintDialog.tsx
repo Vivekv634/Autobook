@@ -63,6 +63,7 @@ export default function NotePrintDialog({
       onOpenChange={(open) => {
         if (!open) setOpenPrintDialogAction(null);
       }}
+      modal={false}
     >
       <DialogContent className="max-h-[65vh] w-full flex flex-col">
         <DialogHeader>
