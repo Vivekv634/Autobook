@@ -10,6 +10,13 @@ import {
   Mic,
 } from "lucide-react";
 
+export const useCases = [
+  "Lecture notes turned into study-ready summaries.",
+  "Engineering meeting notes with auto-extracted action items and code snippets.",
+  "Research notebooks with fast search and preserved citation blocks.",
+  "Personal knowledge base that grows smarter the more you use it.",
+];
+
 export const upcomingFeatures = [
   {
     icon: Brain,

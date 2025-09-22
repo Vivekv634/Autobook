@@ -15,8 +15,7 @@ import {
   Sun,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import data from "@/public/static/data.json";
-import { features, steps, upcomingFeatures } from "@/public/data";
+import { features, steps, upcomingFeatures, useCases } from "@/public/data";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -270,7 +269,7 @@ const AutobookLandingPage: React.FC = () => {
           </div>
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2">
-            {data.useCases.map((useCase, index) => (
+            {useCases.map((useCase, index) => (
               <div
                 key={index}
                 className="group flex items-start space-x-3 rounded-lg p-4 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-colors duration-200"
