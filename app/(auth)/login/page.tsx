@@ -10,13 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { auth } from "@/firebase.config";
 import { loginUserProfile } from "@/redux/features/profile.features";
 import { AppDispatch, RootState } from "@/redux/store";
-import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -24,15 +22,9 @@ export default function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
   const router = useRouter();
   const { loading, error, user } = useSelector(
-    (state: RootState) => state.user,
+    (state: RootState) => state.user
   );
   const dispatch = useDispatch<AppDispatch>();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) router.push("/dashboard");
-    });
-  }, [router]);
 
   function handleFormChange(e: ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });

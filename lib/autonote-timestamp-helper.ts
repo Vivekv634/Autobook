@@ -22,7 +22,7 @@ export function getNextWeekdayTimestamp(
   targetDate.setHours(hour, minute, 0, 0);
 
   let daysAhead = targetDay - fromDate.getDay();
-  if (daysAhead <= 0) daysAhead += 7; // Always future
+  if (daysAhead <= 0) daysAhead += 7;
 
   targetDate.setDate(fromDate.getDate() + daysAhead);
   return targetDate.getTime();

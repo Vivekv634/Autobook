@@ -20,6 +20,9 @@ import { toast } from "sonner";
 import { v4 } from "uuid";
 import ButtonLoader from "../ButtonLoader";
 import { useRouter } from "next/navigation";
+import { Block } from "@/text-editor/types/type";
+import { nanoid } from "@reduxjs/toolkit";
+import { ID_LENGTH } from "@/text-editor/lib/block-functions";
 
 interface NewNoteDialogProps {
   loading: boolean;
@@ -42,10 +45,16 @@ export default function NewNoteDialog({
       e.preventDefault();
       setLoadingAction(true);
       toast.info("Creating new note...");
+      const noteBody: Block = {
+        id: nanoid(ID_LENGTH),
+        content: "",
+        meta: {},
+        type: "paragraph",
+      };
       const note: NoteType = {
         auth_id: uid,
         title: name,
-        body: "[{}]",
+        body: JSON.stringify(noteBody),
         created_at: Date.now(),
         updated_at: Date.now(),
         note_id: v4(),

@@ -136,7 +136,7 @@ export const InputActionBlock = createReactBlockSpec(
               />
               <div className="flex justify-end gap-3">
                 <ButtonLoader
-                  type="button" // <-- add this
+                  type="button"
                   loading={improveLoading}
                   label={"Improve prompt"}
                   loadingLabel={"Improving..."}
@@ -148,7 +148,6 @@ export const InputActionBlock = createReactBlockSpec(
                   loading={loading}
                   disabled={improveLoading || prompt.length == 0 || loading}
                   type="submit"
-                  // onClick={handleLLMCall}
                   label={
                     <div className="flex gap-2 items-center">
                       Generate <Sparkles />

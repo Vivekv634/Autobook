@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// 1. Declare DaysEnum first
 export const DaysEnum = z.enum([
   "Monday",
   "Tuesday",
@@ -11,10 +10,8 @@ export const DaysEnum = z.enum([
   "Sunday",
 ]);
 
-// 2. Infer the type
 export type DaysType = z.infer<typeof DaysEnum>;
 
-// 3. Use DaysType here
 export const DAYS: { day: DaysType; label: string }[] = [
   { day: "Sunday", label: "S" },
   { day: "Monday", label: "M" },
@@ -28,7 +25,6 @@ export const DAYS: { day: DaysType; label: string }[] = [
 export const AutoNoteDaysEnum = z.array(DaysEnum);
 export type AutoNoteDaysType = z.infer<typeof AutoNoteDaysEnum>;
 
-// 4. Main schema
 export const AutoNoteSchema = z.object({
   autonote_id: z.string().default(""),
   auth_id: z.string().default(""),
@@ -52,5 +48,4 @@ export const AutoNoteSchema = z.object({
   time: z.number().default(0),
 });
 
-// 5. Infer AutoNoteType
 export type AutoNoteType = z.infer<typeof AutoNoteSchema>;

@@ -41,7 +41,6 @@ export default function NotePrintDialog({
         if (!pdf) return null;
         setPdfInstance(pdf);
 
-        // Create Blob URL for preview
         const blob = pdf.output("blob");
         const url = URL.createObjectURL(blob);
         setPdfUrl(url);

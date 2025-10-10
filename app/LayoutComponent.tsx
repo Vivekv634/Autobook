@@ -3,7 +3,6 @@ import { store } from "@/redux/store";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
-// import * as serviceWorkerRegistration from "../lib/sw-register.js";
 
 export default function LayoutComponent({
   children,
@@ -23,13 +22,3 @@ export default function LayoutComponent({
     </Provider>
   );
 }
-
-// serviceWorkerRegistration.register({
-//   onSuccess: () => {
-//     console.log("PWA installed successfully");
-//   },
-//   onUpdate: () => {
-//     console.log("New version available");
-//     // You can show a notification to user here
-//   },
-// });

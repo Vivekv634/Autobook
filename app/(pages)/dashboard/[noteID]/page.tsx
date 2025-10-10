@@ -11,37 +11,20 @@ import {
 import { cn } from "@/lib/utils";
 import { AppDispatch, RootState } from "@/redux/store";
 import { NoteType } from "@/types/Note.type";
-import { Ellipsis, Save, Sparkles } from "lucide-react";
+import { Ellipsis, Save } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "@blocknote/core/style.css";
 import "@blocknote/mantine/style.css";
-import { BlockNoteView } from "@blocknote/mantine";
-import { useTheme } from "next-themes";
 import { updateNote } from "@/redux/features/notes.features";
 import { toast } from "sonner";
-import {
-  BlockNoteSchema,
-  defaultBlockSpecs,
-  filterSuggestionItems,
-  insertOrUpdateBlock,
-} from "@blocknote/core";
-import {
-  useCreateBlockNote,
-  SuggestionMenuController,
-  getDefaultReactSlashMenuItems,
-} from "@blocknote/react";
-import { InputActionBlock } from "@/components/editor/ai-block";
 import { Separator } from "@/components/ui/separator";
-
-const schema = BlockNoteSchema.create({
-  blockSpecs: {
-    ...defaultBlockSpecs,
-    inputAction: InputActionBlock,
-  },
-});
+import Editor from "@/text-editor/Editor";
+import { setEditorBlocks } from "@/redux/slices/editor.slice";
+import { ID_LENGTH } from "@/text-editor/lib/block-functions";
+import { nanoid } from "@reduxjs/toolkit";
 
 export default function NotePage() {
   const pathName = usePathname();
@@ -49,49 +32,45 @@ export default function NotePage() {
   const { uid, user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch<AppDispatch>();
   const [editorNote, setEditorNote] = useState<NoteType | null>(null);
-  const { theme } = useTheme();
+  const { blocks } = useSelector((state: RootState) => state.editor);
 
   useEffect(() => {
     const foundNote = notes.find((note: NoteType) =>
       pathName.includes(note.note_id)
     );
-    setEditorNote(foundNote ?? null);
-  }, [notes, pathName]);
-
-  const editor = useCreateBlockNote({ schema });
+    if (foundNote) {
+      setEditorNote(foundNote);
+      const body = JSON.parse(foundNote.body);
+      dispatch(setEditorBlocks([...body]));
+    }
+  }, [notes, pathName, dispatch]);
 
   useEffect(() => {
-    if (editor && editorNote?.body) {
-      try {
-        const parsed = JSON.parse(editorNote.body);
-        if (!editor.document) return;
-        editor.replaceBlocks(editor.document, parsed);
-      } catch (err) {
-        console.error("Failed to parse note body:", err);
-      }
+    if (blocks.length == 0) {
+      dispatch(
+        setEditorBlocks([
+          {
+            id: nanoid(ID_LENGTH),
+            content: "",
+            meta: {},
+            type: "paragraph",
+          },
+        ])
+      );
     }
-  }, [editor, editorNote]);
-
-  type editorType = typeof editor;
-
-  const insertInputActionItem = (editor: editorType) => ({
-    title: "Ask AI",
-    onItemClick: () =>
-      insertOrUpdateBlock(editor, {
-        type: "inputAction",
-        props: { value: undefined },
-      }),
-    aliases: ["ai", "generate"],
-    group: "AI",
-    subtext: "write with AI",
-    icon: <Sparkles className="h-4" />,
-  });
+    setTimeout(() => {
+      if (blocks.length == 1) {
+        const element = document.getElementById(`${blocks[0].id}`);
+        if (element) element.focus();
+      }
+    }, 50);
+  }, [blocks, dispatch]);
 
   const saveNote = async () => {
-    if (!editor || !editorNote || !editor.document) return;
+    if (!editorNote) return;
     const note: NoteType = {
       ...editorNote,
-      body: JSON.stringify(editor.document),
+      body: JSON.stringify(blocks),
       updated_at: Date.now(),
     };
 
@@ -103,7 +82,7 @@ export default function NotePage() {
     }
   };
 
-  if (!editor || !user) return null;
+  if (!user) return null;
 
   if (!editorNote)
     return (
@@ -120,12 +99,6 @@ export default function NotePage() {
           </Link>
         </div>
       </section>
-    );
-
-  const getSlashMenuItems = async (query: string) =>
-    filterSuggestionItems(
-      [...getDefaultReactSlashMenuItems(editor), insertInputActionItem(editor)],
-      query
     );
 
   return (
@@ -148,21 +121,9 @@ export default function NotePage() {
           </DropdownMenuPortal>
         </DropdownMenu>
       </div>
-
-      <BlockNoteView
-        editor={editor}
-        theme={theme == "dark" ? "dark" : "light"}
-        slashMenu={false}
-        className={cn(
-          theme == "light" && "border border-gray-200 rounded-sm",
-          "mx-2"
-        )}
-      >
-        <SuggestionMenuController
-          triggerCharacter="/"
-          getItems={getSlashMenuItems}
-        />
-      </BlockNoteView>
+      <section className="space-y-2 w-full border border-muted-foreground/10 rounded-lg py-4 px-1">
+        <Editor isContentEditable={true} />
+      </section>
     </div>
   );
 }

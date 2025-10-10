@@ -1,9 +1,8 @@
-// utils/blockNoteToPdf.ts
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 type InlineNode = {
-  type?: string; // "text" | "link" | "codeInline" | ...
+  type?: string;
   text?: string;
   href?: string;
   styles?: {
@@ -14,13 +13,13 @@ type InlineNode = {
     color?: string;
     background?: string;
   };
-  language?: string; // for inline code maybe
+  language?: string;
   content?: InlineNode[];
 };
 
 type Block = {
   id: string;
-  type: string; // paragraph, heading, bulletListItem, numberedListItem, image, table, checklist, codeBlock, video, quote, divider, etc.
+  type: string;
   props?: {
     level?: number;
     color?: string;
@@ -48,29 +47,23 @@ type Block = {
     [key: string]: unknown;
   };
   content?: InlineNode[];
-  children?: Block[]; // nested blocks (for lists)
-  // for images/videos/tables, props may contain src, alt, width, height, tableColumns, rows, background, etc.
+  children?: Block[];
 };
 
 type ExportOptions = {
   filename?: string;
-  pageSize?: "a4" | { width: number; height: number }; // width/height in px for custom
-  margin?: number; // in px
-  dpi?: number; // pixel density for html2canvas (default 2)
-  backgroundColor?: string; // default white
+  pageSize?: "a4" | { width: number; height: number };
+  margin?: number;
+  dpi?: number;
+  backgroundColor?: string;
 };
 
-/**
- * Export BlockNote JSON document to PDF using an HTML snapshot -> canvas -> jsPDF pipeline.
- * Handles text, styles, headings, lists, nested lists, tables, checklists, code blocks, images, videos (poster/link).
- */
 export async function exportBlockNoteToPDF(
   blocks: Block[],
-  opts: ExportOptions = {},
+  opts: ExportOptions = {}
 ) {
   const { margin = 24, dpi = 2, backgroundColor = "#ffffff" } = opts;
 
-  // Create offscreen container
   if (!document) return;
   const container = document.createElement("div");
   container.style.position = "fixed";
@@ -85,7 +78,6 @@ export async function exportBlockNoteToPDF(
   container.style.lineHeight = "1.45";
   container.style.fontSize = "14px";
 
-  // Helper: create inline HTML from content array, respecting inline styles
   const renderInline = (nodes?: InlineNode[]) => {
     if (!nodes || nodes.length === 0) return document.createTextNode("");
     const frag = document.createDocumentFragment();
@@ -133,11 +125,9 @@ export async function exportBlockNoteToPDF(
     return frag;
   };
 
-  // Render each block type to HTML
   const renderBlock = (block: Block, parent?: HTMLElement) => {
     const wrapper = document.createElement("div");
     wrapper.style.marginBottom = "10px";
-    // apply block-level background if any
     if (block.props?.background || block.props?.bg) {
       wrapper.style.background = block.props.background || block.props.bg || "";
       wrapper.style.padding = "8px 12px";
@@ -355,8 +345,8 @@ export async function exportBlockNoteToPDF(
         const th = document.createElement("th");
         th.textContent =
           typeof col === "object" && col !== null && "title" in col
-            ? (col.title ?? "")
-            : ((col as string) ?? "");
+            ? col.title ?? ""
+            : (col as string) ?? "";
         th.style.border = "1px solid rgba(0,0,0,0.08)";
         th.style.padding = "6px 8px";
         th.style.textAlign = "left";
@@ -376,10 +366,10 @@ export async function exportBlockNoteToPDF(
           td.style.verticalAlign = "top";
           td.textContent =
             typeof cell === "object" && cell !== null && "text" in cell
-              ? (cell.text ?? "")
+              ? cell.text ?? ""
               : typeof cell === "string"
-                ? cell
-                : "";
+              ? cell
+              : "";
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
@@ -448,8 +438,8 @@ export async function exportBlockNoteToPDF(
             img.onerror = () => resolve();
             // timeout fallback
             setTimeout(resolve, 3000);
-          }),
-      ),
+          })
+      )
     );
   }
 
@@ -514,7 +504,7 @@ export async function exportBlockNoteToPDF(
         0,
         0,
         canvasWidth,
-        sliceCanvas.height,
+        sliceCanvas.height
       );
       const sliceData = sliceCanvas.toDataURL("image/png", 1.0);
       const sliceHeightPts = sliceCanvas.height / pxPerPt;

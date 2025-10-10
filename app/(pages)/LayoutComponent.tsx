@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { setProfile } from "@/redux/slices/profile.slice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { UserType } from "@/types/User.type";
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import {
   doc,
   DocumentReference,
@@ -48,25 +48,35 @@ export function PagesLayoutComponent({
       } else {
         const uid: string = User.uid;
         const docRef: DocumentReference = doc(userDB, uid);
-        const docSnap: DocumentSnapshot = await getDoc(docRef);
+        try {
+          const docSnap: DocumentSnapshot = await getDoc(docRef);
 
-        if (!docSnap.exists()) {
-          toast.error("User profile not found. Please create a profile.");
+          if (!docSnap.exists()) {
+            toast.error("User profile not found. Logging out.");
+            await signOut(auth);
+            router.push("/login");
+            return;
+          }
+
+          const user = docSnap.data() as UserType;
+
+          if (!document) return;
+
+          const theme = user.theme ?? "default";
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = `/themes/${theme}.css`;
+          link.id = "theme-style";
+          document.head.appendChild(link);
+
+          dispatch(setProfile({ user: user, uid: uid }));
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          toast.error("Error loading profile. Logging out.");
+          await signOut(auth);
           router.push("/login");
+          return;
         }
-
-        const user = docSnap.data() as UserType;
-
-        if (!document) return;
-
-        const theme = user.theme ?? "default";
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.href = `/themes/${theme}.css`;
-        link.id = "theme-style";
-        document.head.appendChild(link);
-
-        dispatch(setProfile({ user: user, uid: uid }));
       }
     });
   }, [dispatch, router]);

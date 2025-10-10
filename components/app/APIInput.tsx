@@ -5,8 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 
-// interface PasswordInputProps  extends React.InputHTMLAttributes<HTMLInputElement> {}
-
 export function APIInput({
   className,
   ...props
