@@ -21,8 +21,9 @@ import PopoverWrapper from "./popover/popover-wrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { AlignmentType, BlockType } from "./types/type";
-import { Asterisk, Dot } from "lucide-react";
+import { Asterisk, Copy, Dot } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 const commonClassNames = "outline-none w-full text-lg";
 
 export default function Editor({
@@ -68,7 +69,7 @@ export default function Editor({
     type: BlockType,
     blockID: string
   ) {
-    const blockContent = document.getElementById(blockID)?.innerText;
+    const blockContent = document.getElementById(blockID)?.innerHTML;
 
     // [Enter + non-empty block content] to add a new block
     if (
@@ -131,7 +132,7 @@ export default function Editor({
     itemID: string,
     index: number
   ) {
-    const blockContent = document.getElementById(itemID)?.innerText;
+    const blockContent = document.getElementById(itemID)?.innerHTML;
     // hit 'Enter' on non-empty list item to make a next list item
     if (
       e.key == "Enter" &&
@@ -160,6 +161,12 @@ export default function Editor({
     } else if (e.key == "Enter") {
       e.preventDefault();
     }
+  }
+
+  async function handleCopy(content: string) {
+    if (content.length == 0) return;
+    await navigator.clipboard.writeText(content);
+    toast.info("Copied to clipboard");
   }
 
   function renderBlock() {
@@ -236,6 +243,7 @@ export default function Editor({
         case "code": {
           return (
             <PopoverWrapper
+              className="group relative"
               type={b.type}
               key={b.id}
               id={b.id}
@@ -260,6 +268,12 @@ export default function Editor({
                 )}
                 contentEditable={isContentEditable}
               ></code>
+              <Copy
+                className="absolute top-2 right-2 cursor-pointer text-muted-foreground/80 rounded-md h-8 w-8 p-1 group-focus-within:text-accent-foreground group-hover:text-accent-foreground"
+                onClick={() =>
+                  typeof b.content === "string" && handleCopy(b.content)
+                }
+              />
             </PopoverWrapper>
           );
         }
@@ -310,7 +324,7 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <ol className={cn(commonClassNames, "pl-7")}>
+              <ol className={cn(commonClassNames, "pl-10")}>
                 {typeof b.content == "object" &&
                   b.content.map((li, i) => {
                     return (
@@ -355,7 +369,7 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <ul className={cn(commonClassNames, "pl-7")}>
+              <ul className={cn(commonClassNames, "pl-10")}>
                 {typeof b.content == "object" &&
                   b.content.map((li, i) => {
                     return (
@@ -400,13 +414,13 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <div className={cn(commonClassNames, "pl-7")}>
+              <div className={cn(commonClassNames, "pl-3")}>
                 {typeof b.content == "object" &&
                   b.content.map((li, i) => {
                     return (
                       <div key={i} className="flex gap-2 items-center">
                         <Checkbox
-                          className="rounded-full h-5 w-5"
+                          className="rounded-full h-5 w-5 cursor-pointer"
                           checked={li.checked}
                           onCheckedChange={(e) =>
                             dispatch(

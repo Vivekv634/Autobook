@@ -1,4 +1,4 @@
-import { ID_LENGTH } from "@/text-editor/lib/block-functions";
+import { ID_LENGTH } from "@/text-editor/types/type";
 import {
   Block,
   BlockType,
@@ -109,78 +109,29 @@ export const editorSlice = createSlice({
         state.focusBlockID = filteredBlocks[blockIndex - 1]?.id;
       }
     },
-
     moveBlock(
       state,
       action: { payload: { id: string; direction: "ArrowUp" | "ArrowDown" } }
     ) {
-      let blockIndex: number = state.blocks.findIndex(
-        (b) => b.id == action.payload.id
+      const blockIndex = state.blocks.findIndex(
+        (b) => b.id === action.payload.id
       );
-
-      const currentElement = document.getElementById(action.payload.id);
-      const currentContent = currentElement?.textContent || "";
-
-      const newBlocks = [...state.blocks];
-
-      newBlocks[blockIndex] = {
-        ...newBlocks[blockIndex],
-        content: currentContent,
-      };
-
       if (
-        action.payload.direction == "ArrowDown" &&
+        action.payload.direction === "ArrowDown" &&
         blockIndex < state.blocks.length - 1
       ) {
-        const nextElement = document.getElementById(
-          newBlocks[blockIndex + 1].id
-        );
-        const nextContent = nextElement?.textContent || "";
-        newBlocks[blockIndex + 1] = {
-          ...newBlocks[blockIndex + 1],
-          content: nextContent,
-        };
-
-        [newBlocks[blockIndex], newBlocks[blockIndex + 1]] = [
-          newBlocks[blockIndex + 1],
-          newBlocks[blockIndex],
+        [state.blocks[blockIndex], state.blocks[blockIndex + 1]] = [
+          state.blocks[blockIndex + 1],
+          state.blocks[blockIndex],
         ];
-
-        state.blocks = newBlocks;
-        ++blockIndex;
-      } else if (action.payload.direction == "ArrowUp" && blockIndex > 0) {
-        const prevElement = document.getElementById(
-          newBlocks[blockIndex - 1].id
-        );
-        const prevContent = prevElement?.textContent || "";
-        newBlocks[blockIndex - 1] = {
-          ...newBlocks[blockIndex - 1],
-          content: prevContent,
-        };
-
-        [newBlocks[blockIndex], newBlocks[blockIndex - 1]] = [
-          newBlocks[blockIndex - 1],
-          newBlocks[blockIndex],
+        state.focusBlockID = state.blocks[blockIndex + 1].id;
+      } else if (action.payload.direction === "ArrowUp" && blockIndex > 0) {
+        [state.blocks[blockIndex], state.blocks[blockIndex - 1]] = [
+          state.blocks[blockIndex - 1],
+          state.blocks[blockIndex],
         ];
-        state.blocks = newBlocks;
-        --blockIndex;
-      } else {
-        state.blocks = newBlocks;
-        return;
+        state.focusBlockID = state.blocks[blockIndex - 1].id;
       }
-
-      setTimeout(() => {
-        const element = document.getElementById(`${newBlocks[blockIndex].id}`);
-        if (element) {
-          element.focus();
-          const range = document.createRange();
-          const sel = window.getSelection();
-          range.selectNodeContents(element);
-          range.collapse(false);
-          sel?.removeAllRanges();
-          sel?.addRange(range);
-        }
-      }, 50);
     },
 
     moveCursor(
@@ -203,7 +154,11 @@ export const editorSlice = createSlice({
     setBlockInput(state, action: { payload: { id: string; content: string } }) {
       state.blocks = state.blocks.map((b) => {
         if (b.id === action.payload.id)
-          return { ...b, content: action.payload.content };
+          return {
+            ...b,
+            content:
+              action.payload.content == "<br>" ? "" : action.payload.content,
+          };
         else return b;
       });
     },
@@ -241,7 +196,8 @@ export const editorSlice = createSlice({
     ) {
       state.blocks.forEach((b) => {
         if (b.id === action.payload.id && typeof b.content == "object") {
-          b.content[action.payload.index].itemContent = action.payload.content;
+          b.content[action.payload.index].itemContent =
+            action.payload.content == "<br>" ? "" : action.payload.content;
         }
       });
       state.focusBlockID = action.payload.id;
@@ -338,9 +294,44 @@ export const editorSlice = createSlice({
       const bIndex = state.blocks.findIndex(
         (b) => b.id === action.payload.blockID
       );
-      if (typeof state.blocks[bIndex].content != "object") return;
+      if (typeof state.blocks[bIndex].content !== "object") return;
       state.blocks[bIndex].content[action.payload.itemIndex].checked =
         action.payload.checked;
+
+      // Add new empty item if checking the last item and it has content
+      if (
+        action.payload.checked &&
+        action.payload.itemIndex === state.blocks[bIndex].content.length - 1 &&
+        state.blocks[bIndex].content[
+          action.payload.itemIndex
+        ].itemContent.trim() !== ""
+      ) {
+        const newListItem: ListItemType = {
+          id: nanoid(ID_LENGTH),
+          checked: false,
+          itemContent: "",
+        };
+        state.blocks[bIndex].content.push(newListItem);
+        state.focusBlockID = newListItem.id;
+      }
+    },
+
+    // reducer to change the type of list block
+    changeListType(
+      state,
+      action: { payload: { id: string; type: BlockType } }
+    ) {
+      const newBlocks: Block[] = [];
+      state.blocks.forEach((b) => {
+        if (b.id === action.payload.id)
+          newBlocks.push({
+            ...b,
+            content: b.content,
+            type: action.payload.type,
+          });
+        else newBlocks.push(b);
+      });
+      state.blocks = newBlocks;
     },
   },
 });
@@ -360,4 +351,5 @@ export const {
   removeListItem,
   replaceListItem,
   checkListItem,
+  changeListType,
 } = editorSlice.actions;

@@ -13,7 +13,6 @@ import {
   AlignCenter,
   AlignJustify,
   AlignLeft,
-  AlignRight,
   ChevronRight,
 } from "lucide-react";
 import { ReactNode } from "react";
@@ -23,10 +22,6 @@ const ALIGNMENT: { icon: ReactNode; value: AlignmentType }[] = [
   {
     icon: <AlignLeft />,
     value: "left",
-  },
-  {
-    icon: <AlignRight />,
-    value: "right",
   },
   {
     icon: <AlignCenter />,

@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import Editor from "@/text-editor/Editor";
 import { setEditorBlocks } from "@/redux/slices/editor.slice";
-import { ID_LENGTH } from "@/text-editor/lib/block-functions";
+import { ID_LENGTH } from "@/text-editor/types/type";
 import { nanoid } from "@reduxjs/toolkit";
 
 export default function NotePage() {

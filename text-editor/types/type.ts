@@ -1,4 +1,5 @@
 import z from "zod";
+export const ID_LENGTH = 8;
 
 export const blockTypeSchema = z.enum([
   "paragraph",

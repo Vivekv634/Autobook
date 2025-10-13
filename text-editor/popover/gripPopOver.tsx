@@ -11,6 +11,7 @@ import GeneralPopover from "./popover-types/general";
 import HeadingPopover from "./popover-types/heading";
 import ParagraphPopover from "./popover-types/paragraph";
 import SeparatorPopover from "./popover-types/separator";
+import ListPopover from "./popover-types/list";
 
 export default function GripPopoverCombobox({
   children,
@@ -44,6 +45,12 @@ export default function GripPopoverCombobox({
         return <ParagraphPopover id={id} setOpen={setOpen} />;
       case "separator":
         return <SeparatorPopover id={id} setOpen={setOpen} />;
+      case "ordered-list":
+        return <ListPopover id={id} setOpen={setOpen} />;
+      case "unordered-list":
+        return <ListPopover id={id} setOpen={setOpen} />;
+      case "check-list":
+        return <ListPopover id={id} setOpen={setOpen} />;
       default:
         return null;
     }
@@ -57,7 +64,12 @@ export default function GripPopoverCombobox({
       <DropdownMenuContent className="w-[150px]" align="start" side="bottom">
         {popoverMapper(type)}
         <GeneralPopover
-          hidden={type == "separator"}
+          hidden={[
+            "separator",
+            "ordered-list",
+            "unordered-list",
+            "check-list",
+          ].includes(type)}
           id={id}
           open={open}
           setOpen={setOpen}

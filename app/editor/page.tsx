@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { useTheme } from "next-themes";
 import { ThemeTypes } from "@/types/Theme.types";
-import { ID_LENGTH } from "@/text-editor/lib/block-functions";
+import { ID_LENGTH } from "@/text-editor/types/type";
 import { nanoid } from "@reduxjs/toolkit";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";

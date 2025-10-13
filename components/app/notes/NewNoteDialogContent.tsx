@@ -22,7 +22,7 @@ import ButtonLoader from "../ButtonLoader";
 import { useRouter } from "next/navigation";
 import { Block } from "@/text-editor/types/type";
 import { nanoid } from "@reduxjs/toolkit";
-import { ID_LENGTH } from "@/text-editor/lib/block-functions";
+import { ID_LENGTH } from "@/text-editor/types/type";
 
 interface NewNoteDialogProps {
   loading: boolean;

@@ -14,6 +14,7 @@ interface PopoverWrapperProps {
   setOpenBlockMenu: (value: string) => void;
   openGripMenu: string;
   setOpenGripMenu: (value: string) => void;
+  className?: string;
 }
 
 export default function PopoverWrapper({
@@ -24,9 +25,13 @@ export default function PopoverWrapper({
   openGripMenu,
   setOpenBlockMenu,
   setOpenGripMenu,
+  className,
 }: PopoverWrapperProps) {
   return (
-    <div className="flex px-1 gap-1 items-center justify-end group" key={id}>
+    <div
+      className={`flex px-1 gap-1 items-center justify-end group ${className}`}
+      key={id}
+    >
       <PlusPopoverCombobox
         open={openBlockMenu}
         setOpen={setOpenBlockMenu}
