@@ -59,7 +59,7 @@ export default function GeneralPopover({
       <DropdownMenu>
         <DropdownMenuTrigger
           hidden={hidden}
-          className="flex text-sm justify-between items-center w-full px-2 py-1 cursor-pointer hover:bg-muted outline-none rounded-sm"
+          className="flex text-sm justify-between items-center w-full p-2 cursor-pointer hover:bg-muted outline-none rounded-sm"
         >
           Font <ChevronRight className="h-5" />
         </DropdownMenuTrigger>
@@ -67,7 +67,7 @@ export default function GeneralPopover({
           hidden={hidden}
           side="right"
           align="start"
-          className="ml-1"
+          className="ml-1 w-44"
         >
           <DropdownMenuItem
             onClick={() => handleMetaChange(id, { font: "sans" })}
@@ -91,6 +91,7 @@ export default function GeneralPopover({
       </DropdownMenu>
       <DropdownMenuSeparator hidden={hidden} />
       <DropdownMenuItem
+        className="cursor-pointer"
         disabled={id == blocks[0].id}
         onSelect={() => {
           dispatch(moveBlock({ id, direction: "ArrowUp" }));
@@ -104,12 +105,13 @@ export default function GeneralPopover({
         onSelect={() => {
           dispatch(removeBlock({ id }));
         }}
-        className="text-red-500 active:text-red-500 active:bg-red-200"
+        className="cursor-pointer"
       >
         <Trash2 className="text-red-500" />
-        Delete
+        <span className="text-red-500">Delete</span>
       </DropdownMenuItem>
       <DropdownMenuItem
+        className="cursor-pointer"
         disabled={id == blocks[blocks.length - 1].id}
         onSelect={() => {
           dispatch(moveBlock({ id, direction: "ArrowDown" }));

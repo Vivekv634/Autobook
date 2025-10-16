@@ -32,7 +32,6 @@ export const blockSchema = z.object({
   content: z.union([z.string(), z.array(listItemSchema)]),
   type: blockTypeSchema,
   meta: metaTypeSchema,
-  // listItems: z.array(listItemSchema).optional(),
 });
 
 export type Block = z.infer<typeof blockSchema>;
