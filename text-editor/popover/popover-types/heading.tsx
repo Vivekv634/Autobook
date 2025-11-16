@@ -35,7 +35,7 @@ export default function HeadingPopover({ id, setOpen }: HeadingPopoverProps) {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex text-sm justify-between items-center w-full p-2 cursor-pointer hover:bg-muted outline-none rounded-sm">
+        <DropdownMenuTrigger className="flex text-sm justify-between items-center w-full px-2 py-1 cursor-pointer hover:bg-muted outline-none rounded-sm">
           Levels <ChevronRight className="h-5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent side="right" align="start" className="ml-1">

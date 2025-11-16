@@ -61,7 +61,7 @@ export default function GripPopoverCombobox({
       <DropdownMenuTrigger asChild className="p-1">
         {children}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-44" align="start" side="bottom">
+      <DropdownMenuContent className="w-[150px]" align="start" side="bottom">
         {popoverMapper(type)}
         <GeneralPopover
           hidden={[

@@ -24,8 +24,6 @@ import { AlignmentType, BlockType } from "./types/type";
 import { Asterisk, Copy, Dot } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { Button } from "@/components/ui/button";
 const commonClassNames = "outline-none w-full text-lg";
 
 export default function Editor({
@@ -35,11 +33,6 @@ export default function Editor({
 }) {
   const [openBlockMenu, setOpenBlockMenu] = useState<string>("");
   const [openGripMenu, setOpenGripMenu] = useState<string>("");
-  const [selectionToolbar, setSelectionToolbar] = useState<{
-    visible: boolean;
-    top: number;
-    left: number;
-  }>({ visible: false, top: 0, left: 0 });
   const { blocks, focusBlockID } = useSelector(
     (state: RootState) => state.editor
   );
@@ -66,42 +59,10 @@ export default function Editor({
       if (el) {
         if (el.innerHTML !== b.content && typeof b.content == "string") {
           el.innerHTML = b.content;
-        } else if (typeof b.content == "object") {
-          b.content.forEach((li) => {
-            const liEl = document.getElementById(li.id);
-            if (liEl && liEl.innerHTML !== li.itemContent) {
-              liEl.innerHTML = li.itemContent;
-            }
-          });
         }
       }
     });
   }, [blocks]);
-
-  useEffect(() => {
-    const handleSelectionChange = () => {
-      const selection = window.getSelection();
-      if (selection && selection.rangeCount > 0) {
-        const range = selection.getRangeAt(0);
-        if (!range.collapsed) {
-          const rect = range.getBoundingClientRect();
-          setSelectionToolbar({
-            visible: true,
-            top: rect.top - 50,
-            left: rect.left + rect.width / 2 - 50,
-          });
-        } else {
-          setSelectionToolbar({ visible: false, top: 0, left: 0 });
-        }
-      } else {
-        setSelectionToolbar({ visible: false, top: 0, left: 0 });
-      }
-    };
-
-    document.addEventListener("selectionchange", handleSelectionChange);
-    return () =>
-      document.removeEventListener("selectionchange", handleSelectionChange);
-  }, []);
 
   function handleKeyDown(
     e: KeyboardEvent<HTMLElement> | KeyboardEvent<SVGElement>,
@@ -206,58 +167,6 @@ export default function Editor({
     if (content.length == 0) return;
     await navigator.clipboard.writeText(content);
     toast.info("Copied to clipboard");
-  }
-
-  function formatText(command: "B" | "I" | "U") {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-    const range = selection.getRangeAt(0);
-    if (range.collapsed) return;
-
-    let tag: string;
-    switch (command) {
-      case "B":
-        tag = "strong";
-        break;
-      case "I":
-        tag = "em";
-        break;
-      case "U":
-        tag = "u";
-        break;
-      default:
-        return;
-    }
-
-    const commonAncestor = range.commonAncestorContainer;
-    const element =
-      commonAncestor.nodeType === Node.TEXT_NODE
-        ? commonAncestor.parentElement
-        : (commonAncestor as Element);
-    const formattedElement = element?.closest(tag);
-
-    if (formattedElement) {
-      // Unwrap: replace with text content
-      const text = formattedElement.textContent || "";
-      formattedElement.replaceWith(text);
-    } else {
-      // Wrap: extract and wrap contents
-      const contents = range.extractContents();
-      const newElement = document.createElement(tag);
-      newElement.appendChild(contents);
-      range.insertNode(newElement);
-    }
-
-    // Update block content
-    const blockElement =
-      range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-        ? range.commonAncestorContainer.parentElement
-        : (range.commonAncestorContainer as Element);
-    const blockId = blockElement?.closest("[contenteditable]")?.id;
-    if (blockId) {
-      const html = document.getElementById(blockId)?.innerHTML ?? "";
-      dispatch(setBlockInput({ id: blockId, content: html }));
-    }
   }
 
   function renderBlock() {
@@ -415,7 +324,7 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <ol className={cn(commonClassNames, "pl-10")} id={b.id}>
+              <ol className={cn(commonClassNames, "pl-10")}>
                 {typeof b.content == "object" &&
                   b.content.map((li, i) => {
                     return (
@@ -460,7 +369,7 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <ul className={cn(commonClassNames, "pl-10")} id={b.id}>
+              <ul className={cn(commonClassNames, "pl-10")}>
                 {typeof b.content == "object" &&
                   b.content.map((li, i) => {
                     return (
@@ -505,7 +414,7 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <div className={cn(commonClassNames, "pl-3")} id={b.id}>
+              <div className={cn(commonClassNames, "pl-3")}>
                 {typeof b.content == "object" &&
                   b.content.map((li, i) => {
                     return (
@@ -547,6 +456,7 @@ export default function Editor({
                           }
                           className={cn(
                             commonClassNames,
+                            "list-disc",
                             li.checked && "text-muted-foreground line-through"
                           )}
                           contentEditable={isContentEditable && !li.checked}
@@ -565,53 +475,5 @@ export default function Editor({
     });
   }
 
-  return (
-    <>
-      {renderBlock()}
-      {selectionToolbar.visible && (
-        <div
-          style={{
-            position: "fixed",
-            top: selectionToolbar.top,
-            left: selectionToolbar.left,
-            zIndex: 1000,
-          }}
-          className="rounded-md bg-accent/50 p-1 backdrop-blur-md shadow-md transition-opacity"
-        >
-          <ButtonGroup>
-            {/* <Input /> */}
-            <ButtonGroup>
-              <Button
-                size={"icon-sm"}
-                variant={"outline"}
-                onClick={() => {
-                  formatText("B");
-                }}
-              >
-                B
-              </Button>
-              <Button
-                size={"icon-sm"}
-                variant={"outline"}
-                onClick={() => {
-                  formatText("I");
-                }}
-              >
-                I
-              </Button>
-              <Button
-                size={"icon-sm"}
-                variant={"outline"}
-                onClick={() => {
-                  formatText("U");
-                }}
-              >
-                U
-              </Button>
-            </ButtonGroup>
-          </ButtonGroup>
-        </div>
-      )}
-    </>
-  );
+  return renderBlock();
 }
