@@ -29,7 +29,7 @@ export default function PopoverWrapper({
 }: PopoverWrapperProps) {
   return (
     <div
-      className={`flex px-1 gap-1 items-center justify-end group ${className}`}
+      className={`flex px-1 gap-1 items-center justify-center group ${className}`}
       key={id}
     >
       <PlusPopoverCombobox
@@ -47,7 +47,7 @@ export default function PopoverWrapper({
       >
         <GripVertical className="rounded-sm cursor-pointer duration-100 text-normal transition-all invisible group-hover:visible group-focus-within:visible" />
       </GripPopoverCombobox>
-      {children}
+      <div className="w-11/12">{children}</div>
     </div>
   );
 }

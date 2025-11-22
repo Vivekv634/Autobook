@@ -6,9 +6,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { setEditorBlocks } from "@/redux/slices/editor.slice";
+import { updateMetaData } from "@/redux/slices/editor.slice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { AlignmentType, Block, MetaType } from "@/text-editor/types/type";
+import { AlignmentType } from "@/text-editor/types/type";
 import {
   AlignCenter,
   AlignJustify,
@@ -46,16 +46,17 @@ export default function TextAlignmentDropdown({
 }: TextAlignmentDropdownProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { blocks } = useSelector((state: RootState) => state.editor);
+  const b = blocks.find((b) => b.id === id);
 
-  function handleMetaChange(id: string, meta: MetaType) {
-    const newBlocks: Block[] = [];
-    blocks.forEach((b) =>
-      b.id === id
-        ? newBlocks.push({ ...b, meta: { ...b.meta, ...meta } })
-        : newBlocks.push(b)
-    );
+  function handleMetaUpdate(align: AlignmentType) {
+    if (!b) return;
 
-    dispatch(setEditorBlocks(newBlocks));
+    if (["paragraph", "heading"].includes(b.data.type)) {
+      const updatedData = { ...b.data, align };
+      dispatch(
+        updateMetaData({ id: b.id, data: updatedData as typeof b.data })
+      );
+    }
     setOpen("");
   }
 
@@ -69,10 +70,7 @@ export default function TextAlignmentDropdown({
           (alignment) => !Array.from(exclude).includes(alignment.value)
         ).map((a, i) => {
           return (
-            <DropdownMenuItem
-              key={i}
-              onClick={() => handleMetaChange(id, { alignment: a.value })}
-            >
+            <DropdownMenuItem key={i} onClick={() => handleMetaUpdate(a.value)}>
               {a.icon} {a.value[0].toUpperCase() + a.value.slice(1)}
             </DropdownMenuItem>
           );

@@ -9,38 +9,87 @@ export const blockTypeSchema = z.enum([
   "unordered-list",
   "check-list",
   "separator",
+  "warning",
 ]);
+
 export const alignmentTypeSchema = z.enum(["center", "left", "justify"]);
 export const fontTypeSchema = z.enum(["sans", "mono", "serif"]);
 export const separatorTypeSchema = z.enum(["line", "asterisk", "dots"]);
-export const listItemSchema = z.object({
-  id: z.string(),
-  checked: z.boolean().default(false),
-  itemContent: z.string(),
+
+export type AlignmentType = z.infer<typeof alignmentTypeSchema>;
+export type SeparatorType = z.infer<typeof separatorTypeSchema>;
+
+const paragraphBlockData = z.object({
+  content: z.string(),
+  type: z.literal("paragraph"),
+  align: alignmentTypeSchema,
+  font: fontTypeSchema,
 });
 
-export const metaTypeSchema = z.object({
-  heading: z.number().optional(),
-  alignment: alignmentTypeSchema.optional(),
-  font: fontTypeSchema.optional(),
-  placeholder: z.string().optional(),
-  seperatorType: separatorTypeSchema.optional(),
+const headingBlockData = z.object({
+  content: z.string().default(""),
+  level: z.number().min(1).max(3).default(1),
+  type: z.literal("heading"),
+  align: alignmentTypeSchema,
+  font: fontTypeSchema,
+});
+
+const listItemSchema = z.object({
+  id: z.string(),
+  listContent: z.string().default(""),
+  checked: z.boolean(),
+});
+
+export type ListItem = z.infer<typeof listItemSchema>;
+
+const orderedBlockData = z.object({
+  type: z.literal("ordered-list"),
+  content: z.array(listItemSchema),
+});
+
+const unOrderedBlockData = z.object({
+  type: z.literal("unordered-list"),
+  content: z.array(listItemSchema),
+});
+
+const checkListBlockData = z.object({
+  type: z.literal("check-list"),
+  content: z.array(listItemSchema),
+});
+
+const codeBlockData = z.object({
+  content: z.string().default(""),
+  type: z.literal("code"),
+  font: z.literal("mono"),
+});
+
+const separatorBlockData = z.object({
+  type: z.literal("separator"),
+  content: separatorTypeSchema,
+});
+
+const warningEnumSchema = z.enum(["note", "warning", "error", "success"]);
+export type WarningType = z.infer<typeof warningEnumSchema>;
+
+const warningBlockData = z.object({
+  type: z.literal("warning"),
+  warningType: warningEnumSchema.default("warning"),
+  content: z.string().default(""),
 });
 
 export const blockSchema = z.object({
   id: z.string(),
-  content: z.union([z.string(), z.array(listItemSchema)]),
-  type: blockTypeSchema,
-  meta: metaTypeSchema,
-  // listItems: z.array(listItemSchema).optional(),
+  data: z.discriminatedUnion("type", [
+    paragraphBlockData,
+    headingBlockData,
+    orderedBlockData,
+    checkListBlockData,
+    unOrderedBlockData,
+    codeBlockData,
+    separatorBlockData,
+    warningBlockData,
+  ]),
 });
 
-export type Block = z.infer<typeof blockSchema>;
-
 export type BlockType = z.infer<typeof blockTypeSchema>;
-export type AlignmentType = z.infer<typeof alignmentTypeSchema>;
-export type FontType = z.infer<typeof fontTypeSchema>;
-export type SeparatorType = z.infer<typeof separatorTypeSchema>;
-export type ListItemType = z.infer<typeof listItemSchema>;
-
-export type MetaType = z.infer<typeof metaTypeSchema>;
+export type Block = z.infer<typeof blockSchema>;

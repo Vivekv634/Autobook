@@ -6,11 +6,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { changeListType } from "@/redux/slices/editor.slice";
+import { cn } from "@/lib/utils";
+import {
+  changeListType,
+  checkListItem,
+  setFocusBlockID,
+  setListBlockInput,
+} from "@/redux/slices/editor.slice";
 import { AppDispatch } from "@/redux/store";
-import { BlockType } from "@/text-editor/types/type";
+import { commonClassNames } from "@/text-editor/Editor";
+import { Block, BlockType } from "@/text-editor/types/type";
+import { Checkbox } from "@radix-ui/react-checkbox";
 import { ChevronRight, List, ListOrdered, ListTodo } from "lucide-react";
-import { ReactNode } from "react";
+import { KeyboardEvent, ReactNode } from "react";
 import { useDispatch } from "react-redux";
 
 const listTypes: { icon: ReactNode; label: string; value: BlockType }[] = [
@@ -63,5 +71,154 @@ export default function ListPopover({ id, setOpen }: ListPopoverProps) {
         </DropdownMenuContent>
       </DropdownMenu>
     </>
+  );
+}
+
+interface BlockProps {
+  b: Block;
+  handleListKeyDown(
+    e: KeyboardEvent<HTMLElement> | KeyboardEvent<SVGElement>,
+    type: BlockType,
+    blockID: string,
+    itemID: string,
+    index: number
+  ): void;
+  isContentEditable: boolean;
+}
+
+export function CheckListBlock({
+  handleListKeyDown,
+  b,
+  isContentEditable,
+}: BlockProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  return (
+    <div className={cn(commonClassNames, "pl-3")}>
+      {typeof b.data.content == "object" &&
+        b.data.content.map((li, i) => {
+          return (
+            <div key={i} className="flex gap-2 items-center">
+              <Checkbox
+                className="rounded-full h-5 w-5 border cursor-pointer"
+                checked={li.checked}
+                onCheckedChange={(e) => {
+                  if (!li.listContent) return;
+                  dispatch(
+                    checkListItem({
+                      blockID: b.id,
+                      itemIndex: i,
+                      checked: e == true,
+                    })
+                  );
+                }}
+              />
+              <p
+                key={li.id}
+                onFocus={() => dispatch(setFocusBlockID({ id: li.id }))}
+                id={li.id}
+                suppressContentEditableWarning={true}
+                data-placeholder={`List item ${i + 1}`}
+                onInput={(e) => {
+                  const txt = (e.currentTarget as HTMLElement).innerHTML ?? "";
+                  dispatch(
+                    setListBlockInput({
+                      id: b.id,
+                      index: i,
+                      content: txt,
+                    })
+                  );
+                }}
+                onKeyDown={(e) =>
+                  handleListKeyDown(e, b.data.type, b.id, li.id, i)
+                }
+                className={cn(
+                  commonClassNames,
+                  "list-disc",
+                  li.checked && "text-muted-foreground line-through"
+                )}
+                contentEditable={isContentEditable && !li.checked}
+              ></p>
+            </div>
+          );
+        })}
+    </div>
+  );
+}
+
+export function OrderedListBlock({
+  handleListKeyDown,
+  b,
+  isContentEditable,
+}: BlockProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  return (
+    <ol className={cn(commonClassNames, "pl-10")}>
+      {typeof b.data.content == "object" &&
+        b.data.content.map((li, i) => {
+          return (
+            <li
+              key={li.id}
+              onFocus={() => dispatch(setFocusBlockID({ id: li.id }))}
+              id={li.id}
+              suppressContentEditableWarning={true}
+              data-placeholder={`List item ${i + 1}`}
+              onInput={(e) => {
+                const txt = (e.currentTarget as HTMLElement).innerHTML ?? "";
+                dispatch(
+                  setListBlockInput({
+                    id: b.id,
+                    index: i,
+                    content: txt,
+                  })
+                );
+              }}
+              onKeyDown={(e) =>
+                handleListKeyDown(e, b.data.type, b.id, li.id, i)
+              }
+              className={cn("list-decimal", commonClassNames)}
+              contentEditable={isContentEditable}
+            ></li>
+          );
+        })}
+    </ol>
+  );
+}
+
+export function UnorderedListBlock({
+  handleListKeyDown,
+  b,
+  isContentEditable,
+}: BlockProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  return (
+    <ul className={cn(commonClassNames, "pl-10")}>
+      {typeof b.data.content == "object" &&
+        b.data.content.map((li, i) => {
+          return (
+            <li
+              key={li.id}
+              onFocus={() => dispatch(setFocusBlockID({ id: li.id }))}
+              id={li.id}
+              suppressContentEditableWarning={true}
+              data-placeholder={`List item ${i + 1}`}
+              onInput={(e) => {
+                const txt = (e.currentTarget as HTMLElement).innerHTML ?? "";
+                dispatch(
+                  setListBlockInput({
+                    id: b.id,
+                    index: i,
+                    content: txt,
+                  })
+                );
+              }}
+              onKeyDown={(e) =>
+                handleListKeyDown(e, b.data.type, b.id, li.id, i)
+              }
+              className={cn(commonClassNames, "list-disc")}
+              contentEditable={isContentEditable}
+            ></li>
+          );
+        })}
+    </ul>
   );
 }

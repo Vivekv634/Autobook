@@ -1,11 +1,7 @@
-import { ID_LENGTH } from "@/text-editor/types/type";
-import {
-  Block,
-  BlockType,
-  ListItemType,
-  MetaType,
-} from "@/text-editor/types/type";
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { dataMapper, listTypeMapper } from "@/text-editor/lib/helper-function";
+import { BlockType, ID_LENGTH, ListItem } from "@/text-editor/types/type";
+import { Block } from "@/text-editor/types/type";
+import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 
 interface EditorState {
   blocks: Block[];
@@ -25,65 +21,83 @@ export const editorSlice = createSlice({
   name: "editor",
   initialState,
   reducers: {
-    setEditorBlocks(state, action: { payload: Block[] }) {
+    setEditorBlocks(state, action: PayloadAction<Block[]>) {
       state.blocks = action.payload;
       state.focusBlockID = action.payload[0].id;
     },
 
-    addBlock(state, action: { payload: { id: string; type: BlockType } }) {
-      const newBlock: Block = {
+    addBlock(state, action: PayloadAction<{ id: string; type: BlockType }>) {
+      // complete with logic of adding the block with some test cases like on empty editor, editor with all different types of blocks.
+
+      const block: Block = {
         id: nanoid(ID_LENGTH),
-        type: action.payload.type,
-        content: "",
-        meta: {},
+        data: dataMapper(action.payload.type),
       };
 
-      const index = state.blocks.findIndex((b) => b.id === action.payload.id);
-      // replace the block when the content is empty
+      const targetIndex = state.blocks.findIndex(
+        (b) => b.id === action.payload.id
+      );
+
+      const targetBlock = state.blocks[targetIndex];
       if (
-        state.blocks[index].content.length == 0 &&
-        state.blocks[index].type != "separator"
-      )
-        state.blocks.splice(index, 1, newBlock);
-      // else push the new block next to the target block
-      else state.blocks.splice(index + 1, 0, newBlock);
-
-      state.focusBlockID = newBlock.id;
-
-      if (action.payload.type == "separator") {
-        const pBlock: Block = {
+        ["paragraph", "heading", "warning", "code"].includes(
+          action.payload.type
+        )
+      ) {
+        if (targetBlock.data.content.length != 0) {
+          state.blocks.splice(targetIndex + 1, 0, block);
+        } else {
+          state.blocks.splice(targetIndex, 1, block);
+        }
+        state.focusBlockID = block.id;
+      } else if (action.payload.type === "separator") {
+        const separatorBlock: Block = {
           id: nanoid(ID_LENGTH),
-          type: "paragraph",
-          content: "",
-          meta: {},
+          data: {
+            type: "separator",
+            content: "line",
+          },
         };
-        state.blocks.splice(index + 1, 0, pBlock);
-        state.focusBlockID = pBlock.id;
+        state.blocks.splice(targetIndex + 1, 0, separatorBlock);
+        state.blocks.splice(targetIndex + 2, 0, block);
+        state.focusBlockID = block.id;
       } else if (
         ["ordered-list", "unordered-list", "check-list"].includes(
           action.payload.type
         )
       ) {
-        const listItem: ListItemType = {
+        const listBlock: Block = {
           id: nanoid(ID_LENGTH),
-          checked: false,
-          itemContent: "",
+          data: dataMapper(action.payload.type),
         };
-        state.blocks[index].content = [listItem];
-        state.focusBlockID = listItem.id;
+
+        if (targetBlock.data.content.length == 0) {
+          state.blocks.splice(targetIndex, 1, listBlock);
+        } else {
+          state.blocks.splice(targetIndex + 1, 0, listBlock);
+        }
+        if (typeof listBlock.data.content === "object")
+          state.focusBlockID = listBlock.data.content[0].id;
+        else state.focusBlockID = listBlock.id;
       }
     },
 
-    removeBlock(state, action: { payload: { id: string } }) {
+    removeBlock(state, action: PayloadAction<{ id: string }>) {
       let blockIndex: number = 0;
       const filteredBlocks: Block[] = [];
 
-      if (state.blocks.length == 1 && state.blocks[0].type == "separator") {
+      if (
+        state.blocks.length == 1 &&
+        state.blocks[0].data.type == "separator"
+      ) {
         const newBlock: Block = {
           id: nanoid(ID_LENGTH),
-          type: "paragraph",
-          content: "",
-          meta: {},
+          data: {
+            type: "paragraph",
+            content: "",
+            font: "sans",
+            align: "left",
+          },
         };
         state.blocks.splice(0, 1, newBlock);
         state.focusBlockID = newBlock.id;
@@ -109,9 +123,10 @@ export const editorSlice = createSlice({
         state.focusBlockID = filteredBlocks[blockIndex - 1]?.id;
       }
     },
+
     moveBlock(
       state,
-      action: { payload: { id: string; direction: "ArrowUp" | "ArrowDown" } }
+      action: PayloadAction<{ id: string; direction: "ArrowUp" | "ArrowDown" }>
     ) {
       const blockIndex = state.blocks.findIndex(
         (b) => b.id === action.payload.id
@@ -136,7 +151,7 @@ export const editorSlice = createSlice({
 
     moveCursor(
       state,
-      action: { payload: { id: string; direction: "ArrowUp" | "ArrowDown" } }
+      action: PayloadAction<{ id: string; direction: "ArrowUp" | "ArrowDown" }>
     ) {
       const blockIndex: number = state.blocks.findIndex(
         (b) => b.id == action.payload.id
@@ -151,23 +166,30 @@ export const editorSlice = createSlice({
       }
     },
 
-    setBlockInput(state, action: { payload: { id: string; content: string } }) {
+    setBlockInput(
+      state,
+      action: PayloadAction<{ id: string; content: string }>
+    ) {
       state.blocks = state.blocks.map((b) => {
-        if (b.id === action.payload.id)
+        if (b.id === action.payload.id && typeof b.data.content === "string") {
           return {
             ...b,
-            content:
-              action.payload.content == "<br>" ? "" : action.payload.content,
+            data: {
+              ...b.data,
+              content:
+                action.payload.content === "<br>" ? "" : action.payload.content,
+            } as typeof b.data,
           };
-        else return b;
+        }
+        return b;
       });
     },
 
-    setFocusBlockID(state, action: { payload: { id: string } }) {
+    setFocusBlockID(state, action: PayloadAction<{ id: string }>) {
       state.focusBlockID = action.payload.id;
     },
 
-    replaceBlock(state, action: { payload: { id: string; block: Block } }) {
+    replaceBlock(state, action: PayloadAction<{ id: string; block: Block }>) {
       state.blocks = state.blocks.map((b) =>
         b.id === action.payload.id ? action.payload.block : b
       );
@@ -175,28 +197,25 @@ export const editorSlice = createSlice({
 
     updateMetaData(
       state,
-      action: { payload: { id: string; meta: Partial<MetaType> } }
+      action: PayloadAction<{ id: string; data: Block["data"] }>
     ) {
-      const newBlocks: Block[] = [];
-      state.blocks.forEach((b) =>
-        b.id === action.payload.id
-          ? newBlocks.push({
-              ...b,
-              meta: { ...b.meta, ...action.payload.meta },
-            })
-          : newBlocks.push(b)
+      // re-write the logic of this function/reducer/action.
+      const targetBlockIndex = state.blocks.findIndex(
+        (b) => b.id === action.payload.id
       );
-      state.blocks = newBlocks;
-      state.focusBlockID = action.payload.id;
+      const targetBlock = state.blocks[targetBlockIndex];
+      targetBlock.data = { ...targetBlock.data, ...action.payload.data };
+
+      state.blocks.splice(targetBlockIndex, 1, targetBlock);
     },
 
     setListBlockInput(
       state,
-      action: { payload: { id: string; index: number; content: string } }
+      action: PayloadAction<{ id: string; index: number; content: string }>
     ) {
       state.blocks.forEach((b) => {
-        if (b.id === action.payload.id && typeof b.content == "object") {
-          b.content[action.payload.index].itemContent =
+        if (b.id === action.payload.id && typeof b.data.content == "object") {
+          b.data.content[action.payload.index].listContent =
             action.payload.content == "<br>" ? "" : action.payload.content;
         }
       });
@@ -205,20 +224,21 @@ export const editorSlice = createSlice({
 
     addListItem(
       state,
-      action: {
-        payload: { blockID: string; itemIndex: number };
-      }
+      action: PayloadAction<{
+        blockID: string;
+        itemIndex: number;
+      }>
     ) {
       const bIndex = state.blocks.findIndex(
         (b) => b.id === action.payload.blockID
       );
-      const newListItem: ListItemType = {
+      const newListItem: ListItem = {
         checked: false,
         id: nanoid(ID_LENGTH),
-        itemContent: "",
+        listContent: "",
       };
-      if (typeof state.blocks[bIndex].content !== "object") return;
-      state.blocks[bIndex].content.splice(
+      if (typeof state.blocks[bIndex].data.content !== "object") return;
+      state.blocks[bIndex].data.content.splice(
         action.payload.itemIndex + 1,
         0,
         newListItem
@@ -228,55 +248,98 @@ export const editorSlice = createSlice({
 
     removeListItem(
       state,
-      action: { payload: { blockID: string; itemIndex: number } }
+      action: PayloadAction<{ blockID: string; itemIndex: number }>
     ) {
       const bIndex = state.blocks.findIndex(
         (b) => b.id === action.payload.blockID
       );
-      if (typeof state.blocks[bIndex].content !== "object") return;
+      if (typeof state.blocks[bIndex].data.content !== "object") return;
       // if listitem's length of the target block is 1, then replace the whole block iwth the paragraph block.
-      if (state.blocks[bIndex].content.length == 1) {
+      if (state.blocks[bIndex].data.content.length == 1) {
         const newBlock: Block = {
           id: nanoid(ID_LENGTH),
-          type: "paragraph",
-          content: "",
-          meta: {},
+          data: {
+            type: "paragraph",
+            content: "",
+            align: "left",
+            font: "sans",
+          },
         };
         state.blocks.splice(bIndex, 1, newBlock);
         state.focusBlockID = newBlock.id;
       } else {
-        if (typeof state.blocks[bIndex].content !== "object") return;
+        if (typeof state.blocks[bIndex].data.content !== "object") return;
         // if listitem's length of the target block is not 1, then just remove the target indexed listitem and move the cursor according to the index given.
-        state.blocks[bIndex].content = state.blocks[bIndex].content.filter(
-          (li, i) => i !== action.payload.itemIndex
-        );
+        state.blocks[bIndex].data.content = state.blocks[
+          bIndex
+        ].data.content.filter((li, i) => i !== action.payload.itemIndex);
         // Set focus to the previous item or the next one if it was the first
         const newIndex =
           action.payload.itemIndex > 0 ? action.payload.itemIndex - 1 : 0;
         state.focusBlockID =
-          state.blocks[bIndex].content[newIndex]?.id || state.blocks[bIndex].id;
+          state.blocks[bIndex].data.content[newIndex]?.id ||
+          state.blocks[bIndex].id;
       }
+    },
+
+    // escape the list block if user press "Enter" on empty list
+    escapeListBlock(
+      state,
+      action: PayloadAction<{ blockID: string; itemID: string }>
+    ) {
+      // first, check if the list item's index is last or not.
+      let blockIndex: number = -1;
+      let listBlockData: ListItem[] = [];
+      state.blocks.map((b, i) => {
+        if (b.id === action.payload.blockID) {
+          blockIndex = i as number;
+          listBlockData = b.data.content as ListItem[];
+        }
+      });
+
+      if (listBlockData[listBlockData.length - 1].id != action.payload.itemID) {
+        return;
+      }
+
+      // push the paragraph block just after the list block if list item's index is matched.
+      const paraBlock: Block = {
+        id: nanoid(ID_LENGTH),
+        data: {
+          content: "",
+          type: "paragraph",
+          align: "left",
+          font: "sans",
+        },
+      };
+      state.blocks.splice(blockIndex, 0, paraBlock);
+      state.focusBlockID = paraBlock.id;
     },
 
     // replace whole list block if items length is 1 and content is empty with paragraph block
     replaceListItem(
       state,
-      action: { payload: { blockID: string; itemID: string } }
+      action: PayloadAction<{ blockID: string; itemID: string }>
     ) {
       const newBlocks: Block[] = [];
       state.blocks.forEach((b) => {
-        if (b.id === action.payload.blockID && typeof b.content == "object") {
-          const newItems: ListItemType[] = [];
-          b.content.forEach(
+        if (
+          b.id === action.payload.blockID &&
+          typeof b.data.content == "object"
+        ) {
+          const newItems: ListItem[] = [];
+          b.data.content.forEach(
             (li) => li.id !== action.payload.itemID && newItems.push(li)
           );
-          b.content = newItems;
+          b.data.content = newItems;
           newBlocks.push(b);
           const paraBlock: Block = {
             id: nanoid(ID_LENGTH),
-            content: "",
-            meta: {},
-            type: "paragraph",
+            data: {
+              content: "",
+              type: "paragraph",
+              font: "sans",
+              align: "left",
+            },
           };
           newBlocks.push(paraBlock);
           state.focusBlockID = paraBlock.id;
@@ -287,31 +350,34 @@ export const editorSlice = createSlice({
 
     checkListItem(
       state,
-      action: {
-        payload: { blockID: string; itemIndex: number; checked: boolean };
-      }
+      action: PayloadAction<{
+        blockID: string;
+        itemIndex: number;
+        checked: boolean;
+      }>
     ) {
       const bIndex = state.blocks.findIndex(
         (b) => b.id === action.payload.blockID
       );
-      if (typeof state.blocks[bIndex].content !== "object") return;
-      state.blocks[bIndex].content[action.payload.itemIndex].checked =
+      if (typeof state.blocks[bIndex].data.content !== "object") return;
+      state.blocks[bIndex].data.content[action.payload.itemIndex].checked =
         action.payload.checked;
 
       // Add new empty item if checking the last item and it has content
       if (
         action.payload.checked &&
-        action.payload.itemIndex === state.blocks[bIndex].content.length - 1 &&
-        state.blocks[bIndex].content[
+        action.payload.itemIndex ===
+          state.blocks[bIndex].data.content.length - 1 &&
+        state.blocks[bIndex].data.content[
           action.payload.itemIndex
-        ].itemContent.trim() !== ""
+        ].listContent.trim() !== ""
       ) {
-        const newListItem: ListItemType = {
+        const newListItem: ListItem = {
           id: nanoid(ID_LENGTH),
           checked: false,
-          itemContent: "",
+          listContent: "",
         };
-        state.blocks[bIndex].content.push(newListItem);
+        state.blocks[bIndex].data.content.push(newListItem);
         state.focusBlockID = newListItem.id;
       }
     },
@@ -319,19 +385,23 @@ export const editorSlice = createSlice({
     // reducer to change the type of list block
     changeListType(
       state,
-      action: { payload: { id: string; type: BlockType } }
+      action: PayloadAction<{
+        id: string;
+        type: BlockType;
+      }>
     ) {
-      const newBlocks: Block[] = [];
-      state.blocks.forEach((b) => {
-        if (b.id === action.payload.id)
-          newBlocks.push({
-            ...b,
-            content: b.content,
-            type: action.payload.type,
-          });
-        else newBlocks.push(b);
-      });
-      state.blocks = newBlocks;
+      const blockIndex = state.blocks.findIndex(
+        (b) => b.id === action.payload.id
+      );
+      if (blockIndex === -1) return;
+
+      const targetListBlock: Block = state.blocks[blockIndex];
+
+      if (!targetListBlock || !targetListBlock.data) return;
+      const newListItems = listTypeMapper(targetListBlock, action.payload.type);
+      if (!newListItems) return;
+      targetListBlock.data = newListItems;
+      state.blocks.splice(blockIndex, 1, targetListBlock);
     },
   },
 });
@@ -349,6 +419,7 @@ export const {
   setListBlockInput,
   addListItem,
   removeListItem,
+  escapeListBlock,
   replaceListItem,
   checkListItem,
   changeListType,

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Block, MetaType } from "@/text-editor/types/type";
 import { ChevronDown, ChevronRight, ChevronUp, Trash2 } from "lucide-react";
 import {
   DropdownMenu,
@@ -15,7 +14,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import {
   moveBlock,
   removeBlock,
-  setEditorBlocks,
+  updateMetaData,
 } from "@/redux/slices/editor.slice";
 
 export default function GeneralPopover({
@@ -29,10 +28,24 @@ export default function GeneralPopover({
   open: string;
   setOpen: (value: string) => void;
 }) {
-  const { blocks } = useSelector((state: RootState) => state.editor);
   const inputRef = useRef<HTMLInputElement>(null);
   const isOpen = open === id;
+
   const dispatch = useDispatch<AppDispatch>();
+  const { blocks } = useSelector((state: RootState) => state.editor);
+  const b = blocks.find((b) => b.id === id);
+
+  function handleMetaUpdate(font: "sans" | "serif" | "mono") {
+    if (!b) return;
+
+    if (["heading", "pargraph"].includes(b.data.type)) {
+      const updatedData = { ...b.data, font };
+      dispatch(
+        updateMetaData({ id: b.id, data: updatedData as typeof b.data })
+      );
+    }
+    setOpen("");
+  }
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -41,18 +54,6 @@ export default function GeneralPopover({
       }, 100);
     }
   }, [isOpen]);
-
-  function handleMetaChange(id: string, meta: MetaType) {
-    const newBlocks: Block[] = [];
-    blocks.forEach((b) =>
-      b.id === id
-        ? newBlocks.push({ ...b, meta: { ...b.meta, ...meta } })
-        : newBlocks.push(b)
-    );
-
-    dispatch(setEditorBlocks(newBlocks));
-    setOpen("");
-  }
 
   return (
     <>
@@ -70,19 +71,19 @@ export default function GeneralPopover({
           className="ml-1"
         >
           <DropdownMenuItem
-            onClick={() => handleMetaChange(id, { font: "sans" })}
+            onClick={() => handleMetaUpdate("sans")}
             className="cursor-pointer"
           >
             Sans
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => handleMetaChange(id, { font: "serif" })}
+            onClick={() => handleMetaUpdate("serif")}
             className="cursor-pointer"
           >
             Serif
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => handleMetaChange(id, { font: "mono" })}
+            onClick={() => handleMetaUpdate("mono")}
             className="cursor-pointer"
           >
             Mono
@@ -100,7 +101,7 @@ export default function GeneralPopover({
         Move up
       </DropdownMenuItem>
       <DropdownMenuItem
-        disabled={blocks.length == 1 && blocks[0].type != "separator"}
+        disabled={blocks.length == 1 && blocks[0].data.type != "separator"}
         onSelect={() => {
           dispatch(removeBlock({ id }));
         }}

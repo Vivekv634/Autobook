@@ -12,6 +12,7 @@ import HeadingPopover from "./popover-types/heading";
 import ParagraphPopover from "./popover-types/paragraph";
 import SeparatorPopover from "./popover-types/separator";
 import ListPopover from "./popover-types/list";
+import WarningPopover from "./popover-types/warning";
 
 export default function GripPopoverCombobox({
   children,
@@ -51,6 +52,8 @@ export default function GripPopoverCombobox({
         return <ListPopover id={id} setOpen={setOpen} />;
       case "check-list":
         return <ListPopover id={id} setOpen={setOpen} />;
+      case "warning":
+        return <WarningPopover id={id} setOpen={setOpen} />;
       default:
         return null;
     }
@@ -69,6 +72,7 @@ export default function GripPopoverCombobox({
             "ordered-list",
             "unordered-list",
             "check-list",
+            "warning",
           ].includes(type)}
           id={id}
           open={open}

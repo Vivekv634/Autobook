@@ -30,9 +30,12 @@ export default function EditorTesting() {
         setEditorBlocks([
           {
             id: nanoid(ID_LENGTH),
-            content: "",
-            meta: {},
-            type: "paragraph",
+            data: {
+              content: "",
+              type: "paragraph",
+              align: "left",
+              font: "sans",
+            },
           },
         ])
       );

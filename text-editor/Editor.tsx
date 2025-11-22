@@ -1,30 +1,32 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { JSX, KeyboardEvent, ReactNode, useEffect, useState } from "react";
-import { headingClassName } from "./lib/helper-function";
+import { KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useState } from "react";
 import {
   addBlock,
   moveBlock,
   removeBlock,
   moveCursor,
-  setBlockInput,
-  setFocusBlockID,
-  updateMetaData,
-  setListBlockInput,
   addListItem,
   removeListItem,
   replaceListItem,
-  checkListItem,
+  escapeListBlock,
 } from "@/redux/slices/editor.slice";
 import PopoverWrapper from "./popover/popover-wrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { AlignmentType, BlockType } from "./types/type";
-import { Asterisk, Copy, Dot } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "sonner";
-const commonClassNames = "outline-none w-full text-lg";
+import { BlockType } from "./types/type";
+import { Asterisk, Dot } from "lucide-react";
+import { ParagraphBlock } from "./popover/popover-types/paragraph";
+import { HeadingBlock } from "./popover/popover-types/heading";
+import {
+  CheckListBlock,
+  OrderedListBlock,
+  UnorderedListBlock,
+} from "./popover/popover-types/list";
+import CodeBlock from "./popover/popover-types/code";
+import { WarningBlock } from "./popover/popover-types/warning";
+
+export const commonClassNames = "outline-none w-full text-lg";
 
 export default function Editor({
   isContentEditable,
@@ -53,12 +55,27 @@ export default function Editor({
     }
   }, [focusBlockID]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     blocks.forEach((b) => {
       const el = document.getElementById(b.id);
       if (el) {
-        if (el.innerHTML !== b.content && typeof b.content == "string") {
-          el.innerHTML = b.content;
+        if (
+          el.innerHTML !== b.data.content &&
+          typeof b.data.content === "string"
+        ) {
+          el.innerHTML = b.data.content;
+        } else if (Array.isArray(b.data.content)) {
+          b.data.content.forEach((li) => {
+            const liElement = document.getElementById(li.id);
+            if (liElement) {
+              if (
+                liElement.innerHTML !== li.listContent &&
+                typeof li.listContent === "string"
+              ) {
+                liElement.innerHTML = li.listContent;
+              }
+            }
+          });
         }
       }
     });
@@ -74,7 +91,8 @@ export default function Editor({
     // [Enter + non-empty block content] to add a new block
     if (
       e.key == "Enter" &&
-      blockContent?.length != 0 &&
+      blockContent &&
+      blockContent.trim().length != 0 &&
       !e.shiftKey &&
       !["code"].includes(type)
     ) {
@@ -112,14 +130,14 @@ export default function Editor({
       ["l", "e", "j"].includes(e.key.toLowerCase())
     ) {
       e.preventDefault();
-      const keyMap: { [key: string]: AlignmentType } = {
-        l: "left",
-        e: "center",
-        j: "justify",
-      };
-      dispatch(
-        updateMetaData({ id: blockID, meta: { alignment: keyMap[e.key] } })
-      );
+      // const keyMap: { [key: string]: AlignmentType } = {
+      //   l: "left",
+      //   e: "center",
+      //   j: "justify",
+      // };
+      // dispatch(
+      //   updateMetaData({ id: blockID, meta: { alignment: keyMap[e.key] } })
+      // );
     } else {
       return;
     }
@@ -158,24 +176,25 @@ export default function Editor({
     ) {
       e.preventDefault();
       dispatch(removeListItem({ blockID, itemIndex: index }));
-    } else if (e.key == "Enter") {
-      e.preventDefault();
     }
-  }
 
-  async function handleCopy(content: string) {
-    if (content.length == 0) return;
-    await navigator.clipboard.writeText(content);
-    toast.info("Copied to clipboard");
+    // hit 'Enter' on empty list item to make a paragraph block by default.
+    else if (
+      e.key == "Enter" &&
+      ["ordered-list", "unordered-list", "check-list"].includes(type) &&
+      blockContent?.length == 0
+    ) {
+      dispatch(escapeListBlock({ blockID, itemID }));
+    }
   }
 
   function renderBlock() {
     return blocks.map((b) => {
-      switch (b.type) {
+      switch (b.data.type) {
         case "paragraph":
           return (
             <PopoverWrapper
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -183,32 +202,19 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <p
-                onFocus={() => dispatch(setFocusBlockID({ id: b.id }))}
-                id={b.id}
-                suppressContentEditableWarning={true}
-                data-placeholder={"Hit '/' for commands..."}
-                onInput={(e) => {
-                  const html = (e.currentTarget as HTMLElement).innerHTML ?? "";
-                  dispatch(setBlockInput({ id: b.id, content: html }));
-                }}
-                onKeyDown={(e) => handleKeyDown(e, b.type, b.id)}
-                className={cn(
-                  commonClassNames,
-                  `font-${b.meta.font ?? "sans"}`,
-                  `text-${b.meta.alignment ?? "left"}`
-                )}
-                contentEditable={isContentEditable}
-              ></p>
+              <ParagraphBlock
+                isContentEditable={isContentEditable}
+                b={b}
+                key={b.id}
+                handleKeyDown={handleKeyDown}
+              />
             </PopoverWrapper>
           );
 
         case "heading": {
-          const heading = b.meta.heading ?? 1;
-          const HeadingTag = `h${heading}` as keyof JSX.IntrinsicElements;
           return (
             <PopoverWrapper
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -216,26 +222,12 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <HeadingTag
-                onFocus={() => dispatch(setFocusBlockID({ id: b.id }))}
-                data-placeholder={`Heading ${b.meta.heading ?? 1}`}
-                id={b.id}
-                suppressContentEditableWarning={true}
-                suppressHydrationWarning={true}
-                onKeyDown={(e) => handleKeyDown(e, b.type, b.id)}
+              <HeadingBlock
+                isContentEditable={isContentEditable}
+                b={b}
                 key={b.id}
-                className={cn(
-                  commonClassNames,
-                  headingClassName(heading),
-                  `font-${b.meta.font ?? "sans"}`,
-                  `text-${b.meta.alignment ?? "left"}`
-                )}
-                onInput={(e) => {
-                  const html = (e.currentTarget as HTMLElement).innerHTML ?? "";
-                  dispatch(setBlockInput({ id: b.id, content: html }));
-                }}
-                contentEditable={isContentEditable}
-              ></HeadingTag>
+                handleKeyDown={handleKeyDown}
+              />
             </PopoverWrapper>
           );
         }
@@ -244,7 +236,7 @@ export default function Editor({
           return (
             <PopoverWrapper
               className="group relative"
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -252,27 +244,11 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <code
-                suppressContentEditableWarning={true}
-                onInput={(e) => {
-                  const html = (e.currentTarget as HTMLElement).innerHTML ?? "";
-                  dispatch(setBlockInput({ id: b.id, content: html }));
-                }}
-                onFocus={() => dispatch(setFocusBlockID({ id: b.id }))}
-                data-placeholder="code..."
-                id={b.id}
-                onKeyDown={(e) => handleKeyDown(e, b.type, b.id)}
-                className={cn(
-                  commonClassNames,
-                  "font-mono px-4 py-2 md:py-4 md:px-9 rounded-md bg-muted whitespace-pre-wrap"
-                )}
-                contentEditable={isContentEditable}
-              ></code>
-              <Copy
-                className="absolute top-2 right-2 cursor-pointer text-muted-foreground/80 rounded-md h-8 w-8 p-1 group-focus-within:text-accent-foreground group-hover:text-accent-foreground"
-                onClick={() =>
-                  typeof b.content === "string" && handleCopy(b.content)
-                }
+              <CodeBlock
+                key={b.id}
+                b={b}
+                isContentEditable={isContentEditable}
+                handleKeyDown={handleKeyDown}
               />
             </PopoverWrapper>
           );
@@ -300,7 +276,7 @@ export default function Editor({
           };
           return (
             <PopoverWrapper
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -308,7 +284,7 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              {seperatorMapper[b.meta.seperatorType ?? "line"]}
+              {seperatorMapper[b.data.content ?? "line"]}
             </PopoverWrapper>
           );
         }
@@ -316,7 +292,7 @@ export default function Editor({
         case "ordered-list": {
           return (
             <PopoverWrapper
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -324,36 +300,12 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <ol className={cn(commonClassNames, "pl-10")}>
-                {typeof b.content == "object" &&
-                  b.content.map((li, i) => {
-                    return (
-                      <li
-                        key={li.id}
-                        onFocus={() => dispatch(setFocusBlockID({ id: li.id }))}
-                        id={li.id}
-                        suppressContentEditableWarning={true}
-                        data-placeholder={`List item ${i + 1}`}
-                        onInput={(e) => {
-                          const txt =
-                            (e.currentTarget as HTMLElement).innerHTML ?? "";
-                          dispatch(
-                            setListBlockInput({
-                              id: b.id,
-                              index: i,
-                              content: txt,
-                            })
-                          );
-                        }}
-                        onKeyDown={(e) =>
-                          handleListKeyDown(e, b.type, b.id, li.id, i)
-                        }
-                        className={cn("list-decimal", commonClassNames)}
-                        contentEditable={isContentEditable}
-                      ></li>
-                    );
-                  })}
-              </ol>
+              <OrderedListBlock
+                key={b.id}
+                b={b}
+                isContentEditable={isContentEditable}
+                handleListKeyDown={handleListKeyDown}
+              />
             </PopoverWrapper>
           );
         }
@@ -361,7 +313,7 @@ export default function Editor({
         case "unordered-list": {
           return (
             <PopoverWrapper
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -369,36 +321,12 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <ul className={cn(commonClassNames, "pl-10")}>
-                {typeof b.content == "object" &&
-                  b.content.map((li, i) => {
-                    return (
-                      <li
-                        key={li.id}
-                        onFocus={() => dispatch(setFocusBlockID({ id: li.id }))}
-                        id={li.id}
-                        suppressContentEditableWarning={true}
-                        data-placeholder={`List item ${i + 1}`}
-                        onInput={(e) => {
-                          const txt =
-                            (e.currentTarget as HTMLElement).innerHTML ?? "";
-                          dispatch(
-                            setListBlockInput({
-                              id: b.id,
-                              index: i,
-                              content: txt,
-                            })
-                          );
-                        }}
-                        onKeyDown={(e) =>
-                          handleListKeyDown(e, b.type, b.id, li.id, i)
-                        }
-                        className={cn(commonClassNames, "list-disc")}
-                        contentEditable={isContentEditable}
-                      ></li>
-                    );
-                  })}
-              </ul>
+              <UnorderedListBlock
+                key={b.id}
+                b={b}
+                isContentEditable={isContentEditable}
+                handleListKeyDown={handleListKeyDown}
+              />
             </PopoverWrapper>
           );
         }
@@ -406,7 +334,7 @@ export default function Editor({
         case "check-list": {
           return (
             <PopoverWrapper
-              type={b.type}
+              type={b.data.type}
               key={b.id}
               id={b.id}
               setOpenBlockMenu={setOpenBlockMenu}
@@ -414,57 +342,33 @@ export default function Editor({
               openBlockMenu={openBlockMenu}
               openGripMenu={openGripMenu}
             >
-              <div className={cn(commonClassNames, "pl-3")}>
-                {typeof b.content == "object" &&
-                  b.content.map((li, i) => {
-                    return (
-                      <div key={i} className="flex gap-2 items-center">
-                        <Checkbox
-                          className="rounded-full h-5 w-5 cursor-pointer"
-                          checked={li.checked}
-                          onCheckedChange={(e) =>
-                            dispatch(
-                              checkListItem({
-                                blockID: b.id,
-                                itemIndex: i,
-                                checked: e == true,
-                              })
-                            )
-                          }
-                        />
-                        <p
-                          key={li.id}
-                          onFocus={() =>
-                            dispatch(setFocusBlockID({ id: li.id }))
-                          }
-                          id={li.id}
-                          suppressContentEditableWarning={true}
-                          data-placeholder={`List item ${i + 1}`}
-                          onInput={(e) => {
-                            const txt =
-                              (e.currentTarget as HTMLElement).innerHTML ?? "";
-                            dispatch(
-                              setListBlockInput({
-                                id: b.id,
-                                index: i,
-                                content: txt,
-                              })
-                            );
-                          }}
-                          onKeyDown={(e) =>
-                            handleListKeyDown(e, b.type, b.id, li.id, i)
-                          }
-                          className={cn(
-                            commonClassNames,
-                            "list-disc",
-                            li.checked && "text-muted-foreground line-through"
-                          )}
-                          contentEditable={isContentEditable && !li.checked}
-                        ></p>
-                      </div>
-                    );
-                  })}
-              </div>
+              <CheckListBlock
+                key={b.id}
+                b={b}
+                isContentEditable={isContentEditable}
+                handleListKeyDown={handleListKeyDown}
+              />
+            </PopoverWrapper>
+          );
+        }
+
+        case "warning": {
+          return (
+            <PopoverWrapper
+              type={b.data.type}
+              key={b.id}
+              id={b.id}
+              setOpenBlockMenu={setOpenBlockMenu}
+              setOpenGripMenu={setOpenGripMenu}
+              openBlockMenu={openBlockMenu}
+              openGripMenu={openGripMenu}
+            >
+              <WarningBlock
+                key={b.id}
+                b={b}
+                isContentEditable={isContentEditable}
+                handleKeyDown={handleKeyDown}
+              />
             </PopoverWrapper>
           );
         }

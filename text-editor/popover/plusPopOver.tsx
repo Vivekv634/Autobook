@@ -21,6 +21,7 @@ import { addBlock } from "@/redux/slices/editor.slice";
 import {
   Code,
   Heading,
+  Info,
   List,
   ListOrdered,
   ListTodo,
@@ -63,6 +64,11 @@ const allblocks: { icon: ReactNode; value: BlockType; label: string }[] = [
     value: "check-list",
     label: "Check List",
     icon: <ListTodo />,
+  },
+  {
+    value: "warning",
+    label: "Warning",
+    icon: <Info />,
   },
 ];
 
