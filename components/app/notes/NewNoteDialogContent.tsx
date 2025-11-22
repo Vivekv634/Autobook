@@ -47,9 +47,12 @@ export default function NewNoteDialog({
       toast.info("Creating new note...");
       const noteBody: Block = {
         id: nanoid(ID_LENGTH),
-        content: "",
-        meta: {},
-        type: "paragraph",
+        data: {
+          type: "paragraph",
+          content: "",
+          align: "left",
+          font: "sans",
+        },
       };
       const note: NoteType = {
         auth_id: uid,
