@@ -51,9 +51,12 @@ export default function NotePage() {
         setEditorBlocks([
           {
             id: nanoid(ID_LENGTH),
-            content: "",
-            meta: {},
-            type: "paragraph",
+            data: {
+              type: "paragraph",
+              align: "left",
+              font: "sans",
+              content: "",
+            },
           },
         ])
       );
