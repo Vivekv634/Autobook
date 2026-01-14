@@ -11,6 +11,7 @@ import processPrompt, { improvePromptHelper } from "@/lib/process-prompt";
 import { Card } from "../ui/card";
 import { Textarea } from "../ui/textarea";
 import { GoogleGenAI } from "@google/genai";
+import { jsonTextSlicer } from "@/lib/utils";
 
 export const InputActionBlock = createReactBlockSpec(
   {
@@ -48,7 +49,7 @@ export const InputActionBlock = createReactBlockSpec(
             const ai = new GoogleGenAI({ apiKey: apiKey });
 
             const apiResponse = await ai.models.generateContent({
-              model: "gemini-2.0-flash",
+              model: "gemini-3-flash-preview",
               contents: improvePromptHelper(prompt),
             });
 
@@ -94,7 +95,7 @@ export const InputActionBlock = createReactBlockSpec(
             const ai = new GoogleGenAI({ apiKey: apiKey });
 
             const apiResponse = await ai.models.generateContent({
-              model: "gemini-2.0-flash",
+              model: "gemini-3-flash-preview",
               contents: processPrompt(prompt, user.responseType),
             });
 
@@ -102,10 +103,7 @@ export const InputActionBlock = createReactBlockSpec(
               toast.error("Getting error while generating content!");
               return;
             }
-            const processedResponse = apiResponse.text?.slice(
-              8,
-              apiResponse.text.length - 4
-            );
+            const processedResponse = jsonTextSlicer(apiResponse.text);
 
             const blocksFromLLM = JSON.parse(processedResponse);
             props.editor.replaceBlocks([props.block.id], blocksFromLLM);

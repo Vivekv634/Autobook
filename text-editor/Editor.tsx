@@ -1,6 +1,6 @@
 "use client";
 
-import { KeyboardEvent, ReactNode, useEffect, useLayoutEffect, useState } from "react";
+import { KeyboardEvent, ReactNode, useEffect, useState } from "react";
 import {
   addBlock,
   moveBlock,
@@ -55,7 +55,7 @@ export default function Editor({
     }
   }, [focusBlockID]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     blocks.forEach((b) => {
       const el = document.getElementById(b.id);
       if (el) {
@@ -64,7 +64,14 @@ export default function Editor({
           typeof b.data.content === "string"
         ) {
           el.innerHTML = b.data.content;
-        } else if (Array.isArray(b.data.content)) {
+        }
+        if (
+          ["unordered-list", "ordered-list", "check-list"].includes(
+            b.data.type
+          ) &&
+          typeof b.data.content === "object"
+        ) {
+          console.log(b.data.content);
           b.data.content.forEach((li) => {
             const liElement = document.getElementById(li.id);
             if (liElement) {
@@ -235,7 +242,6 @@ export default function Editor({
         case "code": {
           return (
             <PopoverWrapper
-              className="group relative"
               type={b.data.type}
               key={b.id}
               id={b.id}

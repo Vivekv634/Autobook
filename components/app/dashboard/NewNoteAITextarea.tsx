@@ -17,6 +17,7 @@ import { v4 } from "uuid";
 import { createNote } from "@/redux/features/notes.features";
 import { useRouter } from "next/navigation";
 import { GoogleGenAI } from "@google/genai";
+import { jsonTextSlicer } from "@/lib/utils";
 
 export default function NewNoteAITextarea() {
   const [prompt, setPrompt] = useState<string>("");
@@ -40,15 +41,14 @@ export default function NewNoteAITextarea() {
       const ai = new GoogleGenAI({ apiKey: apiKey });
 
       const apiResponse = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-3-flash-preview",
         contents: searchPrompt,
       });
 
       if (!apiResponse.text) return;
+      console.log(apiResponse.text);
 
-      setSearchRecommandations(
-        JSON.parse(apiResponse.text.slice(8, apiResponse.text.length - 4))
-      );
+      setSearchRecommandations(JSON.parse(apiResponse.text));
     }
     searchAIPrompt();
   }, [user]);
@@ -70,16 +70,13 @@ export default function NewNoteAITextarea() {
       const ai = new GoogleGenAI({ apiKey: apiKey });
 
       const apiResponse = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-3-flash-preview",
         contents: processPromptWithTitle(prompt, user.responseType),
       });
 
       if (!apiResponse.text) return;
 
-      const processedResponse = apiResponse.text.slice(
-        8,
-        apiResponse.text.length - 4
-      );
+      const processedResponse = jsonTextSlicer(apiResponse.text);
 
       const blocksFromLLM = JSON.parse(processedResponse);
       if (!Array.isArray(blocksFromLLM.content)) {
@@ -134,7 +131,7 @@ export default function NewNoteAITextarea() {
         return;
       }
       const apiResponse = await axios.post(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent",
         {
           contents: [
             {
@@ -182,7 +179,7 @@ export default function NewNoteAITextarea() {
           />
           <div className="flex justify-between items-center mt-4">
             <span className="text-muted-foreground text-center">
-              Gemini-2.0-flash
+              gemini-3-flash-preview
             </span>
             <div className="flex items-center gap-2">
               <ButtonLoader
@@ -209,12 +206,12 @@ export default function NewNoteAITextarea() {
         </form>
       </section>
       {searchRecommandations ? (
-        <div className="max-w-2xl w-full flex flex-col mt-3">
+        <div className="max-w-2xl w-full flex flex-col mt-3 gap-1">
           <>
             {Array.from({ length: 3 }).map((_, i) => {
               return (
                 <span
-                  className="my-1 py-3 px-5 h-9 rounded-lg hover:bg-accent cursor-pointer flex items-center"
+                  className="py-3 px-5 rounded-lg hover:bg-accent cursor-pointer flex items-center"
                   key={i}
                   onClick={() => setPrompt(searchRecommandations[`${i}`])}
                 >

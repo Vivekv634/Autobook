@@ -38,7 +38,7 @@ export default function GeneralPopover({
   function handleMetaUpdate(font: "sans" | "serif" | "mono") {
     if (!b) return;
 
-    if (["heading", "pargraph"].includes(b.data.type)) {
+    if (["heading", "paragraph"].includes(b.data.type)) {
       const updatedData = { ...b.data, font };
       dispatch(
         updateMetaData({ id: b.id, data: updatedData as typeof b.data })
